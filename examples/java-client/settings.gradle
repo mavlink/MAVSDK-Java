@@ -1,0 +1,3 @@
+rootProject.name = 'DroneCoreExample'
+
+includeBuild '../../sdk/dronecore'

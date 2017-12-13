@@ -1,0 +1,20 @@
+apply plugin: 'application'
+apply plugin: 'idea'
+
+repositories {
+    jcenter()
+}
+
+mainClassName = "io.dronecore.example.DroneCoreExample"
+
+idea {
+    module {
+        inheritOutputDirs = false
+        outputDir = compileJava.destinationDir
+        testOutputDir = compileTestJava.destinationDir
+    }
+}
+
+dependencies {
+    compile 'io.dronecore:dronecore:0.1.0'
+}

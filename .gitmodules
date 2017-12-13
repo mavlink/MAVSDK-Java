@@ -1,0 +1,3 @@
+[submodule "sdk/proto"]
+	path = sdk/proto
+	url = https://github.com/dronecore/DroneCore-Proto.git
