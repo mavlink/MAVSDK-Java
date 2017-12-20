@@ -1,1 +1,1 @@
-include 'dronecore', 'dronecore-action'
+include 'dronecore', 'dronecore-action', 'dronecore-mission', 'dronecore-telemetry'
