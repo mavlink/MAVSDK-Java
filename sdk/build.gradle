@@ -108,5 +108,6 @@ subprojects {
         implementation "io.grpc:grpc-okhttp:${grpcVersion}"
         implementation "io.grpc:grpc-protobuf-lite:${grpcVersion}"
         implementation "io.grpc:grpc-stub:${grpcVersion}"
+        implementation 'org.slf4j:slf4j-api:1.7.25'
     }
 }
