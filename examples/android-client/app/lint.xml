@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <issue id="InvalidPackage">
+        <ignore regexp=".*logback-android-core-1.1.1-6.jar.*" />
+    </issue>
+</lint>
