@@ -39,14 +39,28 @@ subprojects {
         }
 
         plugins {
+            javalite {
+                artifact = 'com.google.protobuf:protoc-gen-javalite:3.0.0'
+            }
+
             grpc {
                 artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}"
             }
         }
 
         generateProtoTasks {
-            all()*.plugins {
-                grpc {}
+            all()*.each { task ->
+                task.builtins {
+                    remove java
+                }
+
+                task.plugins {
+                    javalite {}
+
+                    grpc {
+                        option 'lite'
+                    }
+                }
             }
         }
     }
@@ -92,7 +106,7 @@ subprojects {
 
     dependencies {
         implementation "io.grpc:grpc-okhttp:${grpcVersion}"
-        implementation "io.grpc:grpc-protobuf:${grpcVersion}"
+        implementation "io.grpc:grpc-protobuf-lite:${grpcVersion}"
         implementation "io.grpc:grpc-stub:${grpcVersion}"
     }
 }
