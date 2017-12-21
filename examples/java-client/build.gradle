@@ -5,7 +5,36 @@ repositories {
     jcenter()
 }
 
+configurations {
+    checkstyleClasspath
+}
+
 mainClassName = "io.dronecore.example.DroneCoreExample"
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+task checkstyle(type: Checkstyle) {
+    configFile = rootProject.file("config/checkstyle/checkstyle.xml")
+    source 'src'
+    include '**/*.java'
+    exclude '**/gen/**'
+
+    classpath = project.files()
+    checkstyleClasspath = project.configurations.checkstyleClasspath
+
+    maxWarnings 0
+
+    reports {
+        xml.enabled true
+        xml.destination new File("$project.buildDir/reports/checkstyle/checkstyle_report.xml")
+
+        html.enabled true
+        html.destination new File("$project.buildDir/reports/checkstyle/checkstyle_report.html")
+    }
+}
+
+build.dependsOn 'checkstyle'
 
 idea {
     module {
@@ -16,5 +45,7 @@ idea {
 }
 
 dependencies {
+    checkstyleClasspath 'com.puppycrawl.tools:checkstyle:8.5'
+
     compile 'io.dronecore:dronecore:0.1.0'
 }
