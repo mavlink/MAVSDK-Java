@@ -1,7 +1,7 @@
-package io.dronecore;
+package io.dronecore.core;
 
-import io.dronecore.rpc.DroneCoreRPCGrpc;
-import io.dronecore.rpc.DroneCoreRPCGrpc.DroneCoreRPCBlockingStub;
+import io.dronecore.core.CoreServiceGrpc.CoreServiceBlockingStub;
+import io.grpc.ConnectivityState;
 import io.grpc.ManagedChannel;
 import io.grpc.okhttp.OkHttpChannelBuilder;
 
@@ -12,7 +12,7 @@ public class DroneCore {
   private static final Logger logger = LoggerFactory.getLogger(DroneCore.class);
 
   private ManagedChannel channel;
-  private DroneCoreRPCBlockingStub blockingStub;
+  private CoreServiceBlockingStub blockingStub;
 
   public void connect() {
     connect("localhost", 50051);
@@ -31,6 +31,6 @@ public class DroneCore {
             .usePlaintext(true)
             .build();
 
-    blockingStub = DroneCoreRPCGrpc.newBlockingStub(channel);
+    blockingStub = CoreServiceGrpc.newBlockingStub(channel);
   }
 }

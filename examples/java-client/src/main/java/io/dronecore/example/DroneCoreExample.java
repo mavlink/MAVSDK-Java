@@ -1,7 +1,6 @@
 package io.dronecore.example;
 
-import io.dronecore.DroneCore;
-
+import io.dronecore.core.DroneCore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

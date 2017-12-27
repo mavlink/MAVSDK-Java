@@ -2,14 +2,11 @@ package io.dronecore.dronecoreclient;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-
+import io.dronecore.core.DroneCore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.dronecore.DroneCore;
-
 public class MainActivity extends AppCompatActivity {
-
   private static final Logger logger = LoggerFactory.getLogger(MainActivity.class);
 
   @Override
