@@ -21,6 +21,8 @@ public class MainActivity extends AppCompatActivity {
     logger.error("Error message");
 
     DroneCore dc = new DroneCore();
-    dc.connect();
+    dc.getDevicesFlowable()
+        .doOnNext(device -> logger.debug("Registered device: " + device.getUuid()))
+        .subscribe();
   }
 }

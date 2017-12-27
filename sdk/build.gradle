@@ -69,7 +69,7 @@ subprojects {
         main {
             java {
                 srcDirs 'build/generated/source/proto/main/grpc'
-                srcDirs 'build/generated/source/proto/main/java'
+                srcDirs 'build/generated/source/proto/main/javalite'
             }
         }
     }
@@ -109,5 +109,11 @@ subprojects {
         implementation "io.grpc:grpc-protobuf-lite:${grpcVersion}"
         implementation "io.grpc:grpc-stub:${grpcVersion}"
         implementation 'org.slf4j:slf4j-api:1.7.25'
+
+        compile 'io.reactivex.rxjava2:rxjava:2.1.7'
+
+        testCompile "io.grpc:grpc-testing:${grpcVersion}"
+        testCompile 'junit:junit:4.12'
+        testCompile 'org.mockito:mockito-core:2.13.0'
     }
 }

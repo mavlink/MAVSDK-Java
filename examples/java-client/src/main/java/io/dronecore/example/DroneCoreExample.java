@@ -11,12 +11,9 @@ public class DroneCoreExample {
     logger.debug("starting example...");
 
     DroneCore dc = new DroneCore();
-    dc.connect();
 
-    try {
-      Thread.sleep(10000);
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
+    dc.getDevicesFlowable()
+        .doOnNext(device -> logger.debug("Registered device: " + device.getUuid()))
+        .subscribe();
   }
 }

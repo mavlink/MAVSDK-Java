@@ -1,10 +1,12 @@
 package io.dronecore.core;
 
+import io.dronecore.core.CoreProto.SubscribeDevicesRequest;
 import io.dronecore.core.CoreServiceGrpc.CoreServiceBlockingStub;
-import io.grpc.ConnectivityState;
 import io.grpc.ManagedChannel;
 import io.grpc.okhttp.OkHttpChannelBuilder;
 
+import io.reactivex.Flowable;
+import java.util.Iterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,23 +16,35 @@ public class DroneCore {
   private ManagedChannel channel;
   private CoreServiceBlockingStub blockingStub;
 
-  public void connect() {
-    connect("localhost", 50051);
+  public DroneCore() {
+    this("localhost", 50051);
+  }
+
+  public DroneCore(String host, int port) {
+    this(createChannel(host, port));
+  }
+
+  private static ManagedChannel createChannel(String host, int port) {
+    logger.debug("Building channel to " + host + ":" + port);
+
+    return OkHttpChannelBuilder.forAddress(host, port)
+        .usePlaintext(true)
+        .build();
+  }
+
+  public DroneCore(ManagedChannel channel) {
+    this.channel = channel;
+    blockingStub = CoreServiceGrpc.newBlockingStub(channel);
   }
 
   /**
-   * Connect to the DroneCore backend.
-   *
-   * @param host The address on which the backend is listening.
-   * @param port The port on which the backend is listening.
+   * Get a flowable streaming the devices connected to the backend.
    */
-  public void connect(String host, int port) {
-    logger.debug("Connecting to " + host + ":" + port);
+  public Flowable<Device> getDevicesFlowable() {
+    final Iterator<CoreProto.Device> devices
+        = blockingStub.subscribeDevices(SubscribeDevicesRequest.newBuilder().build());
 
-    channel = OkHttpChannelBuilder.forAddress(host, port)
-            .usePlaintext(true)
-            .build();
-
-    blockingStub = CoreServiceGrpc.newBlockingStub(channel);
+    return Flowable.fromIterable(() -> devices)
+        .map(device -> new Device(device.getUuid().getValue()));
   }
 }
