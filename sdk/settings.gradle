@@ -1,1 +1,1 @@
-include 'dronecore-core', 'dronecore-action', 'dronecore-mission', 'dronecore-telemetry'
+include 'dronecode-sdk'

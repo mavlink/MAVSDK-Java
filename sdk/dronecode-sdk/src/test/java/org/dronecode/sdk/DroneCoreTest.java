@@ -1,7 +1,5 @@
-package io.dronecore.core;
+package org.dronecode.sdk;
 
-import io.dronecore.core.CoreProto.SubscribeDevicesRequest;
-import io.dronecore.core.CoreServiceGrpc.CoreServiceImplBase;
 import io.grpc.Server;
 import io.grpc.inprocess.InProcessChannelBuilder;
 import io.grpc.inprocess.InProcessServerBuilder;
@@ -9,6 +7,7 @@ import io.grpc.stub.StreamObserver;
 import io.grpc.util.MutableHandlerRegistry;
 import java.util.ArrayList;
 import java.util.List;
+import org.dronecode.sdk.CoreServiceGrpc.CoreServiceImplBase;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,60 +36,59 @@ public class DroneCoreTest {
   }
 
   @After
-  public void tearDown() throws Exception {
+  public void tearDown() {
     fakeServer.shutdownNow();
   }
 
   @Test
-  public void testDevicesFlowable_doesNotEmitWhenNoDevice() {
-    dc.getDevicesFlowable()
+  public void testDiscoverFlowable_doesNotEmitWhenNoDevice() {
+    dc.discoverFlowable()
         .test()
         .assertNoValues();
   }
 
   @Test
-  public void testDevicesFlowable_emitsOneDevice() {
-    final FakeDeviceEmittingServiceBuilder fakeServiceBuild
-        = new FakeDeviceEmittingServiceBuilder(42);
+  public void testDiscoverFlowable_emitsOneDevice() {
+    final FakeUuidEmittingServiceBuilder fakeServiceBuild
+        = new FakeUuidEmittingServiceBuilder(42L);
     serviceRegistry.addService(fakeServiceBuild.getFakeServer());
 
-    dc.getDevicesFlowable()
+    dc.discoverFlowable()
         .test()
-        .assertValue(fakeServiceBuild.getDevices().get(0));
+        .assertValue(fakeServiceBuild.getUuids().get(0));
   }
 
   @Test
-  public void testDevicesFlowable_emitsMultipleDevices() {
-    final FakeDeviceEmittingServiceBuilder fakeServiceBuild
-        = new FakeDeviceEmittingServiceBuilder(42, 33, 21, 15432523);
+  public void testDiscoverFlowable_emitsMultipleDevices() {
+    final FakeUuidEmittingServiceBuilder fakeServiceBuild
+        = new FakeUuidEmittingServiceBuilder(42L, 33L, 21L, 15432523L);
     serviceRegistry.addService(fakeServiceBuild.getFakeServer());
 
-    dc.getDevicesFlowable()
+    dc.discoverFlowable()
         .test()
-        .assertValueSequence(fakeServiceBuild.getDevices());
+        .assertValueSequence(fakeServiceBuild.getUuids());
   }
 
-  class FakeDeviceEmittingServiceBuilder {
-    private List<Device> devices = new ArrayList<>();
+  class FakeUuidEmittingServiceBuilder {
+    private List<Long> uuids = new ArrayList<>();
 
-    private FakeDeviceEmittingServiceBuilder(Integer... uuids) {
-      for (Integer uuid : uuids) {
-        devices.add(new Device(uuid));
+    private FakeUuidEmittingServiceBuilder(Long... uuids) {
+      for (Long uuid : uuids) {
+        this.uuids.add(uuid);
       }
     }
 
-    private List<Device> getDevices() {
-      return devices;
+    private List<Long> getUuids() {
+      return uuids;
     }
 
     private CoreServiceImplBase getFakeServer() {
       return new CoreServiceImplBase() {
         @Override
-        public void subscribeDevices(SubscribeDevicesRequest request,
-                                     StreamObserver<CoreProto.Device> responseObserver) {
-          for (Device device : devices) {
-            CoreProto.UUID uuid = CoreProto.UUID.newBuilder().setValue(device.getUuid()).build();
-            responseObserver.onNext(CoreProto.Device.newBuilder().setUuid(uuid).build());
+        public void subscribeDiscover(CoreProto.SubscribeDiscoverRequest request,
+                                   StreamObserver<CoreProto.DiscoverResponse> responseObserver) {
+          for (Long uuid : uuids) {
+            responseObserver.onNext(CoreProto.DiscoverResponse.newBuilder().setUuid(uuid).build());
           }
 
           responseObserver.onCompleted();
