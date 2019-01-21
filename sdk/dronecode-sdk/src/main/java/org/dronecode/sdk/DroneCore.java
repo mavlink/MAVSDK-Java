@@ -1,12 +1,10 @@
-package io.dronecore.core;
+package org.dronecode.sdk;
 
-import io.dronecore.core.CoreProto.SubscribeDevicesRequest;
-import io.dronecore.core.CoreServiceGrpc.CoreServiceBlockingStub;
 import io.grpc.ManagedChannel;
 import io.grpc.okhttp.OkHttpChannelBuilder;
-
 import io.reactivex.Flowable;
 import java.util.Iterator;
+import org.dronecode.sdk.CoreServiceGrpc.CoreServiceBlockingStub;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,13 +36,14 @@ public class DroneCore {
   }
 
   /**
-   * Get a flowable streaming the devices connected to the backend.
+   * Subscribe to drone discovery. When an event is emitted in this stream, it means
+   * that the drone is connected. Disconnection is provided by "timeoutFlowable()".
    */
-  public Flowable<Device> getDevicesFlowable() {
-    final Iterator<CoreProto.Device> devices
-        = blockingStub.subscribeDevices(SubscribeDevicesRequest.newBuilder().build());
+  public Flowable<Long> discoverFlowable() {
+    final Iterator<CoreProto.DiscoverResponse> responses
+        = blockingStub.subscribeDiscover(CoreProto.SubscribeDiscoverRequest.newBuilder().build());
 
-    return Flowable.fromIterable(() -> devices)
-        .map(device -> new Device(device.getUuid().getValue()));
+    return Flowable.fromIterable(() -> responses)
+        .map(response -> response.getUuid());
   }
 }
