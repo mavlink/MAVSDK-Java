@@ -1,0 +1,25 @@
+public Completable {{ name.lower_camel_case }}({% for param in params %}{{ param.type_info.name }} {{ param.name.lower_camel_case }}{{ ", " if not loop.last }}{% endfor %}) {
+  {{ plugin_name.upper_camel_case }}Proto.{{ name.upper_camel_case }}Request request = {{ plugin_name.upper_camel_case }}Proto.{{ name.upper_camel_case }}Request.newBuilder().build();
+
+  return Completable.create(emitter -> {
+    scheduler.scheduleDirect(() -> {
+      stub.{{ name.lower_camel_case }}(request, new StreamObserver<{{plugin_name.upper_camel_case }}Proto.{{ name.upper_camel_case }}Response>() {
+        @Override
+        public void onNext({{ plugin_name.upper_camel_case }}Proto.{{ name.upper_camel_case }}Response value) {
+          {% if has_result %}
+          {% endif %}
+
+          emitter.onComplete();
+        }
+
+        @Override
+        public void onError(Throwable t) {
+          emitter.onError(t);
+        }
+
+        @Override
+        public void onCompleted() {}
+      });
+    });
+  });
+}
