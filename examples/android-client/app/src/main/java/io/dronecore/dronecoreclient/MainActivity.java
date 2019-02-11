@@ -2,7 +2,7 @@ package io.dronecore.dronecoreclient;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import io.dronecore.core.DroneCore;
+import io.dronecode_sdk.action.Action;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,9 +20,7 @@ public class MainActivity extends AppCompatActivity {
     logger.warn("Warning message");
     logger.error("Error message");
 
-    DroneCore dc = new DroneCore();
-    dc.getDevicesFlowable()
-        .doOnNext(device -> logger.debug("Registered device: " + device.getUuid()))
-        .subscribe();
+    Action action = new Action();
+    action.arm().andThen(action.takeoff()).subscribe();
   }
 }
