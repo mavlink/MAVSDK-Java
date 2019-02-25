@@ -86,6 +86,7 @@ subprojects {
 
     task checkstyle(type: Checkstyle) {
         configFile = rootProject.file("config/checkstyle/checkstyle.xml")
+        configDir = project.provider({ rootProject.file("config/checkstyle") })
         source 'src'
         include '**/*.java'
         exclude '**/generated/**'
