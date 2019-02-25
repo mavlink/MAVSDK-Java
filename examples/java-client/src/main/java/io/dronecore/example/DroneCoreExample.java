@@ -25,6 +25,8 @@ public class DroneCoreExample {
 
     try {
       latch.await();
-    } catch (InterruptedException ignored) {}
+    } catch (InterruptedException ignored) {
+        // This is expected
+    }
   }
 }
