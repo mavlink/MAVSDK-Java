@@ -63,7 +63,7 @@ subprojects {
 
                     dcsdk {
                         option 'file_ext=java'
-                        option 'template_path=/home/jones/Documents/px4/dronecore/DronecodeSDK-Java/sdk/templates/'
+                        option "template_path=$project.rootDir/templates/"
                     }
                 }
             }
@@ -73,7 +73,7 @@ subprojects {
     sourceSets {
         main {
             proto {
-                srcDir '../proto/protos/'
+                srcDir "$project.rootDir/proto/protos/"
             }
 
             java {
