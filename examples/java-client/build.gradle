@@ -47,7 +47,7 @@ idea {
 dependencies {
     checkstyleClasspath 'com.puppycrawl.tools:checkstyle:8.5'
 
-    compile 'org.dronecode.sdk:dronecode-sdk:0.1.0'
+    implementation 'org.dronecode.sdk:dronecode-sdk:0.1.0'
 
     implementation 'ch.qos.logback:logback-core:1.2.3'
     implementation 'ch.qos.logback:logback-classic:1.2.3'
