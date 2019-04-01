@@ -1,34 +1,45 @@
-public Flowable<{% if return_type.is_primitive %}{{ return_type.name }}{% elif return_type.is_repeated %}List<{{ plugin_name.upper_camel_case }}Proto.{{ return_type.inner_name }}>{% else %}{{ plugin_name.upper_camel_case }}Proto.{{ return_type.name }}{% endif %}> {{ name.lower_camel_case }}({% for param in params %}{{ param.type }} {{ param.name.lower_camel_case }}{{ ", " if not loop.last }}{% endfor %}) {
+private Flowable<{% if return_type.is_primitive %}{{ return_type.name }}{% elif return_type.is_repeated %}List<{{ plugin_name.upper_camel_case }}Proto.{{ return_type.inner_name }}>{% else %}{{ plugin_name.upper_camel_case }}Proto.{{ return_type.name }}{% endif %}> {{ name.lower_camel_case }} = create{{ name.upper_camel_case }}();
+
+private Flowable<{% if return_type.is_primitive %}{{ return_type.name }}{% elif return_type.is_repeated %}List<{{ plugin_name.upper_camel_case }}Proto.{{ return_type.inner_name }}>{% else %}{{ plugin_name.upper_camel_case }}Proto.{{ return_type.name }}{% endif %}> create{{ name.upper_camel_case }}() {
   {{ plugin_name.upper_camel_case }}Proto.Subscribe{{ name.upper_camel_case }}Request request
       = {{ plugin_name.upper_camel_case }}Proto.Subscribe{{ name.upper_camel_case }}Request.newBuilder().build();
 
-  return Flowable.create(emitter -> {
-    scheduler.scheduleDirect(() -> {
-      stub.subscribe{{ name.upper_camel_case }}(request,
-          new StreamObserver<{{ plugin_name.upper_camel_case }}Proto.{{ name.upper_camel_case }}Response>() {
+  Flowable<{% if return_type.is_primitive %}{{ return_type.name }}{% elif return_type.is_repeated %}List<{{ plugin_name.upper_camel_case }}Proto.{{ return_type.inner_name }}>{% else %}{{ plugin_name.upper_camel_case }}Proto.{{ return_type.name }}{% endif %}> flowable
+    = Flowable.create(emitter -> {
+      scheduler.scheduleDirect(() -> {
+        stub.subscribe{{ name.upper_camel_case }}(request,
+            new StreamObserver<{{ plugin_name.upper_camel_case }}Proto.{{ name.upper_camel_case }}Response>() {
 
-        @Override
-        public void onNext({{ plugin_name.upper_camel_case }}Proto.{{ name.upper_camel_case }}Response value) {
-          {% if has_result %}
-          {% endif %}
+          @Override
+          public void onNext({{ plugin_name.upper_camel_case }}Proto.{{ name.upper_camel_case }}Response value) {
+            {% if has_result %}
+            {% endif %}
 
-          {%- if return_type.is_repeated %}
-          emitter.onNext(value.get{{ return_name.upper_camel_case }}List());
-          {%- else %}
-          emitter.onNext(value.get{{ return_name.upper_camel_case }}());
-          {%- endif %}
-        }
+            {%- if return_type.is_repeated %}
+            emitter.onNext(value.get{{ return_name.upper_camel_case }}List());
+            {%- else %}
+            emitter.onNext(value.get{{ return_name.upper_camel_case }}());
+            {%- endif %}
+          }
 
-        @Override
-        public void onError(Throwable t) {
-          emitter.onError(t);
-        }
+          @Override
+          public void onError(Throwable t) {
+            emitter.onError(t);
+          }
 
-        @Override
-        public void onCompleted() {
-          emitter.onComplete();
-        }
+          @Override
+          public void onCompleted() {
+            emitter.onComplete();
+          }
+        });
       });
-    });
-  }, BackpressureStrategy.BUFFER);
+    }, BackpressureStrategy.BUFFER);
+
+  return flowable
+  .replay(1)
+  .autoConnect();
+}
+
+public Flowable<{% if return_type.is_primitive %}{{ return_type.name }}{% elif return_type.is_repeated %}List<{{ plugin_name.upper_camel_case }}Proto.{{ return_type.inner_name }}>{% else %}{{ plugin_name.upper_camel_case }}Proto.{{ return_type.name }}{% endif %}> get{{ name.upper_camel_case }}() {
+  return {{ name.lower_camel_case }};
 }
