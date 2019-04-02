@@ -11,11 +11,17 @@ public class DroneCoreExample {
   public static final Logger logger = LoggerFactory.getLogger(DroneCoreExample.class);
 
   public static void main(String[] args) {
-    logger.debug("starting example...");
+    logger.debug("Starting example...");
 
     CountDownLatch latch = new CountDownLatch(1);
 
     Action action = new Action();
+
+    action.setReturnToLaunchAltitude(15f).blockingAwait();
+    logger.debug("RTL altitude: " + action.getReturnToLaunchAltitude().blockingGet());
+    action.setReturnToLaunchAltitude(20f).blockingAwait();
+    logger.debug("RTL altitude: " + action.getReturnToLaunchAltitude().blockingGet());
+
     action.arm()
           .andThen(action.takeoff())
           .delay(5, TimeUnit.SECONDS)
