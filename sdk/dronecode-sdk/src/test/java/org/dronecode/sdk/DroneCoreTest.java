@@ -10,7 +10,7 @@ public class DroneCoreTest {
   @Test
   public void testStream() throws InterruptedException {
     Telemetry telemetry = new Telemetry();
-    telemetry.position()
+    telemetry.getPosition()
              .doOnNext(next -> System.out.println(next))
              .test()
              .await(5, TimeUnit.SECONDS);
