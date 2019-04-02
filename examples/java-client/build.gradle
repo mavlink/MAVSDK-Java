@@ -24,6 +24,11 @@ task setRtlAltitude(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
 }
 
+task runMission(dependsOn: 'classes', type: JavaExec) {
+    main = "io.dronecore.example.RunMission"
+    classpath = sourceSets.main.runtimeClasspath
+}
+
 task checkstyle(type: Checkstyle) {
     configFile = rootProject.file("config/checkstyle/checkstyle.xml")
     source 'src'
