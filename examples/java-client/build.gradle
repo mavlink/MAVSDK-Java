@@ -9,10 +9,20 @@ configurations {
     checkstyleClasspath
 }
 
-mainClassName = "io.dronecore.example.DroneCoreExample"
+mainClassName = "io.dronecore.example.TakeoffAndLand"
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
+
+task takeoffAndLand(dependsOn: 'classes', type: JavaExec) {
+    main = "io.dronecore.example.TakeoffAndLand"
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+task setRtlAltitude(dependsOn: 'classes', type: JavaExec) {
+    main = "io.dronecore.example.SetRtlAltitude"
+    classpath = sourceSets.main.runtimeClasspath
+}
 
 task checkstyle(type: Checkstyle) {
     configFile = rootProject.file("config/checkstyle/checkstyle.xml")
