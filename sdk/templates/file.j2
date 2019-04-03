@@ -43,6 +43,14 @@ public class {{ plugin_name.upper_camel_case }} {
     scheduler = Schedulers.trampoline();
   }
 
+  {% if has_result %}
+  public class {{ plugin_name.upper_camel_case }}Exception extends Exception {
+    public {{ plugin_name.upper_camel_case }}Exception({{ plugin_name.upper_camel_case }}Result.Result code, String description) {
+      super(code + ": " + description);
+    }
+  }
+  {% endif %}
+
 {%- for enum in enums %}
 {{ indent(enum, 1) }}
 {%- endfor %}
