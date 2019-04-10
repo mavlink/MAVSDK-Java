@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/land"
+        app:showAsAction="ifRoom"
+        android:title="@string/land" />
+    <item android:id="@+id/return_home"
+        android:title="@string/return_home"
+        app:showAsAction="ifRoom"/>
+    <item android:id="@+id/disarm"
+        android:title="@string/kill"/>
+    <item android:id="@+id/takeoff"
+        android:title="@string/takeoff"/>
+</menu>
