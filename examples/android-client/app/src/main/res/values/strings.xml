@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">DroneCoreClient</string>
+    <string name="title_activity_maps">Map</string>
+
+    <string name="kill">Kill</string>
+    <string name="return_home">Return</string>
+    <string name="land">Land</string>
+    <string name="takeoff">Takeoff</string>
 </resources>
