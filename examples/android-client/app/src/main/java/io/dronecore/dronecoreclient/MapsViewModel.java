@@ -70,9 +70,9 @@ public class MapsViewModel extends ViewModel {
      * @param latLng waypoint to add
      */
     public void addWaypoint(int index, LatLng latLng) {
-        List<LatLng> currentmissionItems = currentMissionPlanLiveData.getValue();
-        currentmissionItems.add(index, latLng);
-        currentMissionPlanLiveData.postValue(currentmissionItems);
+        List<LatLng> currentMissionItems = currentMissionPlanLiveData.getValue();
+        currentMissionItems.add(index, latLng);
+        currentMissionPlanLiveData.postValue(currentMissionItems);
     }
 
     /**
