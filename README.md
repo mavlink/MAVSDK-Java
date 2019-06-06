@@ -1,6 +1,6 @@
-# DroneCore-Java
+# MAVSDK-Java
 
-This is the Java frontend implementation to [DroneCore](https://github.com/dronecore/DroneCore).
+This is the Java frontend implementation to [MAVSDK](https://github.com/Dronecode/DronecodeSDK).
 
 It is organized as follows:
 
