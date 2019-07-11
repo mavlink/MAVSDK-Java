@@ -19,4 +19,6 @@ The examples can be run with the following commands:
 ./gradlew runMission
 ```
 
+The examples will connect to a running `mavsdk_server` instance. The `mavsdk_server` binary can be downloaded from the [MAVSDK release page](https://github.com/mavlink/mavsdk/releases).
+
 Note that running `./gradlew run` will default to `takeoffAndLand`.
