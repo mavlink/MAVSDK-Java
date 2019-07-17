@@ -1,4 +1,4 @@
-package io.dronecore.dronecoreclient;
+package io.mavsdk.androidclient;
 
 import org.junit.Test;
 

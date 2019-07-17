@@ -1,6 +1,6 @@
 # MAVSDK-Java
 
-This is the Java frontend implementation to [MAVSDK](https://github.com/Dronecode/DronecodeSDK).
+This is the Java frontend implementation to [MAVSDK](https://github.com/mavlink/MAVSDK).
 
 It is organized as follows:
 

@@ -1,4 +1,4 @@
-package io.dronecore.dronecoreclient;
+package io.mavsdk.androidclient;
 
 import android.content.Context;
 
@@ -22,6 +22,6 @@ public class ExampleInstrumentedTest {
     // Context of the app under test.
     Context appContext = InstrumentationRegistry.getTargetContext();
 
-    assertEquals("io.dronecore.dronecoreclient", appContext.getPackageName());
+    assertEquals("io.mavsdk.androidclient", appContext.getPackageName());
   }
 }

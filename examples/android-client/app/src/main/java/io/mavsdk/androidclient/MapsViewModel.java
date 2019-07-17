@@ -1,4 +1,4 @@
-package io.dronecore.dronecoreclient;
+package io.mavsdk.androidclient;
 
 
 import androidx.lifecycle.MutableLiveData;
@@ -10,7 +10,7 @@ import com.google.android.gms.maps.model.LatLng;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.dronecode_sdk.mission.Mission;
+import io.mavsdk.mission.Mission;
 
 /**
  * ViewModel to hold objects that should be persisted

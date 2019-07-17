@@ -1,6 +1,6 @@
-package io.dronecore.example;
+package io.mavsdk.example;
 
-import io.dronecode_sdk.action.Action;
+import io.mavsdk.action.Action;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;

@@ -1,4 +1,4 @@
-package io.dronecore.dronecoreclient;
+package io.mavsdk.androidclient;
 
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
