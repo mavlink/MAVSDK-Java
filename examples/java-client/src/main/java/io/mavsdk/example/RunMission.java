@@ -1,7 +1,7 @@
-package io.dronecore.example;
+package io.mavsdk.example;
 
-import io.dronecode_sdk.action.Action;
-import io.dronecode_sdk.mission.Mission;
+import io.mavsdk.action.Action;
+import io.mavsdk.mission.Mission;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;

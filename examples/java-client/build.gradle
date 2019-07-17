@@ -9,23 +9,23 @@ configurations {
     checkstyleClasspath
 }
 
-mainClassName = "io.dronecore.example.TakeoffAndLand"
+mainClassName = "io.mavsdk.example.TakeoffAndLand"
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
 task takeoffAndLand(dependsOn: 'classes', type: JavaExec) {
-    main = "io.dronecore.example.TakeoffAndLand"
+    main = "io.mavsdk.example.TakeoffAndLand"
     classpath = sourceSets.main.runtimeClasspath
 }
 
 task setRtlAltitude(dependsOn: 'classes', type: JavaExec) {
-    main = "io.dronecore.example.SetRtlAltitude"
+    main = "io.mavsdk.example.SetRtlAltitude"
     classpath = sourceSets.main.runtimeClasspath
 }
 
 task runMission(dependsOn: 'classes', type: JavaExec) {
-    main = "io.dronecore.example.RunMission"
+    main = "io.mavsdk.example.RunMission"
     classpath = sourceSets.main.runtimeClasspath
 }
 
@@ -62,7 +62,7 @@ idea {
 dependencies {
     checkstyleClasspath 'com.puppycrawl.tools:checkstyle:8.5'
 
-    implementation 'org.dronecode.sdk:dronecode-sdk:0.1.0'
+    implementation 'io.mavsdk:mavsdk:0.1.0'
 
     implementation 'ch.qos.logback:logback-core:1.2.3'
     implementation 'ch.qos.logback:logback-classic:1.2.3'

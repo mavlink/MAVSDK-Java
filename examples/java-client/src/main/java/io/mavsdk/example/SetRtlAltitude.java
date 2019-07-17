@@ -1,6 +1,6 @@
-package io.dronecore.example;
+package io.mavsdk.example;
 
-import io.dronecode_sdk.action.Action;
+import io.mavsdk.action.Action;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

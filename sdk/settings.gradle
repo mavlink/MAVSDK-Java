@@ -1,1 +1,1 @@
-include 'dronecode-sdk'
+include 'mavsdk'

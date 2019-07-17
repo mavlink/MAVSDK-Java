@@ -1,11 +1,11 @@
-package org.dronecode.sdk;
+package io.mavsdk;
 
-import io.dronecode_sdk.action.Action;
-import io.dronecode_sdk.telemetry.Telemetry;
+import io.mavsdk.action.Action;
+import io.mavsdk.telemetry.Telemetry;
 import java.util.concurrent.TimeUnit;
 import org.junit.Test;
 
-public class DroneCoreTest {
+public class MavsdkTest {
 
   @Test
   public void testStream() throws InterruptedException {
