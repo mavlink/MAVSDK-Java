@@ -22,9 +22,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.dronecode_sdk.action.Action;
-import io.dronecode_sdk.mission.Mission;
-import io.dronecode_sdk.telemetry.Telemetry;
+import io.mavsdk.action.Action;
+import io.mavsdk.mission.Mission;
+import io.mavsdk.telemetry.Telemetry;
 import io.reactivex.disposables.Disposable;
 
 import static com.google.android.gms.maps.GoogleMap.MAP_TYPE_HYBRID;

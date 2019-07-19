@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">DroneCoreClient</string>
+    <string name="app_name">MAVSDK Android Client</string>
     <string name="title_activity_maps">Map</string>
 
     <string name="kill">Kill</string>
