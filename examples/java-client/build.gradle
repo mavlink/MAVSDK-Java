@@ -29,6 +29,16 @@ task runMission(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
 }
 
+task exportDeps(type: Copy) {
+    from sourceSets.main.runtimeClasspath into 'build/jshell_classpath_export/'
+}
+
+task jshell(dependsOn: 'exportDeps', type: Exec) {
+    print("\n\n=======\nWARNING: this is not the best way to run `jshell`, as it may not be cross-platform and it won't have auto-completion enabled.\nYou may want to run the following instead:\n\n    \$ ./gradlew exportDeps\n    \$ jshell --class-path \$(ls -d build/jshell_classpath_export/* | tr '\\n' ':')\n=======\n\n")
+    standardInput = System.in
+    commandLine 'bash', '-c', "jshell --class-path \$(ls -d build/jshell_classpath_export/* | tr '\\n' ':')"
+}
+
 task checkstyle(type: Checkstyle) {
     configFile = rootProject.file("config/checkstyle/checkstyle.xml")
     source 'src'

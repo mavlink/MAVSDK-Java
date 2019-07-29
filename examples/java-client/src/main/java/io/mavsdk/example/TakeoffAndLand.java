@@ -16,9 +16,12 @@ public class TakeoffAndLand {
     CountDownLatch latch = new CountDownLatch(1);
 
     action.arm()
+          .doOnComplete(() -> logger.debug("Arming..."))
           .andThen(action.takeoff())
+          .doOnComplete(() -> logger.debug("Taking off..."))
           .delay(5, TimeUnit.SECONDS)
           .andThen(action.land())
+          .doOnComplete(() -> logger.debug("Landing..."))
           .doOnComplete(() -> latch.countDown())
           .subscribe();
 

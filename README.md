@@ -4,16 +4,19 @@ This is the Java frontend implementation to [MAVSDK](https://github.com/mavlink/
 
 It is organized as follows:
 
-* The [sdk](./sdk) directory contains the different components provided by this project.
 * The [examples](./examples) directory contains Java and Android examples using the sdk.
+* The [sdk](./sdk) directory contains the actual SDK.
 
-## Contributing
+Detailed instructions on how to run the examples and how to build the SDK are available in
+those directories.
 
-Please read the "Contributing" section of the specific project you are interested in.
+## QuickStart
+
+The fastest way to start is to follow the instructions in the README of the [java-client](./examples/java-client) example.
 
 ## Coding style
 
-Java/Android coding style is ensured using CheckStyle with the Google configurations.
+Java/Android coding style is ensured using CheckStyle with the Google style.
 
 ### Command line
 
