@@ -12,8 +12,11 @@ subprojects {
     apply plugin: 'com.google.protobuf'
     apply plugin: 'idea'
     apply plugin: 'java-library'
+    apply plugin: 'maven'
+    apply plugin: 'signing'
 
     group = 'io.mavsdk'
+    archivesBaseName = 'mavsdk'
     version = '0.1.0'
 
     repositories {
@@ -80,6 +83,68 @@ subprojects {
                 srcDir 'build/generated/source/proto/main/javalite'
                 srcDir 'build/generated/source/proto/main/grpc'
                 srcDir 'build/generated/source/proto/main/dcsdk'
+            }
+        }
+    }
+
+    task javadocJar(type: Jar) {
+        classifier = 'javadoc'
+        from javadoc
+    }
+
+    task sourcesJar(type: Jar) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
+
+    artifacts {
+        archives javadocJar, sourcesJar
+    }
+
+    signing {
+        sign configurations.archives
+    }
+
+    uploadArchives {
+        repositories {
+            mavenDeployer {
+                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+                repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                    authentication(userName: ossrhUsername, password: ossrhPassword)
+                }
+
+                snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                    authentication(userName: ossrhUsername, password: ossrhPassword)
+                }
+
+                pom.project {
+                    name 'MAVSDK-Java'
+                    packaging 'jar'
+                    description 'MAVSDK client for Java.'
+                    url 'https://github.com/mavlink/MAVSDK-Java'
+
+                    scm {
+                        connection 'scm:git:https://github.com/mavlink/MAVSDK-Java'
+                        developerConnection 'scm:git:https://github.com/mavlink/MAVSDK-Java'
+                        url 'https://github.com/mavlink/MAVSDK-Java'
+                    }
+
+                    licenses {
+                        license {
+                            name 'BSD 3-Clause "New"'
+                            url 'https://opensource.org/licenses/BSD-3-Clause'
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id 'jonasvautherin'
+                            name 'Jonas Vautherin'
+                            email 'jonas.vautherin@gmail.com'
+                        }
+                    }
+                }
             }
         }
     }
