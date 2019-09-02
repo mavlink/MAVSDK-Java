@@ -9,6 +9,7 @@ import io.reactivex.Flowable;
 import io.reactivex.Scheduler;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
+import java.lang.String;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
@@ -33,7 +34,7 @@ public class {{ plugin_name.upper_camel_case }} {
     logger.debug("Building channel to " + host + ":" + port);
 
     return OkHttpChannelBuilder.forAddress(host, port)
-        .usePlaintext(true)
+        .usePlaintext()
         .build();
   }
 

@@ -13,6 +13,12 @@ public static class {{ name.upper_camel_case }} {
     {%- endfor %}
   }
 
+  {%- for field in fields %}
+  public {{ field.type_info.name }} get{{ field.name.upper_camel_case }}() {
+    return {{ field.name.lower_camel_case }};
+  }
+  {%- endfor %}
+
   protected {{ plugin_name.upper_camel_case }}Proto.{{ name.upper_camel_case }} rpc{{ name.upper_camel_case }}() {
     return {{ plugin_name.upper_camel_case }}Proto.{{ name.upper_camel_case }}.newBuilder()
 
