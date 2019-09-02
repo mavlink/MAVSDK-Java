@@ -22,7 +22,7 @@ public class TakeoffAndLand {
           .delay(5, TimeUnit.SECONDS)
           .andThen(action.land())
           .doOnComplete(() -> logger.debug("Landing..."))
-          .doOnComplete(() -> latch.countDown())
+          .doOnComplete(latch::countDown)
           .subscribe();
 
     try {
