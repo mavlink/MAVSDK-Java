@@ -1,33 +1,37 @@
 package io.mavsdk.androidclient;
 
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
-
-import java.util.ArrayList;
-import java.util.List;
-
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.mapbox.mapboxsdk.Mapbox;
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
+import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.mapbox.mapboxsdk.maps.MapView;
+import com.mapbox.mapboxsdk.maps.MapboxMap;
+import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
+import com.mapbox.mapboxsdk.maps.Style;
+import com.mapbox.mapboxsdk.plugins.annotation.Circle;
+import com.mapbox.mapboxsdk.plugins.annotation.CircleManager;
+import com.mapbox.mapboxsdk.plugins.annotation.CircleOptions;
+import com.mapbox.mapboxsdk.plugins.annotation.Symbol;
+import com.mapbox.mapboxsdk.plugins.annotation.SymbolManager;
+import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions;
+import com.mapbox.mapboxsdk.utils.ColorUtils;
 import io.mavsdk.action.Action;
 import io.mavsdk.mission.Mission;
 import io.mavsdk.telemetry.Telemetry;
 import io.reactivex.disposables.Disposable;
-
-import static com.google.android.gms.maps.GoogleMap.MAP_TYPE_HYBRID;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Main Activity to display map and create missions.
@@ -36,179 +40,214 @@ import static com.google.android.gms.maps.GoogleMap.MAP_TYPE_HYBRID;
  * 3. Touch an existing waypoint to delete it
  * 4. Hit play to start mission.
  */
-public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMarkerDragListener {
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
-    public static final String TAG = "MapsActivity";
-    public static final String BACKEND_IP_ADDRESS = "10.42.0.65"; // todo update this to ip address of device running the backend. remove this once the backend is included in the app
+  public static final String TAG = "MapsActivity";
+  public static final String BACKEND_IP_ADDRESS = "192.168.0.15";
 
-    private GoogleMap map = null;
-    private MapsViewModel viewModel;
-    private Marker currentPositionMarker;
-    private final List<Marker> markers = new ArrayList<>();
-    private Action action;
-    private Mission mission;
-    private Telemetry telemetry;
-    private final List<Disposable> disposables = new ArrayList<>();
+  private CircleManager circleManager;
+  private SymbolManager symbolManager;
 
-    private Observer<LatLng> currentPositionObserver = this::updateVehiclePosition;
-    private Observer<List<LatLng>> currentMissionPlanObserver = this::updateMarkers;
+  private MapView mapView;
+  private MapboxMap map;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
-        viewModel = ViewModelProviders.of(this).get(MapsViewModel.class);
+  private MapsViewModel viewModel;
+  private Symbol currentPositionMarker;
+  private final List<Circle> waypoints = new ArrayList<>();
+  private Action action;
+  private Mission mission;
+  private Telemetry telemetry;
+  private final List<Disposable> disposables = new ArrayList<>();
 
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+  private Observer<LatLng> currentPositionObserver = this::updateVehiclePosition;
+  private Observer<List<LatLng>> currentMissionPlanObserver = this::updateMarkers;
 
-        FloatingActionButton floatingActionButton = findViewById(R.id.fab);
-        floatingActionButton.setOnClickListener(v -> viewModel.startMission(mission));
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    Mapbox.getInstance(this, getString(R.string.access_token));
+    setContentView(R.layout.activity_maps);
+    mapView = findViewById(R.id.mapView);
+    mapView.onCreate(savedInstanceState);
+    mapView.getMapAsync(this);
+
+    viewModel = ViewModelProviders.of(this).get(MapsViewModel.class);
+
+    FloatingActionButton floatingActionButton = findViewById(R.id.fab);
+    floatingActionButton.setOnClickListener(v -> viewModel.startMission(action, mission));
+  }
+
+  @Override
+  public void onStart() {
+    super.onStart();
+    mapView.onStart();
+  }
+
+  @Override
+  public void onResume() {
+    super.onResume();
+    mapView.onResume();
+    viewModel.currentPositionLiveData.observe(this, currentPositionObserver);
+    viewModel.currentMissionPlanLiveData.observe(this, currentMissionPlanObserver);
+
+    action = new Action(BACKEND_IP_ADDRESS, 50051);
+    mission = new Mission(BACKEND_IP_ADDRESS, 50051);
+    telemetry = new Telemetry(BACKEND_IP_ADDRESS, 50051);
+    disposables.add(telemetry.getFlightMode().distinct()
+        .subscribe(flightMode -> Log.d(TAG, "flight mode: " + flightMode)));
+    disposables.add(telemetry.getArmed().distinct()
+        .subscribe(armed -> Log.d(TAG, "armed: " + armed)));
+    disposables.add(telemetry.getPosition().subscribe(position -> {
+      LatLng latLng = new LatLng(position.getLatitudeDeg(), position.getLongitudeDeg());
+      viewModel.currentPositionLiveData.postValue(latLng);
+    }));
+  }
+
+  @Override
+  public void onPause() {
+    super.onPause();
+    mapView.onPause();
+    viewModel.currentPositionLiveData.removeObserver(currentPositionObserver);
+    viewModel.currentMissionPlanLiveData.removeObserver(currentMissionPlanObserver);
+    for (Disposable disposable : disposables) {
+      disposable.dispose();
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        viewModel.currentPositionLiveData.observe(this, currentPositionObserver);
-        viewModel.currentMissionPlanLiveData.observe(this, currentMissionPlanObserver);
-        action = new Action(BACKEND_IP_ADDRESS, 50051); // TODO: 4/4/19 50051 should be a constant in the sdk somewhere
-        mission = new Mission(BACKEND_IP_ADDRESS, 50051);
-        telemetry = new Telemetry(BACKEND_IP_ADDRESS, 50051);
-        disposables.add(telemetry.getFlightMode().distinct()
-                .subscribe(flightMode -> Log.d(TAG, "flight mode: " + flightMode)));
-        disposables.add(telemetry.getArmed().distinct()
-                .subscribe(armed -> Log.d(TAG, "armed: " + armed)));
-        disposables.add(telemetry.getPosition().subscribe(position -> {
-            LatLng latLng = new LatLng(position.getLatitudeDeg(), position.getLongitudeDeg());
-            viewModel.currentPositionLiveData.postValue(latLng);
-        }));
+    // TODO: 4/10/19 close these channels properly
+    action = null;
+    mission = null;
+    telemetry = null;
+  }
+
+  @Override
+  public void onStop() {
+    super.onStop();
+    mapView.onStop();
+  }
+
+  @Override
+  public void onLowMemory() {
+    super.onLowMemory();
+    mapView.onLowMemory();
+  }
+
+  @Override
+  public void onDestroy() {
+    super.onDestroy();
+    mapView.onDestroy();
+  }
+
+  @Override
+  public void onSaveInstanceState(Bundle outState) {
+    super.onSaveInstanceState(outState);
+    mapView.onSaveInstanceState(outState);
+  }
+
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    getMenuInflater().inflate(R.menu.menu_maps, menu);
+    return true;
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    // Handle item selection
+    switch (item.getItemId()) {
+      case R.id.disarm:
+        action.kill().subscribe();
+        break;
+      case R.id.land:
+        action.land().subscribe();
+        break;
+      case R.id.return_home:
+        action.returnToLaunch().subscribe();
+        break;
+      case R.id.takeoff:
+        action.arm().andThen(action.takeoff()).subscribe();
+        break;
+      default:
+        return super.onOptionsItemSelected(item);
+    }
+    return true;
+  }
+
+  /**
+   * Update [currentPositionMarker] position with a new [position].
+   *
+   * @param newLatLng new position of the vehicle
+   */
+  private void updateVehiclePosition(@Nullable LatLng newLatLng) {
+    if (newLatLng == null || map == null || symbolManager == null) {
+      // Not ready
+      return;
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        viewModel.currentPositionLiveData.removeObserver(currentPositionObserver);
-        viewModel.currentMissionPlanLiveData.removeObserver(currentMissionPlanObserver);
-        for (Disposable disposable : disposables) {
-            disposable.dispose();
-        }
+    // Add a vehicle marker and move the camera
+    if (currentPositionMarker == null) {
+      SymbolOptions symbolOptions = new SymbolOptions();
+      symbolOptions.withLatLng(newLatLng);
+      symbolOptions.withIconImage("marker-icon-id");
+      currentPositionMarker = symbolManager.create(symbolOptions);
 
-        // TODO: 4/10/19 close these channels properly
-        action = null;
-        mission = null;
-        telemetry = null;
+      map.moveCamera(CameraUpdateFactory.tiltTo(0));
+      map.moveCamera(CameraUpdateFactory.newLatLngZoom(newLatLng, 14.0f));
+    } else {
+      currentPositionMarker.setLatLng(newLatLng);
+      symbolManager.update(currentPositionMarker);
+    }
+  }
+
+  /**
+   * Update the [map] with the current mission plan waypoints.
+   *
+   * @param latLngs current mission waypoints
+   */
+  private void updateMarkers(@Nullable List<LatLng> latLngs) {
+    Log.e(TAG, "sparta - points: " + latLngs.size());
+
+    if (circleManager != null) {
+      circleManager.delete(waypoints);
+      waypoints.clear();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_maps, menu);
-        return true;
+    for (LatLng latLng : latLngs) {
+      CircleOptions circleOptions = new CircleOptions()
+          .withLatLng(latLng)
+          .withCircleColor(ColorUtils.colorToRgbaString(Color.BLUE))
+          .withCircleStrokeColor(ColorUtils.colorToRgbaString(Color.BLACK))
+          .withCircleStrokeWidth(1.0f)
+          .withCircleRadius(12f)
+          .withDraggable(false);
+
+      circleManager.create(circleOptions);
     }
+  }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.disarm:
-                action.kill().subscribe();
-                break;
-            case R.id.land:
-                action.land().subscribe();
-                break;
-            case R.id.return_home:
-                action.returnToLaunch().subscribe();
-                break;
-            case R.id.takeoff:
-                action.arm().andThen(action.takeoff()).subscribe();
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-        return true;
-    }
+  /**
+   * Manipulates the map once available.
+   * This callback is triggered when the map is ready to be used.
+   * This is where we can add markers or lines, add listeners or move the camera.
+   */
+  @Override
+  public void onMapReady(@NonNull MapboxMap mapboxMap) {
+    mapboxMap.getUiSettings().setRotateGesturesEnabled(false);
+    mapboxMap.getUiSettings().setTiltGesturesEnabled(false);
+    mapboxMap.addOnMapLongClickListener(point -> {
+      viewModel.addWaypoint(point);
+      return true;
+    });
 
-    /**
-     * Update [currentPositionMarker] position with a new [position]
-     *
-     * @param newLatLng new position of the vehicle
-     */
-    private void updateVehiclePosition(@Nullable LatLng newLatLng) {
-        if (newLatLng != null && map != null) {
-            // Add a vehicle marker and move the camera
-            if (currentPositionMarker == null) {
-                currentPositionMarker = map.addMarker(new MarkerOptions().position(newLatLng)
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
-                map.moveCamera(CameraUpdateFactory.newLatLngZoom(newLatLng, 20.0f));
-            } else {
-                currentPositionMarker.setPosition(newLatLng);
-            }
-        }
-    }
+    mapboxMap.setStyle(Style.LIGHT, style -> {
+      // Add the marker image to map
+      style.addImage("marker-icon-id",
+          BitmapFactory.decodeResource(
+              MapsActivity.this.getResources(), R.drawable.mapbox_marker_icon_default));
 
-    /**
-     * Update the [map] with the current mission plan waypoints
-     *
-     * @param latLngs current mission waypoints
-     */
-    private void updateMarkers(@Nullable List<LatLng> latLngs) {
-        if (map == null) {
-            return;
-        }
-        for (Marker marker : markers) {
-            marker.remove();
-        }
-        markers.clear();
-        if (latLngs != null) {
-            Log.d("Waypoints", "received mission plan with size " + latLngs.size());
-            for (LatLng latLng : latLngs) {
-                markers.add(map.addMarker(new MarkerOptions()
-                        .position(latLng)
-                        .draggable(true)));
-            }
-        }
-    }
+      symbolManager = new SymbolManager(this.mapView, this.map, style);
+      symbolManager.setIconAllowOverlap(true);
+      circleManager = new CircleManager(this.mapView, this.map, style);
+   });
 
-    @Override
-    public void onMarkerDragEnd(Marker marker) {
-        if (marker == null) {
-            return;
-        }
-
-        int index = markers.indexOf(marker);
-        viewModel.replaceWaypoint(index, marker.getPosition());
-    }
-
-    @Override
-    public void onMarkerDragStart(Marker marker) {
-    }
-
-    @Override
-    public void onMarkerDrag(Marker marker) {
-    }
-
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        map = googleMap;
-        map.setOnMapLongClickListener(latLng -> viewModel.addWaypoint(markers.size(), latLng));
-
-        map.setOnMarkerClickListener(marker -> {
-            int index = markers.indexOf(marker);
-            if (index != -1) {
-                viewModel.removeWaypoint(index);
-            }
-            return true;
-        });
-
-        map.setMapType(MAP_TYPE_HYBRID);
-        map.setOnMarkerDragListener(this);
-        updateMarkers(viewModel.currentMissionPlanLiveData.getValue());
-    }
+    map = mapboxMap;
+  }
 }

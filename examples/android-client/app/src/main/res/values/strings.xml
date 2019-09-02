@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">MAVSDK Android Client</string>
-    <string name="title_activity_maps">Map</string>
 
+    <string name="access_token">pk.eyJ1IjoibWF2ZHNrLWphdmEtc2FtcGxlIiwiYSI6ImNrMGZjY2lxNTBpbzIzZ2xjaGlsNDZ5YXkifQ.f0jCQvYbGQecPCFFy_3jSA</string>
     <string name="kill">Kill</string>
     <string name="return_home">Return</string>
     <string name="land">Land</string>

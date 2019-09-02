@@ -51,13 +51,17 @@ task checkstyle(type: Checkstyle) {
 build.dependsOn 'checkstyle'
 
 dependencies {
-    checkstyleClasspath 'com.puppycrawl.tools:checkstyle:8.5'
+    checkstyleClasspath 'com.puppycrawl.tools:checkstyle:8.17'
+
     implementation 'androidx.appcompat:appcompat:1.0.2'
-    implementation 'com.google.android.gms:play-services-maps:16.1.0'
-    implementation 'com.google.android.material:material:1.0.0'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
+    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-annotation-v8:0.7.0'
+    implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:8.2.1'
     implementation 'io.mavsdk:mavsdk:0.1.0'
+
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:runner:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
+
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    androidTestImplementation 'androidx.test:runner:1.2.0'
 }
