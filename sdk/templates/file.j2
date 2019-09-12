@@ -46,8 +46,22 @@ public class {{ plugin_name.upper_camel_case }} {
 
   {% if has_result %}
   public class {{ plugin_name.upper_camel_case }}Exception extends Exception {
+    private {{ plugin_name.upper_camel_case }}Result.Result code;
+    private String description;
+
     public {{ plugin_name.upper_camel_case }}Exception({{ plugin_name.upper_camel_case }}Result.Result code, String description) {
       super(code + ": " + description);
+
+      this.code = code;
+      this.description = description;
+    }
+
+    public {{ plugin_name.upper_camel_case }}Result.Result getCode() {
+      return this.code;
+    }
+
+    public String getDescription() {
+      return this.description;
     }
   }
   {% endif %}
