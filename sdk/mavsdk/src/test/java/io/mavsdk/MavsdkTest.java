@@ -1,7 +1,5 @@
 package io.mavsdk;
 
-import io.mavsdk.action.Action;
-import io.mavsdk.telemetry.Telemetry;
 import java.util.concurrent.TimeUnit;
 import org.junit.Test;
 
@@ -9,27 +7,27 @@ public class MavsdkTest {
 
   @Test
   public void testStream() throws InterruptedException {
-    Telemetry telemetry = new Telemetry();
-    telemetry.getPosition()
-             .doOnNext(next -> System.out.println(next))
+    System system = new System();
+    system.getTelemetry().getPosition()
+             .doOnNext(next -> java.lang.System.out.println(next))
              .test()
              .await(5, TimeUnit.SECONDS);
   }
 
   @Test
   public void testCall() throws InterruptedException {
-    Action action = new Action();
-    action.arm()
-          .andThen(action.takeoff())
+    System system = new System();
+    system.getAction().arm()
+          .andThen(system.getAction().takeoff())
           .delay(5, TimeUnit.SECONDS)
-          .andThen(action.land())
+          .andThen(system.getAction().land())
           .test()
           .await();
   }
 
   @Test
   public void testRequest() throws InterruptedException {
-    Action action = new Action();
-    action.getTakeoffAltitude().doOnSuccess(result -> System.out.println(result)).test().await();
+    System system = new System();
+    system.getAction().getTakeoffAltitude().doOnSuccess(result -> java.lang.System.out.println(result)).test().await();
   }
 }
