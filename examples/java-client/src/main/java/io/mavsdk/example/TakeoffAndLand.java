@@ -1,8 +1,11 @@
 package io.mavsdk.example;
 
-import io.mavsdk.action.Action;
+import io.mavsdk.System;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+
+import io.mavsdk.action.Action;
+import io.mavsdk.mission.Mission;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,18 +15,20 @@ public class TakeoffAndLand {
   public static void main(String[] args) {
     logger.debug("Starting example: takeoff and land...");
 
-    Action action = new Action();
+    System drone = new System();
     CountDownLatch latch = new CountDownLatch(1);
 
-    action.arm()
+    drone.getAction().arm()
           .doOnComplete(() -> logger.debug("Arming..."))
-          .andThen(action.takeoff())
-          .doOnComplete(() -> logger.debug("Taking off..."))
+          .doOnError(throwable -> logger.error("Failed to arm: " + ((Action.ActionException) throwable).getCode()))
+          .andThen(drone.getAction().takeoff()
+            .doOnComplete(() -> logger.debug("Taking off..."))
+            .doOnError(throwable -> logger.error("Failed to take off: " + ((Mission.MissionException) throwable).getCode())))
           .delay(5, TimeUnit.SECONDS)
-          .andThen(action.land())
-          .doOnComplete(() -> logger.debug("Landing..."))
-          .doOnComplete(latch::countDown)
-          .subscribe();
+          .andThen(drone.getAction().land()
+            .doOnComplete(() -> logger.debug("Landing..."))
+            .doOnError(throwable -> logger.error("Failed to land: " + ((Mission.MissionException) throwable).getCode())))
+          .subscribe(latch::countDown, throwable -> latch.countDown());
 
     try {
       latch.await();
