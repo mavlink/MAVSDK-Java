@@ -1,11 +1,10 @@
 package io.mavsdk.example;
 
-import io.mavsdk.action.Action;
+import io.mavsdk.System;
 import io.mavsdk.mission.Mission;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,19 +20,19 @@ public class RunMission {
     missionItems.add(generateMissionItem(47.397825620791885, 8.5450092830163271));
     missionItems.add(generateMissionItem(47.397832880000003, 8.5455939999999995));
 
-    Action action = new Action();
-    Mission mission = new Mission();
-    mission
+    System drone = new System();
+
+    drone.getMission()
         .setReturnToLaunchAfterMission(true)
-        .andThen(mission.uploadMission(missionItems)
+        .andThen(drone.getMission().uploadMission(missionItems)
             .doOnComplete(() -> logger.debug("Upload succeeded")))
-        .andThen(action.arm())
-        .andThen(mission.startMission()
+        .andThen(drone.getAction().arm())
+        .andThen(drone.getMission().startMission()
             .doOnComplete(() -> logger.debug("Mission started")))
         .subscribe();
 
     CountDownLatch latch = new CountDownLatch(1);
-    mission
+    drone.getMission()
         .getMissionProgress()
         .filter(progress -> progress.getCurrentItemIndex() == progress.getMissionCount())
         .take(1)
