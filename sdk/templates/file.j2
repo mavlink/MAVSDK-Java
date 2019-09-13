@@ -31,7 +31,7 @@ public class {{ plugin_name.upper_camel_case }} {
   }
 
   private static ManagedChannel createChannel(String host, int port) {
-    logger.debug("Building channel to " + host + ":" + port);
+    logger.trace("Building channel to " + host + ":" + port);
 
     return OkHttpChannelBuilder.forAddress(host, port)
         .usePlaintext()

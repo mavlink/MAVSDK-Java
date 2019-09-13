@@ -26,7 +26,7 @@ public class System {
   /**
    * Create a System object, initializing the plugins and connecting them to mavsdk_server.
    *
-   * This defaults to a mavsdk_server running on localhost:50051.
+   * <p>This defaults to a mavsdk_server running on localhost:50051.</p>
    */
   public System() {
     this("localhost", 50051);
