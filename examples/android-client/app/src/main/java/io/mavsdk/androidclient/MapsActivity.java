@@ -26,9 +26,7 @@ import com.mapbox.mapboxsdk.plugins.annotation.Symbol;
 import com.mapbox.mapboxsdk.plugins.annotation.SymbolManager;
 import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions;
 import com.mapbox.mapboxsdk.utils.ColorUtils;
-import io.mavsdk.action.Action;
-import io.mavsdk.mission.Mission;
-import io.mavsdk.telemetry.Telemetry;
+import io.mavsdk.System;
 import io.reactivex.disposables.Disposable;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,8 +35,7 @@ import java.util.List;
  * Main Activity to display map and create missions.
  * 1. Take off
  * 2. Long click on map to add a waypoint
- * 3. Touch an existing waypoint to delete it
- * 4. Hit play to start mission.
+ * 3. Hit play to start mission.
  */
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -53,10 +50,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
   private MapsViewModel viewModel;
   private Symbol currentPositionMarker;
+
+  private System drone;
   private final List<Circle> waypoints = new ArrayList<>();
-  private Action action;
-  private Mission mission;
-  private Telemetry telemetry;
   private final List<Disposable> disposables = new ArrayList<>();
 
   private Observer<LatLng> currentPositionObserver = this::updateVehiclePosition;
@@ -74,7 +70,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     viewModel = ViewModelProviders.of(this).get(MapsViewModel.class);
 
     FloatingActionButton floatingActionButton = findViewById(R.id.fab);
-    floatingActionButton.setOnClickListener(v -> viewModel.startMission(action, mission));
+    floatingActionButton.setOnClickListener(v -> viewModel.startMission(drone));
   }
 
   @Override
@@ -90,14 +86,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     viewModel.currentPositionLiveData.observe(this, currentPositionObserver);
     viewModel.currentMissionPlanLiveData.observe(this, currentMissionPlanObserver);
 
-    action = new Action(BACKEND_IP_ADDRESS, 50051);
-    mission = new Mission(BACKEND_IP_ADDRESS, 50051);
-    telemetry = new Telemetry(BACKEND_IP_ADDRESS, 50051);
-    disposables.add(telemetry.getFlightMode().distinct()
+    drone = new System(BACKEND_IP_ADDRESS, 50051);
+
+    disposables.add(drone.getTelemetry().getFlightMode().distinct()
         .subscribe(flightMode -> Log.d(TAG, "flight mode: " + flightMode)));
-    disposables.add(telemetry.getArmed().distinct()
+    disposables.add(drone.getTelemetry().getArmed().distinct()
         .subscribe(armed -> Log.d(TAG, "armed: " + armed)));
-    disposables.add(telemetry.getPosition().subscribe(position -> {
+    disposables.add(drone.getTelemetry().getPosition().subscribe(position -> {
       LatLng latLng = new LatLng(position.getLatitudeDeg(), position.getLongitudeDeg());
       viewModel.currentPositionLiveData.postValue(latLng);
     }));
@@ -109,14 +104,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     mapView.onPause();
     viewModel.currentPositionLiveData.removeObserver(currentPositionObserver);
     viewModel.currentMissionPlanLiveData.removeObserver(currentMissionPlanObserver);
+
     for (Disposable disposable : disposables) {
       disposable.dispose();
     }
 
     // TODO: 4/10/19 close these channels properly
-    action = null;
-    mission = null;
-    telemetry = null;
+    drone = null;
   }
 
   @Override
@@ -154,16 +148,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     // Handle item selection
     switch (item.getItemId()) {
       case R.id.disarm:
-        action.kill().subscribe();
+        drone.getAction().kill().subscribe();
         break;
       case R.id.land:
-        action.land().subscribe();
+        drone.getAction().land().subscribe();
         break;
       case R.id.return_home:
-        action.returnToLaunch().subscribe();
+        drone.getAction().returnToLaunch().subscribe();
         break;
       case R.id.takeoff:
-        action.arm().andThen(action.takeoff()).subscribe();
+        drone.getAction().arm().andThen(drone.getAction().takeoff()).subscribe();
         break;
       default:
         return super.onOptionsItemSelected(item);
@@ -203,8 +197,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
    * @param latLngs current mission waypoints
    */
   private void updateMarkers(@Nullable List<LatLng> latLngs) {
-    Log.e(TAG, "sparta - points: " + latLngs.size());
-
     if (circleManager != null) {
       circleManager.delete(waypoints);
       waypoints.clear();
@@ -246,7 +238,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
       symbolManager = new SymbolManager(this.mapView, this.map, style);
       symbolManager.setIconAllowOverlap(true);
       circleManager = new CircleManager(this.mapView, this.map, style);
-   });
+    });
 
     map = mapboxMap;
   }

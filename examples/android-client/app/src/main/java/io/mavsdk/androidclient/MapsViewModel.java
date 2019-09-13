@@ -5,7 +5,7 @@ import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import com.mapbox.mapboxsdk.geometry.LatLng;
-import io.mavsdk.action.Action;
+import io.mavsdk.System;
 import io.mavsdk.mission.Mission;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +34,7 @@ public class MapsViewModel extends ViewModel {
    * Executes the current mission.
    */
   @SuppressLint("CheckResult")
-  void startMission(Action action, Mission mission) {
+  void startMission(System drone) {
     List<LatLng> latLngs = currentMissionPlanLiveData.getValue();
     if (latLngs != null) {
       List<Mission.MissionItem> missionItems = new ArrayList<>();
@@ -52,17 +52,17 @@ public class MapsViewModel extends ViewModel {
             1.0);
         missionItems.add(missionItem);
       }
-      mission
+      drone.getMission()
           .setReturnToLaunchAfterMission(true)
-          .andThen(mission.uploadMission(missionItems)
+          .andThen(drone.getMission().uploadMission(missionItems)
               .doOnComplete(() -> Log.d("MapsViewModel", "Upload succeeded"))
               .doOnError(throwable -> Log.e("MapsViewModel", "Failed to upload the mission")))
-          .andThen(action.arm()
+          .andThen(drone.getAction().arm()
                         .onErrorComplete())
-          .andThen(mission.startMission()
+          .andThen(drone.getMission().startMission()
               .doOnComplete(() -> Log.d("MapsViewModel", "Mission started"))
               .doOnError(throwable -> Log.e("MapsViewModel", "Failed to start the mission")))
-          .subscribe(() -> {}, throwable -> {});
+          .subscribe(() -> { }, throwable -> { });
     }
   }
 
