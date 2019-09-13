@@ -9,9 +9,9 @@ public class MavsdkTest {
   public void testStream() throws InterruptedException {
     System system = new System();
     system.getTelemetry().getPosition()
-             .doOnNext(next -> java.lang.System.out.println(next))
-             .test()
-             .await(5, TimeUnit.SECONDS);
+          .doOnNext(next -> java.lang.System.out.println(next))
+          .test()
+          .await(5, TimeUnit.SECONDS);
   }
 
   @Test
@@ -28,6 +28,7 @@ public class MavsdkTest {
   @Test
   public void testRequest() throws InterruptedException {
     System system = new System();
-    system.getAction().getTakeoffAltitude().doOnSuccess(result -> java.lang.System.out.println(result)).test().await();
+    system.getAction().getTakeoffAltitude()
+          .doOnSuccess(result -> java.lang.System.out.println(result)).test().await();
   }
 }

@@ -12,71 +12,97 @@ import io.mavsdk.param.Param;
 import io.mavsdk.telemetry.Telemetry;
 
 public class System {
-    private Action action;
-    private Calibration calibration;
-    private Camera camera;
-    private Core core;
-    private Gimbal gimbal;
-    private Info info;
-    private Mission mission;
-    private Offboard offboard;
-    private Param param;
-    private Telemetry telemetry;
+  private Action action;
+  private Calibration calibration;
+  private Camera camera;
+  private Core core;
+  private Gimbal gimbal;
+  private Info info;
+  private Mission mission;
+  private Offboard offboard;
+  private Param param;
+  private Telemetry telemetry;
 
-    public System() {
-        this("localhost", 50051);
-    }
+  /**
+   * Create a System object, initializing the plugins and connecting them to mavsdk_server.
+   *
+   * This defaults to a mavsdk_server running on localhost:50051.
+   */
+  public System() {
+    this("localhost", 50051);
+  }
 
-    public System(String host, int port) {
-        this.action = new Action(host, port);
-        this.calibration = new Calibration(host, port);
-        this.camera = new Camera(host, port);
-        this.core = new Core(host, port);
-        this.gimbal = new Gimbal(host, port);
-        this.info = new Info(host, port);
-        this.mission = new Mission(host, port);
-        this.offboard = new Offboard(host, port);
-        this.param = new Param(host, port);
-        this.telemetry = new Telemetry(host, port);
-    }
+  /**
+   * Create a System object, initializing the plugins and connecting them to mavsdk_server.
+   * @param host the address of mavsdk_server
+   * @param port the port of mavsdk_server
+   */
+  public System(String host, int port) {
+    this.action = new Action(host, port);
+    this.calibration = new Calibration(host, port);
+    this.camera = new Camera(host, port);
+    this.core = new Core(host, port);
+    this.gimbal = new Gimbal(host, port);
+    this.info = new Info(host, port);
+    this.mission = new Mission(host, port);
+    this.offboard = new Offboard(host, port);
+    this.param = new Param(host, port);
+    this.telemetry = new Telemetry(host, port);
+  }
 
-    public Action getAction() {
-        return action;
-    }
+  public Action getAction() {
+    return action;
+  }
 
-    public Calibration getCalibration() {
-        return calibration;
-    }
+  public Calibration getCalibration() {
+    return calibration;
+  }
 
-    public Camera getCamera() {
-        return camera;
-    }
+  public Camera getCamera() {
+    return camera;
+  }
 
-    public Core getCore() {
-        return core;
-    }
+  public Core getCore() {
+    return core;
+  }
 
-    public Gimbal getGimbal() {
-        return gimbal;
-    }
+  public Gimbal getGimbal() {
+    return gimbal;
+  }
 
-    public Info getInfo() {
-        return info;
-    }
+  public Info getInfo() {
+    return info;
+  }
 
-    public Mission getMission() {
-        return mission;
-    }
+  public Mission getMission() {
+    return mission;
+  }
 
-    public Offboard getOffboard() {
-        return offboard;
-    }
+  public Offboard getOffboard() {
+    return offboard;
+  }
 
-    public Param getParam() {
-        return param;
-    }
+  public Param getParam() {
+    return param;
+  }
 
-    public Telemetry getTelemetry() {
-        return telemetry;
-    }
+  public Telemetry getTelemetry() {
+    return telemetry;
+  }
+
+  /**
+   * Dispose of all the plugins.
+   */
+  public void dispose() {
+    this.action.dispose();
+    this.calibration.dispose();
+    this.camera.dispose();
+    this.core.dispose();
+    this.gimbal.dispose();
+    this.info.dispose();
+    this.mission.dispose();
+    this.offboard.dispose();
+    this.param.dispose();
+    this.telemetry.dispose();
+  }
 }

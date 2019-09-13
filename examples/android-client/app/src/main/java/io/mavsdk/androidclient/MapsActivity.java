@@ -109,7 +109,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
       disposable.dispose();
     }
 
-    // TODO: 4/10/19 close these channels properly
+    drone.dispose();
     drone = null;
   }
 
@@ -196,7 +196,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
    *
    * @param latLngs current mission waypoints
    */
-  private void updateMarkers(@Nullable List<LatLng> latLngs) {
+  private void updateMarkers(@NonNull List<LatLng> latLngs) {
     if (circleManager != null) {
       circleManager.delete(waypoints);
       waypoints.clear();

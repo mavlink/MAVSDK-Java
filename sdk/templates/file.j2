@@ -44,6 +44,10 @@ public class {{ plugin_name.upper_camel_case }} {
     scheduler = Schedulers.trampoline();
   }
 
+  public void dispose() {
+    this.channel.shutdown();
+  }
+
   {% if has_result %}
   public class {{ plugin_name.upper_camel_case }}Exception extends Exception {
     private {{ plugin_name.upper_camel_case }}Result.Result code;
