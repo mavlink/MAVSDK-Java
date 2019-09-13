@@ -1,7 +1,6 @@
 package io.mavsdk.androidclient;
 
 import android.annotation.SuppressLint;
-import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import com.mapbox.mapboxsdk.geometry.LatLng;
@@ -9,11 +8,14 @@ import io.mavsdk.System;
 import io.mavsdk.mission.Mission;
 import java.util.ArrayList;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * ViewModel to hold objects that should be persisted.
  */
 public class MapsViewModel extends ViewModel {
+  private static final Logger logger = LoggerFactory.getLogger(MapsViewModel.class);
 
   private static final float MISSION_HEIGHT = 5.0f;
   private static final float MISSION_SPEED = 1.0f;
@@ -55,13 +57,13 @@ public class MapsViewModel extends ViewModel {
       drone.getMission()
           .setReturnToLaunchAfterMission(true)
           .andThen(drone.getMission().uploadMission(missionItems)
-              .doOnComplete(() -> Log.d("MapsViewModel", "Upload succeeded"))
-              .doOnError(throwable -> Log.e("MapsViewModel", "Failed to upload the mission")))
+              .doOnComplete(() -> logger.debug("Upload succeeded"))
+              .doOnError(throwable -> logger.error("Failed to upload the mission")))
           .andThen(drone.getAction().arm()
                         .onErrorComplete())
           .andThen(drone.getMission().startMission()
-              .doOnComplete(() -> Log.d("MapsViewModel", "Mission started"))
-              .doOnError(throwable -> Log.e("MapsViewModel", "Failed to start the mission")))
+              .doOnComplete(() -> logger.debug("Mission started"))
+              .doOnError(throwable -> logger.error("Failed to start the mission")))
           .subscribe(() -> { }, throwable -> { });
     }
   }

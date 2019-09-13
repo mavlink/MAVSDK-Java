@@ -3,7 +3,6 @@ package io.mavsdk.androidclient;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import androidx.annotation.NonNull;
@@ -30,6 +29,8 @@ import io.mavsdk.System;
 import io.reactivex.disposables.Disposable;
 import java.util.ArrayList;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Main Activity to display map and create missions.
@@ -38,8 +39,8 @@ import java.util.List;
  * 3. Hit play to start mission.
  */
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
+  private static final Logger logger = LoggerFactory.getLogger(MapsActivity.class);
 
-  public static final String TAG = "MapsActivity";
   public static final String BACKEND_IP_ADDRESS = "192.168.0.15";
 
   private CircleManager circleManager;
@@ -89,9 +90,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     drone = new System(BACKEND_IP_ADDRESS, 50051);
 
     disposables.add(drone.getTelemetry().getFlightMode().distinct()
-        .subscribe(flightMode -> Log.d(TAG, "flight mode: " + flightMode)));
+        .subscribe(flightMode -> logger.debug("flight mode: " + flightMode)));
     disposables.add(drone.getTelemetry().getArmed().distinct()
-        .subscribe(armed -> Log.d(TAG, "armed: " + armed)));
+        .subscribe(armed -> logger.debug("armed: " + armed)));
     disposables.add(drone.getTelemetry().getPosition().subscribe(position -> {
       LatLng latLng = new LatLng(position.getLatitudeDeg(), position.getLongitudeDeg());
       viewModel.currentPositionLiveData.postValue(latLng);
