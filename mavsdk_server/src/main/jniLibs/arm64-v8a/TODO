@@ -1,0 +1,5 @@
+Here should go libc++_shared.so and libmavsdk_server.so
+
+In the future, libc++_shared should be linked statically
+against libmavsdk_server.so, and libmavsdk_server.so should
+be downloaded by gradle from https://github.com/mavlink/mavsdk/releases.

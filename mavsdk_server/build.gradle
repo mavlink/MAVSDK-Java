@@ -1,0 +1,107 @@
+buildscript {
+    repositories {
+        google()
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.5.0'
+    }
+}
+
+allprojects {
+    apply plugin: 'com.android.library'
+    apply plugin: 'maven'
+    apply plugin: 'signing'
+
+    repositories {
+        google()
+        jcenter()
+    }
+
+    task sourcesJar(type: Jar) {
+        classifier = 'sources'
+        from android.sourceSets.main.java.srcDirs
+    }
+
+    artifacts {
+        archives sourcesJar
+    }
+
+    signing {
+        sign configurations.archives
+    }
+
+    uploadArchives {
+        repositories {
+            mavenDeployer {
+                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+                repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                    authentication(userName: ossrhUsername, password: ossrhPassword)
+                }
+
+                snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                    authentication(userName: ossrhUsername, password: ossrhPassword)
+                }
+
+                pom.project {
+                    name 'MAVSDK-Server'
+                    packaging 'aar'
+                    description 'MAVSDK server for Android.'
+                    url 'https://github.com/mavlink/MAVSDK-Java'
+
+                    scm {
+                        connection 'scm:git:https://github.com/mavlink/MAVSDK-Java'
+                        developerConnection 'scm:git:https://github.com/mavlink/MAVSDK-Java'
+                        url 'https://github.com/mavlink/MAVSDK-Java'
+                    }
+
+                    licenses {
+                        license {
+                            name 'BSD 3-Clause "New"'
+                            url 'https://opensource.org/licenses/BSD-3-Clause'
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id 'jonasvautherin'
+                            name 'Jonas Vautherin'
+                            email 'jonas.vautherin@gmail.com'
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+android {
+    compileSdkVersion 29
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 29
+
+        archivesBaseName = 'mavsdk-server'
+        group = 'io.mavsdk'
+        versionCode 1
+        version '0.1.1'
+
+        ndk {
+            abiFilters 'arm64-v8a'
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            path "src/main/cpp/CMakeLists.txt"
+        }
+    }
+}
