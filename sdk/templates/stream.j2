@@ -28,8 +28,10 @@ private Flowable<{% if return_type.is_primitive %}{{ return_type.name }}{% elif 
               {%- else %}
               emitter.onNext({{ return_type.name }}.translateFromRpc(value.get{{ return_name.upper_camel_case }}()));
               {%- endif %}
+              break;
             default:
               emitter.onError(new {{ plugin_name.upper_camel_case }}Exception(result.result, result.resultStr));
+              break;
           }
           {%- else %}
             {%- if return_type.is_repeated %}
@@ -46,8 +48,6 @@ private Flowable<{% if return_type.is_primitive %}{{ return_type.name }}{% elif 
               {%- endif %}
             {%- endif %}
           {%- endif %}
-            {% if has_result %}
-            {% endif %}
           }
 
           @Override
