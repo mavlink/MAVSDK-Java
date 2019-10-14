@@ -26,6 +26,7 @@ import com.mapbox.mapboxsdk.plugins.annotation.SymbolManager;
 import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions;
 import com.mapbox.mapboxsdk.utils.ColorUtils;
 import io.mavsdk.System;
+import io.mavsdk.mavsdkserver.MavsdkServer;
 import io.reactivex.disposables.Disposable;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +42,7 @@ import org.slf4j.LoggerFactory;
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
   private static final Logger logger = LoggerFactory.getLogger(MapsActivity.class);
 
-  public static final String BACKEND_IP_ADDRESS = "192.168.0.15";
+  public static final String BACKEND_IP_ADDRESS = "127.0.0.1";
 
   private CircleManager circleManager;
   private SymbolManager symbolManager;
@@ -86,6 +87,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     mapView.onResume();
     viewModel.currentPositionLiveData.observe(this, currentPositionObserver);
     viewModel.currentMissionPlanLiveData.observe(this, currentMissionPlanObserver);
+
+    new Thread(() -> {
+      MavsdkServer mavsdkServer = new MavsdkServer();
+      mavsdkServer.run("udp://:14540");
+    }).start();
 
     drone = new System(BACKEND_IP_ADDRESS, 50051);
 
