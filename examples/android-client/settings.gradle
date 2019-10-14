@@ -5,3 +5,7 @@ include ':app'
 // the README in ../../sdk for more instructions about building
 // from sources.
 //includeBuild '../../sdk'
+
+// Uncomment the following line to use the mavsdk_server built
+// from sources.
+//includeBuild '../../mavsdk_server'
