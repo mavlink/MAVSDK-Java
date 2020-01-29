@@ -60,7 +60,7 @@ dependencies {
     implementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-annotation-v8:0.7.0'
     implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:8.2.1'
     implementation 'io.mavsdk:mavsdk:0.2.0'
-    implementation 'io.mavsdk:mavsdk-server:0.1.1'
+    implementation 'io.mavsdk:mavsdk-server:0.2.0'
     implementation 'org.slf4j:slf4j-api:1.7.28'
 
     testImplementation 'junit:junit:4.12'
