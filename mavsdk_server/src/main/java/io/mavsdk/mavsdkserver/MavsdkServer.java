@@ -6,5 +6,5 @@ public class MavsdkServer {
         java.lang.System.loadLibrary("native_lib");
     }
 
-    public native void run(String connectionUrl);
+    public native void run(String systemAddress, int mavsdkServerPort);
 }
