@@ -181,6 +181,8 @@ subprojects {
     }
 
     dependencies {
+        protobuf "io.grpc:grpc-protobuf:${grpcVersion}"
+
         implementation "io.grpc:grpc-okhttp:${grpcVersion}"
         implementation "io.grpc:grpc-protobuf-lite:${grpcVersion}"
         implementation "io.grpc:grpc-stub:${grpcVersion}"
