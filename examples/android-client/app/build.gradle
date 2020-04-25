@@ -54,9 +54,9 @@ dependencies {
     checkstyleClasspath 'com.puppycrawl.tools:checkstyle:8.17'
 
     implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.1.0'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation 'com.github.tony19:logback-android:2.0.0'
-    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'com.google.android.material:material:1.1.0'
     implementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-annotation-v8:0.7.0'
     implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:8.2.1'
     implementation 'io.mavsdk:mavsdk:0.2.0'
