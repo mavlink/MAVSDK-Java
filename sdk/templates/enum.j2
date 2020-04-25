@@ -1,14 +1,14 @@
 public enum {{ name.upper_camel_case }} {
   {% for value in values %}
-  {{ value.uppercase }}{{ ", " if not loop.last }}
+  {{ value.name.uppercase }}{{ ", " if not loop.last }}
   {%- endfor %};
 
   protected {{ plugin_name.upper_camel_case }}Proto.{% if parent_struct is not none %}{{ parent_struct.upper_camel_case }}.{% endif %}{{ name.upper_camel_case }} rpc{{ name.upper_camel_case }}() {
     switch (this) {
       {% for value in values %}
-      case {{ value.uppercase }}:
+      case {{ value.name.uppercase }}:
       {{ "default: " if loop.first }}
-        return {{ plugin_name.upper_camel_case}}Proto.{% if parent_struct is not none %}{{ parent_struct.upper_camel_case }}.{% endif %}{{ name.upper_camel_case }}.{{ value.uppercase }};
+        return {{ plugin_name.upper_camel_case}}Proto.{% if parent_struct is not none %}{{ parent_struct.upper_camel_case }}.{% endif %}{{ name.upper_camel_case }}.{{ name.uppercase }}_{{ value.name.uppercase }};
       {%- endfor %}
     }
   }
@@ -16,9 +16,9 @@ public enum {{ name.upper_camel_case }} {
   protected static {{ name.upper_camel_case }} translateFromRpc({{ plugin_name.upper_camel_case }}Proto.{% if parent_struct is not none %}{{ parent_struct.upper_camel_case }}.{% endif %}{{ name.upper_camel_case }} rpc{{ name.upper_camel_case }}) {
     switch (rpc{{ name.upper_camel_case }}) {
       {%- for value in values %}
-      case {{ value.uppercase }}:
+      case {{ name.uppercase }}_{{ value.name.uppercase }}:
       {{ "default: " if loop.first }}
-        return {{ name.upper_camel_case }}.{{ value.uppercase }};
+        return {{ name.upper_camel_case }}.{{ value.name.uppercase }};
       {%- endfor -%}
     }
   }
