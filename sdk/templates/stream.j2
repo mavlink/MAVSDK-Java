@@ -17,8 +17,7 @@ private Flowable<{% if return_type.is_primitive %}{{ return_type.name }}{% elif 
 
           switch (result.result) {
             case SUCCESS:
-            case IN_PROGRESS:
-            case INSTRUCTION:
+            case NEXT:
               {%- if return_type.is_repeated %}
                   {%- if return_type.is_primitive %}
               emitter.onNext(value.get{{ return_name.upper_camel_case }}List());
