@@ -53,6 +53,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
   private MapsViewModel viewModel;
   private Symbol currentPositionMarker;
 
+  private MavsdkServer mavsdkServer = new MavsdkServer();
   private System drone;
   private final List<Circle> waypoints = new ArrayList<>();
   private final List<Disposable> disposables = new ArrayList<>();
@@ -88,12 +89,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     viewModel.currentPositionLiveData.observe(this, currentPositionObserver);
     viewModel.currentMissionPlanLiveData.observe(this, currentMissionPlanObserver);
 
-    new Thread(() -> {
-      MavsdkServer mavsdkServer = new MavsdkServer();
-      mavsdkServer.run("udp://:14540", 50020);
-    }).start();
-
-    drone = new System(BACKEND_IP_ADDRESS, 50020);
+    int mavsdkServerPort = mavsdkServer.run();
+    drone = new System(BACKEND_IP_ADDRESS, mavsdkServerPort);
 
     disposables.add(drone.getTelemetry().getFlightMode().distinct()
         .subscribe(flightMode -> logger.debug("flight mode: " + flightMode)));
@@ -118,6 +115,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     drone.dispose();
     drone = null;
+    mavsdkServer.stop();
   }
 
   @Override
