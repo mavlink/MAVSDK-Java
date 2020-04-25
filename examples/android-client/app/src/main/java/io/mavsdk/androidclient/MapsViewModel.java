@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import io.mavsdk.System;
 import io.mavsdk.mission.Mission;
+import io.mavsdk.mission.Mission.MissionPlan;
 import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
@@ -54,9 +55,13 @@ public class MapsViewModel extends ViewModel {
             1.0);
         missionItems.add(missionItem);
       }
+
+      MissionPlan missionPlan = new MissionPlan(missionItems);
+
+      logger.debug("Uploading and starting mission...");
       drone.getMission()
           .setReturnToLaunchAfterMission(true)
-          .andThen(drone.getMission().uploadMission(missionItems)
+          .andThen(drone.getMission().uploadMission(missionPlan)
               .doOnComplete(() -> logger.debug("Upload succeeded"))
               .doOnError(throwable -> logger.error("Failed to upload the mission")))
           .andThen(drone.getAction().arm()
