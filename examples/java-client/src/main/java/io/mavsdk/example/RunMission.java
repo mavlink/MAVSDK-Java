@@ -20,11 +20,13 @@ public class RunMission {
     missionItems.add(generateMissionItem(47.397825620791885, 8.5450092830163271));
     missionItems.add(generateMissionItem(47.397832880000003, 8.5455939999999995));
 
+    Mission.MissionPlan missionPlan = new Mission.MissionPlan(missionItems);
+
     System drone = new System();
 
     drone.getMission()
         .setReturnToLaunchAfterMission(true)
-        .andThen(drone.getMission().uploadMission(missionItems)
+        .andThen(drone.getMission().uploadMission(missionPlan)
             .doOnComplete(() -> logger.debug("Upload succeeded")))
         .andThen(drone.getAction().arm())
         .andThen(drone.getMission().startMission()
@@ -34,7 +36,7 @@ public class RunMission {
     CountDownLatch latch = new CountDownLatch(1);
     drone.getMission()
         .getMissionProgress()
-        .filter(progress -> progress.getCurrentItemIndex() == progress.getMissionCount())
+        .filter(progress -> progress.getCurrent() == progress.getTotal())
         .take(1)
         .subscribe(ignored -> latch.countDown());
 
