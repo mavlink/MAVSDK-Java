@@ -6,19 +6,40 @@ It is organized as follows:
 
 * The [examples](./examples) directory contains Java and Android examples using the sdk.
 * The [sdk](./sdk) directory contains the actual SDK.
-
-Detailed instructions on how to run the examples and how to build the SDK are available in
-those directories.
+* The [mavsdk_server](./mavsdk_server) directory contains the Android library exposing `mavsdk_server`.
 
 ## QuickStart
 
-The fastest way to start is to follow the instructions in the README of the [java-client](./examples/java-client) example.
+The fastest way to start is to follow the instructions in the README of the [java-client](./examples/java-client) example. For Android, the [android-client](./example/android-client) is the next step.
 
-## Coding style
+MAVSDK-Java is distributed through MavenCentral, meaning that it can be imported using gradle with:
+
+```
+dependencies {
+    ...
+    implementation 'io.mavsdk:mavsdk:0.3.1'
+    ...
+}
+```
+
+For Android, `mavsdk_server` is distributed as an Android library (`aar`):
+
+```
+dependencies {
+    ...
+    implementation 'io.mavsdk:mavsdk:0.3.1'
+    implementation 'io.mavsdk:mavsdk-server:0.3.1'
+    ...
+}
+```
+
+## Contributing
+
+### Coding style
 
 Java/Android coding style is ensured using CheckStyle with the Google style.
 
-### Command line
+#### Command line
 
 A `checkstyle` task is defined in the root `build.gradle` of each project and can be run as follows:
 
@@ -26,11 +47,11 @@ A `checkstyle` task is defined in the root `build.gradle` of each project and ca
 
 The `build` task depends on `checkstyle`, meaning that `$ ./gradlew build` runs the checks as well.
 
-### IntelliJ / Android-Studio
+#### IntelliJ / Android-Studio
 
 There exist a plugin for CheckStyle in JetBrains' IDEs.
 
-#### Setup
+##### Setup
 
 1. Install the plugin called "CheckStyle-IDEA" in IntelliJ / Android-Studio.
 2. Import the checkstyle configuration as a code style scheme in _Settings > Editor > Code Style > Java > Manage... >
@@ -39,13 +60,32 @@ There exist a plugin for CheckStyle in JetBrains' IDEs.
 4. Still in _Settings > Other Settings > Checkstyle_, add a new configuration file and browse to
    `config/checkstyle/checkstyle.xml`.
 
-#### Usage
+##### Usage
 
 In IntelliJ / Android-Studio's bottom task bar, you should see a "CheckStyle" tab. It will allow you to select your configuration
 with the "Rules" dropdown-list, and to run the analysis on your code.
 
 Note that by default, the IDE will not run checkstyle when building the project (whereas `$ ./gradlew build` always does it).
 
-### Troubleshooting
+#### Troubleshooting
 
 In IntelliJ / Android-Studio, the IDE might force the order of the imports in a way that is not following the checkstyle rules. For some reason, this is not set when importing `checkstyle.xml` as a code style scheme. However, it can be manually updated in _Settings > Code Style > Java > Import Layout_.
+
+### Releasing
+
+Both [sdk](./sdk) and [mavsdk_server](./mavdsk_server) are released with Maven. Publishing can be done through a gradle task:
+
+```gradle
+./gradlew uploadArchives
+```
+
+This task requires a few secrets in `gradle.properties`:
+
+```
+signing.keyId=<keyId>
+signing.password=<password>
+signing.secretKeyRingFile=<ring_file>
+
+ossrhUsername=<username>
+ossrhPassword=<password>
+```

@@ -11,18 +11,18 @@ The example runs `System drone = new System();`, which will by default connect t
 Running `mavsdk_server -p 50051` from the command line will show output similar to the following:
 
 ```
-$ ./mavsdk_server -p 50051
-[12:53:55|Info ] MAVSDK version: 0.24.0 (mavsdk_impl.cpp:25)
-[12:53:55|Debug] New: System ID: 0 Comp ID: 0 (mavsdk_impl.cpp:401)
-[12:53:55|Info ] Server started (grpc_server.cpp:38)
-[12:53:55|Info ] Server set to listen on 0.0.0.0:50051 (grpc_server.cpp:39)
-[12:53:55|Info ] Waiting to discover system on udp://:14540... (connection_initiator.h:22)
+% ./mavsdk_server -p 50051                                                                        [0]
+[10:09:52|Info ] MAVSDK version: 0.25.0-11-g5e25ce90 (mavsdk_impl.cpp:26)
+[10:09:52|Debug] New: System ID: 0 Comp ID: 0 (mavsdk_impl.cpp:379)
+[10:09:52|Info ] Server started (grpc_server.cpp:38)
+[10:09:52|Info ] Server set to listen on 0.0.0.0:50051 (grpc_server.cpp:39)
+[10:09:52|Info ] Waiting to discover system on udp://:14540... (connection_initiator.h:22)
 ```
 
 The other requirement is to have a MAVLink drone (or simulator) running. You can get started with the simulation environment [here](https://dev.px4.io/master/en/simulation/). If using docker, an alternative is to run a headless gazebo instance, as described [here](https://github.com/JonasVautherin/px4-gazebo-headless):
 
 ```sh
-$ docker run --rm -it jonasvautherin/px4-gazebo-headless:v1.10.1
+$ docker run --rm -it jonasvautherin/px4-gazebo-headless
 ```
 
 ## Running the examples
