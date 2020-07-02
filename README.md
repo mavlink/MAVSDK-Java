@@ -89,3 +89,7 @@ signing.secretKeyRingFile=<ring_file>
 ossrhUsername=<username>
 ossrhPassword=<password>
 ```
+
+## Further Information
+
+- [Getting started with MAVSDK – Java](https://auterion.com/getting-started-with-mavsdk-java/) (Jonas Vautherin, Auterion blog)
