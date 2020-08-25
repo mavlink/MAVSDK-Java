@@ -12,7 +12,7 @@ It is organized as follows:
 
 The fastest way to start is to follow the instructions in the README of the [java-client](./examples/java-client) example. For Android, the [android-client](./example/android-client) is the next step.
 
-Please note MavsdkServer Java currently is not compatible for running on x86 and x86_64 Android images. if you would like to develop using the MavsdkServer, you will need to deploy and develop using a Arm based product or emulator. 
+Please note `MavsdkServer` currently is not compatible for running on x86 and x86_64 Android images. If you would like to develop using `MavsdkServer`, you will need to deploy and develop using an ARM-based product or emulator.
 
 MAVSDK-Java is distributed through MavenCentral, meaning that it can be imported using gradle with:
 
