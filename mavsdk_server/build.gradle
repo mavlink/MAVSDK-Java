@@ -19,7 +19,7 @@ allprojects {
         jcenter()
     }
 
-    def mavsdk_server_release = "v0.28.0"
+    def mavsdk_server_release = "v0.34.0"
 
     task extractMavsdkServer(type: Copy) {
         mkdir project.buildDir.getAbsolutePath() + "/tmp"
