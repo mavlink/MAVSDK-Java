@@ -64,7 +64,7 @@ subprojects {
                         option 'lite'
                     }
 
-                    dcsdk {
+                    mavsdk {
                         option 'file_ext=java'
                         option "template_path=$project.rootDir/templates/"
                     }
@@ -82,7 +82,7 @@ subprojects {
             java {
                 srcDir 'build/generated/source/proto/main/javalite'
                 srcDir 'build/generated/source/proto/main/grpc'
-                srcDir 'build/generated/source/proto/main/dcsdk'
+                srcDir 'build/generated/source/proto/main/mavsdk'
             }
         }
     }
