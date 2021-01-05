@@ -1,5 +1,5 @@
 #include <android/log.h>
-#include <backend_api.h>
+#include <mavsdk_server_api.h>
 #include <future>
 #include <jni.h>
 #include <thread>
@@ -29,21 +29,21 @@ extern "C"
     JNIEXPORT jint JNICALL
     Java_io_mavsdk_mavsdkserver_MavsdkServer_getPort(JNIEnv* env, jobject thiz, jlong mavsdkServerHandle)
     {
-        auto mavsdk_server = reinterpret_cast<MavsdkBackend*>(mavsdkServerHandle);
+        auto mavsdk_server = reinterpret_cast<MavsdkServer*>(mavsdkServerHandle);
         return mavsdk_server_get_port(mavsdk_server);
     }
 
     JNIEXPORT void JNICALL
     Java_io_mavsdk_mavsdkserver_MavsdkServer_attach(JNIEnv* env, jobject thiz, jlong mavsdkServerHandle)
     {
-        auto mavsdk_server = reinterpret_cast<MavsdkBackend*>(mavsdkServerHandle);
+        auto mavsdk_server = reinterpret_cast<MavsdkServer*>(mavsdkServerHandle);
         mavsdk_server_attach(mavsdk_server);
     }
 
     JNIEXPORT void JNICALL
     Java_io_mavsdk_mavsdkserver_MavsdkServer_stop(JNIEnv* env, jobject thiz, jlong mavsdkServerHandle)
     {
-        auto mavsdk_server = reinterpret_cast<MavsdkBackend*>(mavsdkServerHandle);
+        auto mavsdk_server = reinterpret_cast<MavsdkServer*>(mavsdkServerHandle);
         mavsdk_server_stop(mavsdk_server);
     }
 };
