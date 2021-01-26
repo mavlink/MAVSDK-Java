@@ -112,6 +112,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     for (Disposable disposable : disposables) {
       disposable.dispose();
     }
+    disposables.clear();
+
 
     drone.dispose();
     drone = null;
