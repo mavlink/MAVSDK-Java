@@ -92,9 +92,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     int mavsdkServerPort = mavsdkServer.run();
     drone = new System(BACKEND_IP_ADDRESS, mavsdkServerPort);
 
-    disposables.add(drone.getTelemetry().getFlightMode().distinct()
+    disposables.add(drone.getTelemetry().getFlightMode().distinctUntilChanged()
         .subscribe(flightMode -> logger.debug("flight mode: " + flightMode)));
-    disposables.add(drone.getTelemetry().getArmed().distinct()
+    disposables.add(drone.getTelemetry().getArmed().distinctUntilChanged()
         .subscribe(armed -> logger.debug("armed: " + armed)));
     disposables.add(drone.getTelemetry().getPosition().subscribe(position -> {
       LatLng latLng = new LatLng(position.getLatitudeDeg(), position.getLongitudeDeg());
