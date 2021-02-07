@@ -72,7 +72,7 @@ idea {
 dependencies {
     checkstyleClasspath 'com.puppycrawl.tools:checkstyle:8.5'
 
-    implementation 'io.mavsdk:mavsdk:0.5.1'
+    implementation 'io.mavsdk:mavsdk:0.6.0'
 
     implementation 'ch.qos.logback:logback-core:1.2.3'
     implementation 'ch.qos.logback:logback-classic:1.2.3'
