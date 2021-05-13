@@ -101,6 +101,12 @@ subprojects {
         archives javadocJar, sourcesJar
     }
 
+    if (project.hasProperty('ossrhUsername')
+        && project.hasProperty('ossrhPassword')
+        && project.hasProperty('signing.keyId')
+        && project.hasProperty('signing.password')
+        && project.hasProperty('signing.secretKeyRingFile')) {
+
     signing {
         sign configurations.archives
     }
@@ -147,6 +153,7 @@ subprojects {
                 }
             }
         }
+    }
     }
 
     task checkstyle(type: Checkstyle) {
