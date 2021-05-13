@@ -61,6 +61,12 @@ allprojects {
         archives sourcesJar
     }
 
+    if (project.hasProperty('ossrhUsername')
+        && project.hasProperty('ossrhPassword')
+        && project.hasProperty('signing.keyId')
+        && project.hasProperty('signing.password')
+        && project.hasProperty('signing.secretKeyRingFile')) {
+
     signing {
         sign configurations.archives
     }
@@ -107,6 +113,7 @@ allprojects {
                 }
             }
         }
+    }
     }
 }
 
