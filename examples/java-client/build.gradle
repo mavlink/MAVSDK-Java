@@ -29,6 +29,11 @@ task runMission(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
 }
 
+task runCamera(dependsOn: 'classes', type: JavaExec) {
+    main = "io.mavsdk.example.RunCamera"
+    classpath = sourceSets.main.runtimeClasspath
+}
+
 task exportDeps(type: Copy) {
     from sourceSets.main.runtimeClasspath into 'build/jshell_classpath_export/'
 }
