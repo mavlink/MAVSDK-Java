@@ -34,6 +34,11 @@ task runCamera(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
 }
 
+task calibrate(dependsOn: 'classes', type: JavaExec) {
+    main = "io.mavsdk.example.Calibrate"
+    classpath = sourceSets.main.runtimeClasspath
+}
+
 task runDownloadLastLog(dependsOn: 'classes', type: JavaExec) {
     main = "io.mavsdk.example.DownloadLastLog"
     classpath = sourceSets.main.runtimeClasspath
