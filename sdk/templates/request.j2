@@ -1,4 +1,4 @@
-public Single<{% if return_type.is_primitive %}{{ return_type.name }}{% elif return_type.is_repeated %}List<{{ plugin_name.upper_camel_case }}Proto.{{ return_type.inner_name }}>{% else %}{{ plugin_name.upper_camel_case }}Proto.{{ return_type.name }}{% endif %}> {{ name.lower_camel_case }}({% for param in params %}{{ param.type_info.name }} {{ param.name.lower_camel_case }}{{ ", " if not loop.last }}{% endfor %}) {
+public Single<{% if return_type.is_primitive %}{{ return_type.name }}{% elif return_type.is_repeated %}List<{{ plugin_name.upper_camel_case }}.{{ return_type.inner_name }}>{% else %}{{ plugin_name.upper_camel_case }}.{{ return_type.name }}{% endif %}> {{ name.lower_camel_case }}({% for param in params %}{{ param.type_info.name }} {{ param.name.lower_camel_case }}{{ ", " if not loop.last }}{% endfor %}) {
   {{ plugin_name.upper_camel_case }}Proto.{{ name.upper_camel_case }}Request request = {{ plugin_name.upper_camel_case }}Proto.{{ name.upper_camel_case }}Request
           .newBuilder()
           {%- for param in params %}
@@ -23,18 +23,22 @@ public Single<{% if return_type.is_primitive %}{{ return_type.name }}{% elif ret
           if (result.result != {{ plugin_name.upper_camel_case }}Result.Result.SUCCESS) {
             emitter.onError(new {{ plugin_name.upper_camel_case }}Exception(result.result, result.resultStr));
           } else {
+          {%- endif %}
+          {%- if return_type.is_primitive %}
             {%- if return_type.is_repeated %}
             emitter.onSuccess(value.get{{ return_name.upper_camel_case }}List());
             {%- else %}
             emitter.onSuccess(value.get{{ return_name.upper_camel_case }}());
             {%- endif %}
-          }
           {%- else %}
             {%- if return_type.is_repeated %}
-          emitter.onSuccess(value.get{{ return_name.upper_camel_case }}List());
+            emitter.onSuccess(value.get{{ return_name.upper_camel_case }}List().stream().map({{ return_type.inner_name }}::translateFromRpc).collect(Collectors.toList()));
             {%- else %}
-          emitter.onSuccess(value.get{{ return_name.upper_camel_case }}());
+            emitter.onSuccess({{ return_type.name }}.translateFromRpc(value.get{{ return_name.upper_camel_case }}()));
             {%- endif %}
+          {%- endif %}
+          {%- if has_result %}
+          }
           {%- endif %}
         }
 
