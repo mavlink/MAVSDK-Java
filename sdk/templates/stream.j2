@@ -15,23 +15,25 @@ private Flowable<{% if return_type.is_primitive %}{{ return_type.name }}{% elif 
           {%- if has_result %}
           {{ plugin_name.upper_camel_case }}Result result = {{ plugin_name.upper_camel_case }}Result.translateFromRpc(value.get{{ plugin_name.upper_camel_case }}Result());
 
-          switch (result.result) {
-            case SUCCESS:
-            case NEXT:
-              {%- if return_type.is_repeated %}
-                  {%- if return_type.is_primitive %}
-              emitter.onNext(value.get{{ return_name.upper_camel_case }}List());
-                  {%- else %}
-              emitter.onNext(value.get{{ return_name.upper_camel_case }}List().stream().map({{ return_type.inner_name }}::translateFromRpc).collect(Collectors.toList()));
-                  {%- endif %}
-              {%- else %}
-              emitter.onNext({{ return_type.name }}.translateFromRpc(value.get{{ return_name.upper_camel_case }}()));
-              {%- endif %}
-              break;
-            default:
-              emitter.onError(new {{ plugin_name.upper_camel_case }}Exception(result.result, result.resultStr));
-              break;
-          }
+            switch (result.result) {
+              case SUCCESS:
+                emitter.onComplete();
+                break;
+              case NEXT:
+                {%- if return_type.is_repeated %}
+                    {%- if return_type.is_primitive %}
+                emitter.onNext(value.get{{ return_name.upper_camel_case }}List());
+                    {%- else %}
+                emitter.onNext(value.get{{ return_name.upper_camel_case }}List().stream().map({{ return_type.inner_name }}::translateFromRpc).collect(Collectors.toList()));
+                    {%- endif %}
+                {%- else %}
+                emitter.onNext({{ return_type.name }}.translateFromRpc(value.get{{ return_name.upper_camel_case }}()));
+                {%- endif %}
+                break;
+              default:
+                emitter.onError(new {{ plugin_name.upper_camel_case }}Exception(result.result, result.resultStr));
+                break;
+            }
           {%- else %}
             {%- if return_type.is_repeated %}
               {%- if return_type.is_primitive %}
