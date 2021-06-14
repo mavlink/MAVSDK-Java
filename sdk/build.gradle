@@ -4,7 +4,7 @@ buildscript {
     }
 
     dependencies {
-        classpath "com.google.protobuf:protobuf-gradle-plugin:0.8.8"
+        classpath "com.google.protobuf:protobuf-gradle-plugin:0.8.16"
     }
 }
 
@@ -34,7 +34,7 @@ subprojects {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
 
-    def grpcVersion = '1.19.0'
+    def grpcVersion = '1.36.2'
 
     protobuf {
         protoc {
