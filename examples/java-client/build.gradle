@@ -9,11 +9,6 @@ configurations {
     checkstyleClasspath
 }
 
-mainClassName = "io.mavsdk.example.TakeoffAndLand"
-
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
-
 task takeoffAndLand(dependsOn: 'classes', type: JavaExec) {
     main = "io.mavsdk.example.TakeoffAndLand"
     classpath = sourceSets.main.runtimeClasspath
@@ -41,6 +36,11 @@ task calibrate(dependsOn: 'classes', type: JavaExec) {
 
 task runDownloadLastLog(dependsOn: 'classes', type: JavaExec) {
     main = "io.mavsdk.example.DownloadLastLog"
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+task listPhotos(dependsOn: 'classes', type: JavaExec) {
+    main = "io.mavsdk.example.ListPhotos"
     classpath = sourceSets.main.runtimeClasspath
 }
 
