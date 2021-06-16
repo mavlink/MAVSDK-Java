@@ -35,9 +35,9 @@ dependencies {
 }
 ```
 
-### Proguard
+### ProGuard
 
-Proguard users may need to add the following rule:
+ProGuard users may need to add the following rule:
 
 ```
 -keep class io.mavsdk.** { *; }
