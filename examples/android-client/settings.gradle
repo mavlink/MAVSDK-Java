@@ -1,7 +1,7 @@
 include ':app'
 
 // Uncomment the following line to use the SDK built from sources.
-// This will require `protoc-gen-dcsdk` to be in your PATH. See
+// This will require `protoc-gen-mavsdk` to be in your PATH. See
 // the README in ../../sdk for more instructions about building
 // from sources.
 //includeBuild '../../sdk'

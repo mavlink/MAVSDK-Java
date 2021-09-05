@@ -39,7 +39,11 @@ private Flowable<{% if return_type.is_primitive %}{{ return_type.name }}{% elif 
                 emitter.onNext(value.get{{ return_name.upper_camel_case }}List().stream().map({{ return_type.inner_name }}::translateFromRpc).collect(Collectors.toList()));
                     {%- endif %}
                 {%- else %}
+                    {%- if return_type.is_primitive %}
+                emitter.onNext(value.get{{ return_name.upper_camel_case }}());
+                    {%- else %}
                 emitter.onNext({{ return_type.name }}.translateFromRpc(value.get{{ return_name.upper_camel_case }}()));
+                    {%- endif %}
                 {%- endif %}
                 break;
               default:

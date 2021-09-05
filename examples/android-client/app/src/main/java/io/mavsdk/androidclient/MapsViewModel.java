@@ -52,7 +52,9 @@ public class MapsViewModel extends ViewModel {
             Float.NaN,
             Mission.MissionItem.CameraAction.NONE,
             Float.NaN,
-            1.0);
+            1.0,
+            Float.NaN,
+            Float.NaN);
         missionItems.add(missionItem);
       }
 
