@@ -1,3 +1,4 @@
+@CheckReturnValue
 public Completable {{ name.lower_camel_case }}({% for param in params %}{{ param.type_info.name }} {{ param.name.lower_camel_case }}{{ ", " if not loop.last }}{% endfor %}) {
   {{ plugin_name.upper_camel_case }}Proto.{{ name.upper_camel_case }}Request request = {{ plugin_name.upper_camel_case }}Proto.{{ name.upper_camel_case }}Request
           .newBuilder()
