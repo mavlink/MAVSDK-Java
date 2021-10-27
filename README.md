@@ -10,7 +10,7 @@ It is organized as follows:
 
 ## QuickStart
 
-The fastest way to start is to follow the instructions in the README of the [java-client](./examples/java-client) example. For Android, the [android-client](./example/android-client) is the next step.
+The fastest way to start is to follow the instructions in the README of the [java-client](./examples/java-client) example. For Android, the [android-client](./examples/android-client) is the next step.
 
 Please note `MavsdkServer` currently is not compatible for running on x86 and x86_64 Android images. If you would like to develop using `MavsdkServer`, you will need to deploy and develop using an ARM-based product or emulator.
 
@@ -83,7 +83,7 @@ In IntelliJ / Android-Studio, the IDE might force the order of the imports in a 
 
 ### Releasing
 
-Both [sdk](./sdk) and [mavsdk_server](./mavdsk_server) are released with Maven. Publishing can be done through a gradle task:
+Both [sdk](./sdk) and [mavsdk_server](./mavsdk_server) are released with Maven. Publishing can be done through a gradle task:
 
 ```gradle
 ./gradlew uploadArchives
