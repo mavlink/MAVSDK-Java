@@ -50,14 +50,21 @@ public class MavsdkServer {
    *     For UDP : udp://[bind_host][:bind_port]
    *     For Serial : serial:///path/to/serial/dev[:baudrate]
    * @param mavsdkServerPort The port on which the server should listen for a `System`.
-   * @return A handle to the started MavsdkServer, to be used with other native functions.
+   * @return The port on which MavsdkServer listens for a `System` to connect.
+   *     A return value of 0 means that the server failed to start.
    */
   public int run(String systemAddress, int mavsdkServerPort) {
-    mavsdkServerHandle = runNative(systemAddress, mavsdkServerPort);
+
+    if (!runNative(mavsdkServerHandle, systemAddress, mavsdkServerPort)) {
+      return 0;
+    }
+
     return getPort(mavsdkServerHandle);
   }
 
-  private native long runNative(String systemAddress, int mavsdkServerPort);
+  private native long initNative();
+
+  private native boolean runNative(long mavsdkServerHandle, String systemAddress, int mavsdkServerPort);
 
   private native int getPort(long mavsdkServerHandle);
 
