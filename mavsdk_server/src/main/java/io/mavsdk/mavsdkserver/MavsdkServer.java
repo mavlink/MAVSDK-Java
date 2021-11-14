@@ -54,6 +54,7 @@ public class MavsdkServer {
    *     A return value of 0 means that the server failed to start.
    */
   public int run(String systemAddress, int mavsdkServerPort) {
+    mavsdkServerHandle = initNative();
 
     if (!runNative(mavsdkServerHandle, systemAddress, mavsdkServerPort)) {
       return 0;
