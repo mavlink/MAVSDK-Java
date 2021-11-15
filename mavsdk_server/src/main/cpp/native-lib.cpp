@@ -8,22 +8,27 @@
 
 extern "C"
 {
-    void onServerStarted(void* port_promise) {
-        auto* promise = static_cast<std::promise<void>*>(port_promise);
-        promise->set_value();
+    JNIEXPORT jlong JNICALL
+    Java_io_mavsdk_mavsdkserver_MavsdkServer_initNative(JNIEnv *env, jobject thiz) {
+        MavsdkServer* mavsdk_server;
+        mavsdk_server_init(&mavsdk_server);
+        return reinterpret_cast<jlong>(mavsdk_server);
     }
 
-    JNIEXPORT jlong JNICALL
-    Java_io_mavsdk_mavsdkserver_MavsdkServer_runNative(JNIEnv* env, jobject thiz, jstring system_address, jint mavsdk_server_port)
+    JNIEXPORT jboolean JNICALL
+    Java_io_mavsdk_mavsdkserver_MavsdkServer_runNative(JNIEnv* env, jobject thiz, jlong mavsdkServerHandle, jstring system_address, jint mavsdk_server_port)
     {
         const char* native_connection_url = env->GetStringUTFChars(system_address, 0);
+        auto mavsdk_server = reinterpret_cast<MavsdkServer*>(mavsdkServerHandle);
 
         LOGD("Running mavsdk_server with connection url: %s", native_connection_url);
-        auto mavsdk_server = mavsdk_server_run(native_connection_url, mavsdk_server_port);
+        if (!mavsdk_server_run(mavsdk_server, native_connection_url, mavsdk_server_port)) {
+            return false;
+        }
+
         auto server_port = mavsdk_server_get_port(mavsdk_server);
         LOGD("mavsdk_server is now running, listening on port %d", server_port);
-
-        return reinterpret_cast<jlong>(mavsdk_server);
+        return true;
     }
 
     JNIEXPORT jint JNICALL
