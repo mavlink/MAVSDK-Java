@@ -80,7 +80,7 @@ private Flowable<{% if return_type.is_primitive %}{{ return_type.name }}{% elif 
       });
     }, BackpressureStrategy.BUFFER);
 
-  return flowable;
+  return flowable.share();
 }
 
 @CheckReturnValue
