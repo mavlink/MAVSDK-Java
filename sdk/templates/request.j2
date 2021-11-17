@@ -1,7 +1,11 @@
 @CheckReturnValue
 public Single<{% if return_type.is_primitive %}{{ return_type.name }}{% elif return_type.is_repeated %}List<{{ plugin_name.upper_camel_case }}.{{ return_type.inner_name }}>{% else %}{{ plugin_name.upper_camel_case }}.{{ return_type.name }}{% endif %}> {{ name.lower_camel_case }}({% for param in params %}@NonNull {{ param.type_info.name }} {{ param.name.lower_camel_case }}{{ ", " if not loop.last }}{% endfor %}) {
 
+  {% if has_result %}
   if (!isBound) return Single.error(new {{ plugin_name.upper_camel_case }}Exception({{ plugin_name.upper_camel_case }}Result.Result.NO_SYSTEM, "No System"));
+  {% else %}
+  if (!isBound) return Completable.error(new Exception("No System"));
+  {% endif %}
 
   {{ plugin_name.upper_camel_case }}Proto.{{ name.upper_camel_case }}Request request = {{ plugin_name.upper_camel_case }}Proto.{{ name.upper_camel_case }}Request
           .newBuilder()
