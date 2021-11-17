@@ -56,6 +56,7 @@ public class {{ plugin_name.upper_camel_case }} {
           stub = {{ plugin_name.upper_camel_case }}ServiceGrpc.newStub(channel);
           scheduler = Schedulers.trampoline();
 
+          processStreams();
           isBound = true;
         } else {
           throw new RuntimeException("Already bound!");
@@ -68,6 +69,16 @@ public class {{ plugin_name.upper_camel_case }} {
 
   public void dispose() {
     this.channel.shutdown();
+  }
+
+  private void processStreams() {
+    {%- for method in methods %}
+      {%- if method.is_stream %}
+        {%- if method._params|length == 0 %}
+    process{{ method.name.upper_camel_case }}();
+        {%- endif%}
+      {%- endif %}
+    {%- endfor %}
   }
 
   {% if has_result %}
