@@ -20,16 +20,22 @@ import org.slf4j.LoggerFactory;
 public class {{ plugin_name.upper_camel_case }} {
   private static final Logger logger = LoggerFactory.getLogger({{ plugin_name.upper_camel_case }}.class);
 
+  private final String host;
+  private final int port;
+
   private ManagedChannel channel;
   private {{ plugin_name.upper_camel_case }}ServiceGrpc.{{ plugin_name.upper_camel_case }}ServiceStub stub;
   private Scheduler scheduler;
 
-  public {{ plugin_name.upper_camel_case }}() {
-    this("127.0.0.1", 50051);
-  }
+  private boolean isBound = false;
 
   public {{ plugin_name.upper_camel_case }}(String host, int port) {
-    this(createChannel(host, port));
+    this.host = host;
+    this.port = port;
+  }
+
+  public {{ plugin_name.upper_camel_case }}() {
+    this("127.0.0.1", 50051);
   }
 
   private static ManagedChannel createChannel(String host, int port) {
@@ -40,10 +46,12 @@ public class {{ plugin_name.upper_camel_case }} {
         .build();
   }
 
-  private {{ plugin_name.upper_camel_case }}(ManagedChannel channel) {
-    this.channel = channel;
+  public synchronized void bind() {
+    channel = createChannel(host, port);
     stub = {{ plugin_name.upper_camel_case }}ServiceGrpc.newStub(channel);
     scheduler = Schedulers.trampoline();
+
+    isBound = true;
   }
 
   public void dispose() {
