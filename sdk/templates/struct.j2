@@ -3,9 +3,9 @@ public static class {{ name.upper_camel_case }} {
   private {{ field.type_info.name }} {{ field.name.lower_camel_case }};
   {%- endfor %}
 
-  {% for nested_enum in nested_enums %}
+  {%- for nested_enum in nested_enums %}
   {{ '\n' + indent(nested_enums[nested_enum], 1) }}
-  {% endfor %}
+  {%- endfor %}
 
   public {{ name.upper_camel_case }}({%- for field in fields %}{{ field.type_info.name }} {{ field.name.lower_camel_case }}{{ ", " if not loop.last }}{%- endfor %}) {
     {%- for field in fields %}
