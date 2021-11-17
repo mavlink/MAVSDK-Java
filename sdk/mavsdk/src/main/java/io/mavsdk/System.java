@@ -210,6 +210,39 @@ public class System {
   }
 
   /**
+   * Bind all plugins.
+   */
+  public void bind() {
+    this.action.bind();
+    this.actionServer.bind();
+    this.calibration.bind();
+    this.camera.bind();
+    this.core.bind();
+    this.failure.bind();
+    this.followMe.bind();
+    this.ftp.bind();
+    this.geofence.bind();
+    this.gimbal.bind();
+    this.info.bind();
+    this.logFiles.bind();
+    this.manualControl.bind();
+    this.mission.bind();
+    this.missionRaw.bind();
+    this.missionRawServer.bind();
+    this.mocap.bind();
+    this.offboard.bind();
+    this.param.bind();
+    this.paramServer.bind();
+    this.serverUtility.bind();
+    this.shell.bind();
+    this.telemetry.bind();
+    this.telemetryServer.bind();
+    this.trackingServer.bind();
+    this.transponder.bind();
+    this.tune.bind();
+  }
+
+  /**
    * Dispose of all the plugins.
    */
   public void dispose() {

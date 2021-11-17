@@ -8,6 +8,7 @@ public class MavsdkTest {
   @Test
   public void testStream() throws InterruptedException {
     System system = new System();
+    system.bind();
     system.getTelemetry().getPosition()
           .doOnNext(next -> java.lang.System.out.println(next))
           .test()
@@ -17,6 +18,7 @@ public class MavsdkTest {
   @Test
   public void testCall() throws InterruptedException {
     System system = new System();
+    system.bind();
     system.getAction().arm()
           .andThen(system.getAction().takeoff())
           .delay(5, TimeUnit.SECONDS)
@@ -28,6 +30,7 @@ public class MavsdkTest {
   @Test
   public void testRequest() throws InterruptedException {
     System system = new System();
+    system.bind();
     system.getAction().getTakeoffAltitude()
           .doOnSuccess(result -> java.lang.System.out.println(result)).test().await();
   }
