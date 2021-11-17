@@ -7,18 +7,17 @@ public Completable {{ name.lower_camel_case }}({% for param in params %}@NonNull
   if (!isBound) return Completable.error(new Exception("No System"));
   {% endif %}
 
-  {{ plugin_name.upper_camel_case }}Proto.{{ name.upper_camel_case }}Request request = {{ plugin_name.upper_camel_case }}Proto.{{ name.upper_camel_case }}Request
-          .newBuilder()
-          {%- for param in params %}
-            {%- if param.type_info.is_primitive %}
-          .set{{ param.name.upper_camel_case }}({{ param.name.lower_camel_case }})
-            {% elif param.type_info.is_repeated %}
-          .addAll{{ param.name.upper_camel_case }}({{ param.name.lower_camel_case }}.stream().map(elem -> elem.rpc{{ param.type_info.inner_name }}())::iterator)
-            {%- else %}
-          .set{{ param.name.upper_camel_case }}({{ param.name.lower_camel_case }}.rpc{{ param.type_info.name }}())
-            {%- endif %}
-          {%- endfor %}
-          .build();
+  {{ plugin_name.upper_camel_case }}Proto.{{ name.upper_camel_case }}Request request = {{ plugin_name.upper_camel_case }}Proto.{{ name.upper_camel_case }}Request.newBuilder()
+  {%- for param in params %}
+    {%- if param.type_info.is_primitive %}
+    .set{{ param.name.upper_camel_case }}({{ param.name.lower_camel_case }})
+    {% elif param.type_info.is_repeated %}
+    .addAll{{ param.name.upper_camel_case }}({{ param.name.lower_camel_case }}.stream().map(elem -> elem.rpc{{ param.type_info.inner_name }}())::iterator)
+    {%- else %}
+    .set{{ param.name.upper_camel_case }}({{ param.name.lower_camel_case }}.rpc{{ param.type_info.name }}())
+    {%- endif %}
+  {%- endfor %}
+    .build();
 
   return Completable.create(emitter -> {
     scheduler.scheduleDirect(() -> {
