@@ -10,6 +10,8 @@ import io.reactivex.Scheduler;
 import io.reactivex.Single;
 import io.reactivex.annotations.CheckReturnValue;
 import io.reactivex.annotations.NonNull;
+import io.reactivex.processors.FlowableProcessor;
+import io.reactivex.processors.PublishProcessor;
 import io.reactivex.schedulers.Schedulers;
 import java.lang.String;
 import java.util.List;
@@ -92,13 +94,16 @@ public class {{ plugin_name.upper_camel_case }} {
 
 {%- for enum in enums %}
 {{ indent(enum, 1) }}
+
 {%- endfor %}
 
 {% for struct in structs %}
 {{ indent(struct, 1) }}
+
 {% endfor %}
 
 {%- for method in methods %}
 {{ indent(method, 1) }}
+
 {%- endfor %}
 }
