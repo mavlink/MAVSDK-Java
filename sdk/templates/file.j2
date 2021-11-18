@@ -70,6 +70,7 @@ public class {{ plugin_name.upper_camel_case }} implements Plugin {
     }
   }
 
+  @Override
   public void dispose() {
     this.channel.shutdown();
   }
