@@ -1,4 +1,4 @@
-package io.mavsdk;
+package io.mavsdk.internal;
 
 import io.reactivex.annotations.NonNull;
 

@@ -11,6 +11,9 @@ import io.mavsdk.ftp.Ftp;
 import io.mavsdk.geofence.Geofence;
 import io.mavsdk.gimbal.Gimbal;
 import io.mavsdk.info.Info;
+import io.mavsdk.internal.DoubleCheck;
+import io.mavsdk.internal.MavsdkExecutors;
+import io.mavsdk.internal.Provider;
 import io.mavsdk.log_files.LogFiles;
 import io.mavsdk.manual_control.ManualControl;
 import io.mavsdk.mission.Mission;
@@ -27,35 +30,37 @@ import io.mavsdk.telemetry_server.TelemetryServer;
 import io.mavsdk.tracking_server.TrackingServer;
 import io.mavsdk.transponder.Transponder;
 import io.mavsdk.tune.Tune;
+import io.reactivex.annotations.NonNull;
 
 public class System {
-  private final Action action;
-  private final ActionServer actionServer;
-  private final Calibration calibration;
-  private final Camera camera;
-  private final Core core;
-  private final Failure failure;
-  private final FollowMe followMe;
-  private final Ftp ftp;
-  private final Geofence geofence;
-  private final Gimbal gimbal;
-  private final Info info;
-  private final LogFiles logFiles;
-  private final ManualControl manualControl;
-  private final Mission mission;
-  private final MissionRaw missionRaw;
-  private final MissionRawServer missionRawServer;
-  private final Mocap mocap;
-  private final Offboard offboard;
-  private final Param param;
-  private final ParamServer paramServer;
-  private final ServerUtility serverUtility;
-  private final Shell shell;
-  private final Telemetry telemetry;
-  private final TelemetryServer telemetryServer;
-  private final TrackingServer trackingServer;
-  private final Transponder transponder;
-  private final Tune tune;
+
+  private final Provider<Action> actionProvider;
+  private final Provider<ActionServer> actionServerProvider;
+  private final Provider<Calibration> calibrationProvider;
+  private final Provider<Camera> cameraProvider;
+  private final Provider<Core> coreProvider;
+  private final Provider<Failure> failureProvider;
+  private final Provider<FollowMe> followMeProvider;
+  private final Provider<Ftp> ftpProvider;
+  private final Provider<Geofence> geofenceProvider;
+  private final Provider<Gimbal> gimbalProvider;
+  private final Provider<Info> infoProvider;
+  private final Provider<LogFiles> logFilesProvider;
+  private final Provider<ManualControl> manualControlProvider;
+  private final Provider<Mission> missionProvider;
+  private final Provider<MissionRaw> missionRawProvider;
+  private final Provider<MissionRawServer> missionRawServerProvider;
+  private final Provider<Mocap> mocapProvider;
+  private final Provider<Offboard> offboardProvider;
+  private final Provider<Param> paramProvider;
+  private final Provider<ParamServer> paramServerProvider;
+  private final Provider<ServerUtility> serverUtilityProvider;
+  private final Provider<Shell> shellProvider;
+  private final Provider<Telemetry> telemetryProvider;
+  private final Provider<TelemetryServer> telemetryServerProvider;
+  private final Provider<TrackingServer> trackingServerProvider;
+  private final Provider<Transponder> transponderProvider;
+  private final Provider<Tune> tuneProvider;
 
   /**
    * Create a System object, initializing the plugins and connecting them to mavsdk_server.
@@ -68,210 +73,341 @@ public class System {
 
   /**
    * Create a System object, initializing the plugins and connecting them to mavsdk_server.
+   *
    * @param host the address of mavsdk_server
    * @param port the port of mavsdk_server
    */
-  public System(String host, int port) {
-    this.action = new Action(host, port);
-    this.actionServer = new ActionServer(host, port);
-    this.calibration = new Calibration(host, port);
-    this.camera = new Camera(host, port);
-    this.core = new Core(host, port);
-    this.failure = new Failure(host, port);
-    this.followMe = new FollowMe(host, port);
-    this.ftp = new Ftp(host, port);
-    this.geofence = new Geofence(host, port);
-    this.gimbal = new Gimbal(host, port);
-    this.info = new Info(host, port);
-    this.logFiles = new LogFiles(host, port);
-    this.manualControl = new ManualControl(host, port);
-    this.mission = new Mission(host, port);
-    this.missionRaw = new MissionRaw(host, port);
-    this.missionRawServer = new MissionRawServer(host, port);
-    this.mocap = new Mocap(host, port);
-    this.offboard = new Offboard(host, port);
-    this.param = new Param(host, port);
-    this.paramServer = new ParamServer(host, port);
-    this.serverUtility = new ServerUtility(host, port);
-    this.shell = new Shell(host, port);
-    this.telemetry = new Telemetry(host, port);
-    this.telemetryServer = new TelemetryServer(host, port);
-    this.trackingServer = new TrackingServer(host, port);
-    this.transponder = new Transponder(host, port);
-    this.tune = new Tune(host, port);
+  public System(@NonNull String host, int port) {
+
+    actionProvider = DoubleCheck.create(() -> {
+      Action plugin = new Action(host, port);
+      MavsdkExecutors.connectionExecutor().execute(plugin::bind);
+      return plugin;
+    });
+
+    actionServerProvider = DoubleCheck.create(() -> {
+      ActionServer plugin = new ActionServer(host, port);
+      MavsdkExecutors.connectionExecutor().execute(plugin::bind);
+      return plugin;
+    });
+
+    calibrationProvider = DoubleCheck.create(() -> {
+      Calibration plugin = new Calibration(host, port);
+      MavsdkExecutors.connectionExecutor().execute(plugin::bind);
+      return plugin;
+    });
+
+    cameraProvider = DoubleCheck.create(() -> {
+      Camera plugin = new Camera(host, port);
+      MavsdkExecutors.connectionExecutor().execute(plugin::bind);
+      return plugin;
+    });
+
+    coreProvider = DoubleCheck.create(() -> {
+      Core plugin = new Core(host, port);
+      MavsdkExecutors.connectionExecutor().execute(plugin::bind);
+      return plugin;
+    });
+
+    failureProvider = DoubleCheck.create(() -> {
+      Failure plugin = new Failure(host, port);
+      MavsdkExecutors.connectionExecutor().execute(plugin::bind);
+      return plugin;
+    });
+
+    followMeProvider = DoubleCheck.create(() -> {
+      FollowMe plugin = new FollowMe(host, port);
+      MavsdkExecutors.connectionExecutor().execute(plugin::bind);
+      return plugin;
+    });
+
+    ftpProvider = DoubleCheck.create(() -> {
+      Ftp plugin = new Ftp(host, port);
+      MavsdkExecutors.connectionExecutor().execute(plugin::bind);
+      return plugin;
+    });
+
+    geofenceProvider = DoubleCheck.create(() -> {
+      Geofence plugin = new Geofence(host, port);
+      MavsdkExecutors.connectionExecutor().execute(plugin::bind);
+      return plugin;
+    });
+
+    gimbalProvider = DoubleCheck.create(() -> {
+      Gimbal plugin = new Gimbal(host, port);
+      MavsdkExecutors.connectionExecutor().execute(plugin::bind);
+      return plugin;
+    });
+
+    infoProvider = DoubleCheck.create(() -> {
+      Info plugin = new Info(host, port);
+      MavsdkExecutors.connectionExecutor().execute(plugin::bind);
+      return plugin;
+    });
+
+    logFilesProvider = DoubleCheck.create(() -> {
+      LogFiles plugin = new LogFiles(host, port);
+      MavsdkExecutors.connectionExecutor().execute(plugin::bind);
+      return plugin;
+    });
+
+    manualControlProvider = DoubleCheck.create(() -> {
+      ManualControl plugin = new ManualControl(host, port);
+      MavsdkExecutors.connectionExecutor().execute(plugin::bind);
+      return plugin;
+    });
+
+    missionProvider = DoubleCheck.create(() -> {
+      Mission plugin = new Mission(host, port);
+      MavsdkExecutors.connectionExecutor().execute(plugin::bind);
+      return plugin;
+    });
+
+    missionRawProvider = DoubleCheck.create(() -> {
+      MissionRaw plugin = new MissionRaw(host, port);
+      MavsdkExecutors.connectionExecutor().execute(plugin::bind);
+      return plugin;
+    });
+
+    missionRawServerProvider = DoubleCheck.create(() -> {
+      MissionRawServer plugin = new MissionRawServer(host, port);
+      MavsdkExecutors.connectionExecutor().execute(plugin::bind);
+      return plugin;
+    });
+
+    mocapProvider = DoubleCheck.create(() -> {
+      Mocap plugin = new Mocap(host, port);
+      MavsdkExecutors.connectionExecutor().execute(plugin::bind);
+      return plugin;
+    });
+
+    offboardProvider = DoubleCheck.create(() -> {
+      Offboard plugin = new Offboard(host, port);
+      MavsdkExecutors.connectionExecutor().execute(plugin::bind);
+      return plugin;
+    });
+
+    paramProvider = DoubleCheck.create(() -> {
+      Param plugin = new Param(host, port);
+      MavsdkExecutors.connectionExecutor().execute(plugin::bind);
+      return plugin;
+    });
+
+    paramServerProvider = DoubleCheck.create(() -> {
+      ParamServer plugin = new ParamServer(host, port);
+      MavsdkExecutors.connectionExecutor().execute(plugin::bind);
+      return plugin;
+    });
+
+    serverUtilityProvider = DoubleCheck.create(() -> {
+      ServerUtility plugin = new ServerUtility(host, port);
+      MavsdkExecutors.connectionExecutor().execute(plugin::bind);
+      return plugin;
+    });
+
+    shellProvider = DoubleCheck.create(() -> {
+      Shell plugin = new Shell(host, port);
+      MavsdkExecutors.connectionExecutor().execute(plugin::bind);
+      return plugin;
+    });
+
+    telemetryProvider = DoubleCheck.create(() -> {
+      Telemetry plugin = new Telemetry(host, port);
+      MavsdkExecutors.connectionExecutor().execute(plugin::bind);
+      return plugin;
+    });
+
+    telemetryServerProvider = DoubleCheck.create(() -> {
+      TelemetryServer plugin = new TelemetryServer(host, port);
+      MavsdkExecutors.connectionExecutor().execute(plugin::bind);
+      return plugin;
+    });
+
+    trackingServerProvider = DoubleCheck.create(() -> {
+      TrackingServer plugin = new TrackingServer(host, port);
+      MavsdkExecutors.connectionExecutor().execute(plugin::bind);
+      return plugin;
+    });
+
+    transponderProvider = DoubleCheck.create(() -> {
+      Transponder plugin = new Transponder(host, port);
+      MavsdkExecutors.connectionExecutor().execute(plugin::bind);
+      return plugin;
+    });
+
+    tuneProvider = DoubleCheck.create(() -> {
+      Tune plugin = new Tune(host, port);
+      MavsdkExecutors.connectionExecutor().execute(plugin::bind);
+      return plugin;
+    });
   }
 
+  @NonNull
   public Action getAction() {
-    return action;
+    return actionProvider.get();
   }
 
+  @NonNull
   public ActionServer getActionServer() {
-    return actionServer;
+    return actionServerProvider.get();
   }
 
+  @NonNull
   public Calibration getCalibration() {
-    return calibration;
+    return calibrationProvider.get();
   }
 
+  @NonNull
   public Camera getCamera() {
-    return camera;
+    return cameraProvider.get();
   }
 
+  @NonNull
   public Core getCore() {
-    return core;
+    return coreProvider.get();
   }
 
+  @NonNull
   public Failure getFailure() {
-    return failure;
+    return failureProvider.get();
   }
 
+  @NonNull
   public FollowMe getFollowMe() {
-    return followMe;
+    return followMeProvider.get();
   }
 
+  @NonNull
   public Ftp getFtp() {
-    return ftp;
+    return ftpProvider.get();
   }
 
+  @NonNull
   public Geofence getGeofence() {
-    return geofence;
+    return geofenceProvider.get();
   }
 
+  @NonNull
   public Gimbal getGimbal() {
-    return gimbal;
+    return gimbalProvider.get();
   }
 
+  @NonNull
   public Info getInfo() {
-    return info;
+    return infoProvider.get();
   }
 
+  @NonNull
   public LogFiles getLogFiles() {
-    return logFiles;
+    return logFilesProvider.get();
   }
 
+  @NonNull
   public ManualControl getManualControl() {
-    return manualControl;
+    return manualControlProvider.get();
   }
 
+  @NonNull
   public Mission getMission() {
-    return mission;
+    return missionProvider.get();
   }
 
+  @NonNull
   public MissionRaw getMissionRaw() {
-    return missionRaw;
+    return missionRawProvider.get();
   }
 
+  @NonNull
   public MissionRawServer getMissionRawServer() {
-    return missionRawServer;
+    return missionRawServerProvider.get();
   }
 
+  @NonNull
   public Mocap getMocap() {
-    return mocap;
+    return mocapProvider.get();
   }
 
+  @NonNull
   public Offboard getOffboard() {
-    return offboard;
+    return offboardProvider.get();
   }
 
+  @NonNull
   public Param getParam() {
-    return param;
+    return paramProvider.get();
   }
 
+  @NonNull
   public ParamServer getParamServer() {
-    return paramServer;
+    return paramServerProvider.get();
   }
 
+  @NonNull
   public ServerUtility getServerUtility() {
-    return serverUtility;
+    return serverUtilityProvider.get();
   }
 
+  @NonNull
   public Shell getShell() {
-    return shell;
+    return shellProvider.get();
   }
 
+  @NonNull
   public Telemetry getTelemetry() {
-    return telemetry;
+    return telemetryProvider.get();
   }
 
+  @NonNull
   public TelemetryServer getTelemetryServer() {
-    return telemetryServer;
+    return telemetryServerProvider.get();
   }
 
+  @NonNull
   public TrackingServer getTrackingServer() {
-    return trackingServer;
+    return trackingServerProvider.get();
   }
 
+  @NonNull
   public Transponder getTransponder() {
-    return transponder;
+    return transponderProvider.get();
   }
 
+  @NonNull
   public Tune getTune() {
-    return tune;
+    return tuneProvider.get();
   }
 
-  /**
-   * Bind all plugins.
-   */
-  public void bind() {
-    this.action.bind();
-    this.actionServer.bind();
-    this.calibration.bind();
-    this.camera.bind();
-    this.core.bind();
-    this.failure.bind();
-    this.followMe.bind();
-    this.ftp.bind();
-    this.geofence.bind();
-    this.gimbal.bind();
-    this.info.bind();
-    this.logFiles.bind();
-    this.manualControl.bind();
-    this.mission.bind();
-    this.missionRaw.bind();
-    this.missionRawServer.bind();
-    this.mocap.bind();
-    this.offboard.bind();
-    this.param.bind();
-    this.paramServer.bind();
-    this.serverUtility.bind();
-    this.shell.bind();
-    this.telemetry.bind();
-    this.telemetryServer.bind();
-    this.trackingServer.bind();
-    this.transponder.bind();
-    this.tune.bind();
-  }
 
   /**
    * Dispose of all the plugins.
    */
   public void dispose() {
-    this.action.dispose();
-    this.actionServer.dispose();
-    this.calibration.dispose();
-    this.camera.dispose();
-    this.core.dispose();
-    this.failure.dispose();
-    this.followMe.dispose();
-    this.ftp.dispose();
-    this.geofence.dispose();
-    this.gimbal.dispose();
-    this.info.dispose();
-    this.logFiles.dispose();
-    this.manualControl.dispose();
-    this.mission.dispose();
-    this.missionRaw.dispose();
-    this.missionRawServer.dispose();
-    this.mocap.dispose();
-    this.offboard.dispose();
-    this.param.dispose();
-    this.paramServer.dispose();
-    this.serverUtility.dispose();
-    this.shell.dispose();
-    this.telemetry.dispose();
-    this.telemetryServer.dispose();
-    this.trackingServer.dispose();
-    this.transponder.dispose();
-    this.tune.dispose();
+    this.actionProvider.get().dispose();
+    this.actionServerProvider.get().dispose();
+    this.calibrationProvider.get().dispose();
+    this.cameraProvider.get().dispose();
+    this.coreProvider.get().dispose();
+    this.failureProvider.get().dispose();
+    this.followMeProvider.get().dispose();
+    this.ftpProvider.get().dispose();
+    this.geofenceProvider.get().dispose();
+    this.gimbalProvider.get().dispose();
+    this.infoProvider.get().dispose();
+    this.logFilesProvider.get().dispose();
+    this.manualControlProvider.get().dispose();
+    this.missionProvider.get().dispose();
+    this.missionRawProvider.get().dispose();
+    this.missionRawServerProvider.get().dispose();
+    this.mocapProvider.get().dispose();
+    this.offboardProvider.get().dispose();
+    this.paramProvider.get().dispose();
+    this.paramServerProvider.get().dispose();
+    this.serverUtilityProvider.get().dispose();
+    this.shellProvider.get().dispose();
+    this.telemetryProvider.get().dispose();
+    this.telemetryServerProvider.get().dispose();
+    this.trackingServerProvider.get().dispose();
+    this.transponderProvider.get().dispose();
+    this.tuneProvider.get().dispose();
   }
 }
