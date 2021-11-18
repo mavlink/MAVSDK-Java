@@ -20,7 +20,7 @@ public class MavsdkExecutors {
   }
 
   /**
-   * The `Executor` for initializing the {@link Plugin}s in the background.
+   * The `Executor` for initializing the {@link Plugin}s in the background in a FIFO manner.
    *
    * Note: For Android, this executor should be used to run the MavsdkServer before
    * any {@link Plugin} is called/initialized. Ideally, use this to run the MavsdkServer
