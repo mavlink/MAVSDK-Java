@@ -31,7 +31,7 @@ public class {{ plugin_name.upper_camel_case }} implements Plugin {
   private {{ plugin_name.upper_camel_case }}ServiceGrpc.{{ plugin_name.upper_camel_case }}ServiceStub stub;
   private Scheduler scheduler;
 
-  private volatile boolean isBound = false;
+  private volatile boolean isInitialized = false;
 
   public {{ plugin_name.upper_camel_case }}(String host, int port) {
     this.host = host;
@@ -51,28 +51,28 @@ public class {{ plugin_name.upper_camel_case }} implements Plugin {
   }
 
   @Override
-  public void bind() {
-    if (!isBound) {
+  public void initialize() {
+    if (!isInitialized) {
       synchronized (this) {
-        if (!isBound) {
+        if (!isInitialized) {
           channel = createChannel(host, port);
           stub = {{ plugin_name.upper_camel_case }}ServiceGrpc.newStub(channel);
           scheduler = Schedulers.trampoline();
 
           processStreams();
-          isBound = true;
+          isInitialized = true;
         } else {
-          throw new RuntimeException("Already bound!");
+          throw new RuntimeException("Already initialized!");
         }
       }
     } else {
-      throw new RuntimeException("Already bound!");
+      throw new RuntimeException("Already initialized!");
     }
   }
 
   @Override
   public void dispose() {
-    if (isBound) {
+    if (isInitialized) {
       this.channel.shutdown();
     }
   }

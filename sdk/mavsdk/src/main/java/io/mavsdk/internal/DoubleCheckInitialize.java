@@ -4,12 +4,12 @@ import io.mavsdk.MavsdkExecutors;
 import io.mavsdk.Plugin;
 import io.reactivex.annotations.NonNull;
 
-public class DoubleCheckBind<T extends Plugin> implements Provider<T> {
+public class DoubleCheckInitialize<T extends Plugin> implements Provider<T> {
 
   private final Provider<T> provider;
   private volatile T instance = null;
 
-  private DoubleCheckBind(@NonNull Provider<T> provider) {
+  private DoubleCheckInitialize(@NonNull Provider<T> provider) {
     this.provider = provider;
   }
 
@@ -27,6 +27,6 @@ public class DoubleCheckBind<T extends Plugin> implements Provider<T> {
   }
 
   public static <T extends Plugin> Provider<T> provider(@NonNull Provider<T> provider) {
-    return new DoubleCheckBind<>(provider);
+    return new DoubleCheckInitialize<>(provider);
   }
 }
