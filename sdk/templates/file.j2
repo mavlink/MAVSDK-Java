@@ -1,5 +1,6 @@
 package {{ package.lower_snake_case }};
 
+import io.mavsdk.Plugin;
 import io.grpc.ManagedChannel;
 import io.grpc.okhttp.OkHttpChannelBuilder;
 import io.grpc.stub.StreamObserver;
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class {{ plugin_name.upper_camel_case }} {
+public class {{ plugin_name.upper_camel_case }} implements Plugin {
   private static final Logger logger = LoggerFactory.getLogger({{ plugin_name.upper_camel_case }}.class);
 
   private final String host;
@@ -48,6 +49,7 @@ public class {{ plugin_name.upper_camel_case }} {
         .build();
   }
 
+  @Override
   public void bind() {
     if (!isBound) {
       synchronized (this) {
