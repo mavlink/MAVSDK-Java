@@ -12,7 +12,6 @@ import io.mavsdk.geofence.Geofence;
 import io.mavsdk.gimbal.Gimbal;
 import io.mavsdk.info.Info;
 import io.mavsdk.internal.DoubleCheckBind;
-import io.mavsdk.internal.MavsdkExecutors;
 import io.mavsdk.internal.Provider;
 import io.mavsdk.log_files.LogFiles;
 import io.mavsdk.manual_control.ManualControl;
