@@ -15,8 +15,8 @@ public class MavsdkExecutors {
   private MavsdkExecutors() {
   }
 
-  private static final class BindHolder {
-    private static final Executor BIND_EXECUTOR = Executors.newSingleThreadExecutor();
+  private static final class InitializerHolder {
+    private static final Executor INITIALIZER = Executors.newSingleThreadExecutor();
   }
 
   /**
@@ -29,7 +29,7 @@ public class MavsdkExecutors {
    * @return The `Executor` for initializing the {@link Plugin}s in the background.
    */
   @NonNull
-  public static Executor bindExecutor() {
-    return BindHolder.BIND_EXECUTOR;
+  public static Executor initializer() {
+    return InitializerHolder.INITIALIZER;
   }
 }

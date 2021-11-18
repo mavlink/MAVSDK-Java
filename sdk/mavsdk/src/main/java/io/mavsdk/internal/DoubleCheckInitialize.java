@@ -28,7 +28,7 @@ public class DoubleCheckInitialize<T extends Plugin> implements Provider<T> {
       synchronized (this) {
         if (instance == null) {
           instance = provider.get();
-          MavsdkExecutors.bindExecutor().execute(instance::initialize);
+          MavsdkExecutors.initializer().execute(instance::initialize);
         }
       }
     }
