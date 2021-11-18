@@ -1,6 +1,7 @@
 package {{ package.lower_snake_case }};
 
 import io.mavsdk.Plugin;
+import io.mavsdk.MavsdkException;
 import io.grpc.ManagedChannel;
 import io.grpc.okhttp.OkHttpChannelBuilder;
 import io.grpc.stub.StreamObserver;
@@ -84,7 +85,7 @@ public class {{ plugin_name.upper_camel_case }} implements Plugin {
   }
 
   {% if has_result %}
-  public class {{ plugin_name.upper_camel_case }}Exception extends Exception {
+  public class {{ plugin_name.upper_camel_case }}Exception extends MavsdkException {
     private {{ plugin_name.upper_camel_case }}Result.Result code;
     private String description;
 

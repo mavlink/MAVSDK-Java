@@ -3,7 +3,7 @@ public Single<{% if return_type.is_primitive %}{{ return_type.name }}{% elif ret
   {%- if has_result %}
   if (!isBound) return Single.error(new {{ plugin_name.upper_camel_case }}Exception({{ plugin_name.upper_camel_case }}Result.Result.NO_SYSTEM, "No System"));
   {%- else %}
-  if (!isBound) return Single.error(new Exception("No System"));
+  if (!isBound) return Single.error(new MavsdkException("No System"));
   {%- endif %}
 
   {{ plugin_name.upper_camel_case }}Proto.{{ name.upper_camel_case }}Request request = {{ plugin_name.upper_camel_case }}Proto.{{ name.upper_camel_case }}Request.newBuilder()
