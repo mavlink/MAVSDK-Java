@@ -3,12 +3,12 @@ package io.mavsdk.internal;
 import io.mavsdk.Plugin;
 import io.reactivex.annotations.NonNull;
 
-public class DoubleCheck<T extends Plugin> implements Provider<T> {
+public class DoubleCheckBind<T extends Plugin> implements Provider<T> {
 
   private final Provider<T> provider;
   private volatile T instance = null;
 
-  private DoubleCheck(@NonNull Provider<T> provider) {
+  private DoubleCheckBind(@NonNull Provider<T> provider) {
     this.provider = provider;
   }
 
@@ -18,13 +18,14 @@ public class DoubleCheck<T extends Plugin> implements Provider<T> {
       synchronized (this) {
         if (instance == null) {
           instance = provider.get();
+          MavsdkExecutors.bindExecutor().execute(instance::bind);
         }
       }
     }
     return instance;
   }
 
-  public static <T extends Plugin> Provider<T> create(@NonNull Provider<T> provider) {
-    return new DoubleCheck<>(provider);
+  public static <T extends Plugin> Provider<T> provider(@NonNull Provider<T> provider) {
+    return new DoubleCheckBind<>(provider);
   }
 }

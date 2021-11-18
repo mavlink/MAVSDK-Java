@@ -11,7 +11,7 @@ import io.mavsdk.ftp.Ftp;
 import io.mavsdk.geofence.Geofence;
 import io.mavsdk.gimbal.Gimbal;
 import io.mavsdk.info.Info;
-import io.mavsdk.internal.DoubleCheck;
+import io.mavsdk.internal.DoubleCheckBind;
 import io.mavsdk.internal.MavsdkExecutors;
 import io.mavsdk.internal.Provider;
 import io.mavsdk.log_files.LogFiles;
@@ -78,168 +78,33 @@ public class System {
    * @param port the port of mavsdk_server
    */
   public System(@NonNull String host, int port) {
-
-    actionProvider = DoubleCheck.create(() -> {
-      Action plugin = new Action(host, port);
-      MavsdkExecutors.bindExecutor().execute(plugin::bind);
-      return plugin;
-    });
-
-    actionServerProvider = DoubleCheck.create(() -> {
-      ActionServer plugin = new ActionServer(host, port);
-      MavsdkExecutors.bindExecutor().execute(plugin::bind);
-      return plugin;
-    });
-
-    calibrationProvider = DoubleCheck.create(() -> {
-      Calibration plugin = new Calibration(host, port);
-      MavsdkExecutors.bindExecutor().execute(plugin::bind);
-      return plugin;
-    });
-
-    cameraProvider = DoubleCheck.create(() -> {
-      Camera plugin = new Camera(host, port);
-      MavsdkExecutors.bindExecutor().execute(plugin::bind);
-      return plugin;
-    });
-
-    coreProvider = DoubleCheck.create(() -> {
-      Core plugin = new Core(host, port);
-      MavsdkExecutors.bindExecutor().execute(plugin::bind);
-      return plugin;
-    });
-
-    failureProvider = DoubleCheck.create(() -> {
-      Failure plugin = new Failure(host, port);
-      MavsdkExecutors.bindExecutor().execute(plugin::bind);
-      return plugin;
-    });
-
-    followMeProvider = DoubleCheck.create(() -> {
-      FollowMe plugin = new FollowMe(host, port);
-      MavsdkExecutors.bindExecutor().execute(plugin::bind);
-      return plugin;
-    });
-
-    ftpProvider = DoubleCheck.create(() -> {
-      Ftp plugin = new Ftp(host, port);
-      MavsdkExecutors.bindExecutor().execute(plugin::bind);
-      return plugin;
-    });
-
-    geofenceProvider = DoubleCheck.create(() -> {
-      Geofence plugin = new Geofence(host, port);
-      MavsdkExecutors.bindExecutor().execute(plugin::bind);
-      return plugin;
-    });
-
-    gimbalProvider = DoubleCheck.create(() -> {
-      Gimbal plugin = new Gimbal(host, port);
-      MavsdkExecutors.bindExecutor().execute(plugin::bind);
-      return plugin;
-    });
-
-    infoProvider = DoubleCheck.create(() -> {
-      Info plugin = new Info(host, port);
-      MavsdkExecutors.bindExecutor().execute(plugin::bind);
-      return plugin;
-    });
-
-    logFilesProvider = DoubleCheck.create(() -> {
-      LogFiles plugin = new LogFiles(host, port);
-      MavsdkExecutors.bindExecutor().execute(plugin::bind);
-      return plugin;
-    });
-
-    manualControlProvider = DoubleCheck.create(() -> {
-      ManualControl plugin = new ManualControl(host, port);
-      MavsdkExecutors.bindExecutor().execute(plugin::bind);
-      return plugin;
-    });
-
-    missionProvider = DoubleCheck.create(() -> {
-      Mission plugin = new Mission(host, port);
-      MavsdkExecutors.bindExecutor().execute(plugin::bind);
-      return plugin;
-    });
-
-    missionRawProvider = DoubleCheck.create(() -> {
-      MissionRaw plugin = new MissionRaw(host, port);
-      MavsdkExecutors.bindExecutor().execute(plugin::bind);
-      return plugin;
-    });
-
-    missionRawServerProvider = DoubleCheck.create(() -> {
-      MissionRawServer plugin = new MissionRawServer(host, port);
-      MavsdkExecutors.bindExecutor().execute(plugin::bind);
-      return plugin;
-    });
-
-    mocapProvider = DoubleCheck.create(() -> {
-      Mocap plugin = new Mocap(host, port);
-      MavsdkExecutors.bindExecutor().execute(plugin::bind);
-      return plugin;
-    });
-
-    offboardProvider = DoubleCheck.create(() -> {
-      Offboard plugin = new Offboard(host, port);
-      MavsdkExecutors.bindExecutor().execute(plugin::bind);
-      return plugin;
-    });
-
-    paramProvider = DoubleCheck.create(() -> {
-      Param plugin = new Param(host, port);
-      MavsdkExecutors.bindExecutor().execute(plugin::bind);
-      return plugin;
-    });
-
-    paramServerProvider = DoubleCheck.create(() -> {
-      ParamServer plugin = new ParamServer(host, port);
-      MavsdkExecutors.bindExecutor().execute(plugin::bind);
-      return plugin;
-    });
-
-    serverUtilityProvider = DoubleCheck.create(() -> {
-      ServerUtility plugin = new ServerUtility(host, port);
-      MavsdkExecutors.bindExecutor().execute(plugin::bind);
-      return plugin;
-    });
-
-    shellProvider = DoubleCheck.create(() -> {
-      Shell plugin = new Shell(host, port);
-      MavsdkExecutors.bindExecutor().execute(plugin::bind);
-      return plugin;
-    });
-
-    telemetryProvider = DoubleCheck.create(() -> {
-      Telemetry plugin = new Telemetry(host, port);
-      MavsdkExecutors.bindExecutor().execute(plugin::bind);
-      return plugin;
-    });
-
-    telemetryServerProvider = DoubleCheck.create(() -> {
-      TelemetryServer plugin = new TelemetryServer(host, port);
-      MavsdkExecutors.bindExecutor().execute(plugin::bind);
-      return plugin;
-    });
-
-    trackingServerProvider = DoubleCheck.create(() -> {
-      TrackingServer plugin = new TrackingServer(host, port);
-      MavsdkExecutors.bindExecutor().execute(plugin::bind);
-      return plugin;
-    });
-
-    transponderProvider = DoubleCheck.create(() -> {
-      Transponder plugin = new Transponder(host, port);
-      MavsdkExecutors.bindExecutor().execute(plugin::bind);
-      return plugin;
-    });
-
-    tuneProvider = DoubleCheck.create(() -> {
-      Tune plugin = new Tune(host, port);
-      MavsdkExecutors.bindExecutor().execute(plugin::bind);
-      return plugin;
-    });
+    actionProvider = DoubleCheckBind.provider(() -> new Action(host, port));
+    actionServerProvider = DoubleCheckBind.provider(() -> new ActionServer(host, port));
+    calibrationProvider = DoubleCheckBind.provider(() -> new Calibration(host, port));
+    cameraProvider = DoubleCheckBind.provider(() -> new Camera(host, port));
+    coreProvider = DoubleCheckBind.provider(() -> new Core(host, port));
+    failureProvider = DoubleCheckBind.provider(() -> new Failure(host, port));
+    followMeProvider = DoubleCheckBind.provider(() -> new FollowMe(host, port));
+    ftpProvider = DoubleCheckBind.provider(() -> new Ftp(host, port));
+    geofenceProvider = DoubleCheckBind.provider(() -> new Geofence(host, port));
+    gimbalProvider = DoubleCheckBind.provider(() -> new Gimbal(host, port));
+    infoProvider = DoubleCheckBind.provider(() -> new Info(host, port));
+    logFilesProvider = DoubleCheckBind.provider(() -> new LogFiles(host, port));
+    manualControlProvider = DoubleCheckBind.provider(() -> new ManualControl(host, port));
+    missionProvider = DoubleCheckBind.provider(() -> new Mission(host, port));
+    missionRawProvider = DoubleCheckBind.provider(() -> new MissionRaw(host, port));
+    missionRawServerProvider = DoubleCheckBind.provider(() -> new MissionRawServer(host, port));
+    mocapProvider = DoubleCheckBind.provider(() -> new Mocap(host, port));
+    offboardProvider = DoubleCheckBind.provider(() -> new Offboard(host, port));
+    paramProvider = DoubleCheckBind.provider(() -> new Param(host, port));
+    paramServerProvider = DoubleCheckBind.provider(() -> new ParamServer(host, port));
+    serverUtilityProvider = DoubleCheckBind.provider(() -> new ServerUtility(host, port));
+    shellProvider = DoubleCheckBind.provider(() -> new Shell(host, port));
+    telemetryProvider = DoubleCheckBind.provider(() -> new Telemetry(host, port));
+    telemetryServerProvider = DoubleCheckBind.provider(() -> new TelemetryServer(host, port));
+    trackingServerProvider = DoubleCheckBind.provider(() -> new TrackingServer(host, port));
+    transponderProvider = DoubleCheckBind.provider(() -> new Transponder(host, port));
+    tuneProvider = DoubleCheckBind.provider(() -> new Tune(host, port));
   }
 
   @NonNull
@@ -382,32 +247,32 @@ public class System {
    * Dispose of all the plugins.
    */
   public void dispose() {
-    this.actionProvider.get().dispose();
-    this.actionServerProvider.get().dispose();
-    this.calibrationProvider.get().dispose();
-    this.cameraProvider.get().dispose();
-    this.coreProvider.get().dispose();
-    this.failureProvider.get().dispose();
-    this.followMeProvider.get().dispose();
-    this.ftpProvider.get().dispose();
-    this.geofenceProvider.get().dispose();
-    this.gimbalProvider.get().dispose();
-    this.infoProvider.get().dispose();
-    this.logFilesProvider.get().dispose();
-    this.manualControlProvider.get().dispose();
-    this.missionProvider.get().dispose();
-    this.missionRawProvider.get().dispose();
-    this.missionRawServerProvider.get().dispose();
-    this.mocapProvider.get().dispose();
-    this.offboardProvider.get().dispose();
-    this.paramProvider.get().dispose();
-    this.paramServerProvider.get().dispose();
-    this.serverUtilityProvider.get().dispose();
-    this.shellProvider.get().dispose();
-    this.telemetryProvider.get().dispose();
-    this.telemetryServerProvider.get().dispose();
-    this.trackingServerProvider.get().dispose();
-    this.transponderProvider.get().dispose();
-    this.tuneProvider.get().dispose();
+    actionProvider.get().dispose();
+    actionServerProvider.get().dispose();
+    calibrationProvider.get().dispose();
+    cameraProvider.get().dispose();
+    coreProvider.get().dispose();
+    failureProvider.get().dispose();
+    followMeProvider.get().dispose();
+    ftpProvider.get().dispose();
+    geofenceProvider.get().dispose();
+    gimbalProvider.get().dispose();
+    infoProvider.get().dispose();
+    logFilesProvider.get().dispose();
+    manualControlProvider.get().dispose();
+    missionProvider.get().dispose();
+    missionRawProvider.get().dispose();
+    missionRawServerProvider.get().dispose();
+    mocapProvider.get().dispose();
+    offboardProvider.get().dispose();
+    paramProvider.get().dispose();
+    paramServerProvider.get().dispose();
+    serverUtilityProvider.get().dispose();
+    shellProvider.get().dispose();
+    telemetryProvider.get().dispose();
+    telemetryServerProvider.get().dispose();
+    trackingServerProvider.get().dispose();
+    transponderProvider.get().dispose();
+    tuneProvider.get().dispose();
   }
 }
