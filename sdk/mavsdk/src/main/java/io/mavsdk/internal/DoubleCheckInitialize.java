@@ -4,6 +4,14 @@ import io.mavsdk.MavsdkExecutors;
 import io.mavsdk.Plugin;
 import io.reactivex.annotations.NonNull;
 
+/**
+ * An implementation of {@link Provider} uses the Double-Check idiom to construct
+ * and initialize instances of {@link Plugin} only once. The memoized instances
+ * are provided in the subsequent calls of `get()`.
+ *
+ * <p> This enables lazy construction and initialization of {@link Plugin}s, reducing
+ * the startup time of the application.
+ */
 public class DoubleCheckInitialize<T extends Plugin> implements Provider<T> {
 
   private final Provider<T> provider;
@@ -14,6 +22,7 @@ public class DoubleCheckInitialize<T extends Plugin> implements Provider<T> {
   }
 
   @Override
+  @NonNull
   public T get() {
     if (instance == null) {
       synchronized (this) {
@@ -26,6 +35,13 @@ public class DoubleCheckInitialize<T extends Plugin> implements Provider<T> {
     return instance;
   }
 
+  /**
+   * Wraps a {@link Provider} into a {@link DoubleCheckInitialize}.
+   *
+   * @param provider The {@link Provider} to wrap.
+   * @return A {@link DoubleCheckInitialize} wrapping the given {@link Provider}.
+   */
+  @NonNull
   public static <T extends Plugin> Provider<T> provider(@NonNull Provider<T> provider) {
     return new DoubleCheckInitialize<>(provider);
   }

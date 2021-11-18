@@ -62,16 +62,18 @@ public class System {
   private final Provider<Tune> tuneProvider;
 
   /**
-   * Create a System object, initializing the plugins and connecting them to mavsdk_server.
+   * Create a System object. The plugins are initialized lazily, when the corresponding
+   * get method is called.
    *
-   * <p>This defaults to a mavsdk_server running on localhost:50051.</p>
+   * <p>This defaults to a mavsdk_server running on localhost:50051.
    */
   public System() {
     this("localhost", 50051);
   }
 
   /**
-   * Create a System object, initializing the plugins and connecting them to mavsdk_server.
+   * Create a System object.The plugins are initialized lazily, when the corresponding
+   * get method is called.
    *
    * @param host the address of mavsdk_server
    * @param port the port of mavsdk_server
