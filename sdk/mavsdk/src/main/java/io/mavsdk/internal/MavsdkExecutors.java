@@ -11,11 +11,11 @@ public class MavsdkExecutors {
   }
 
   private static final class Holder {
-    private static final Executor CONNECTION_EXECUTOR = Executors.newSingleThreadExecutor();
+    private static final Executor BIND_EXECUTOR = Executors.newSingleThreadExecutor();
   }
 
   @NonNull
-  public static Executor connectionExecutor() {
-    return Holder.CONNECTION_EXECUTOR;
+  public static Executor bindExecutor() {
+    return Holder.BIND_EXECUTOR;
   }
 }

@@ -81,163 +81,163 @@ public class System {
 
     actionProvider = DoubleCheck.create(() -> {
       Action plugin = new Action(host, port);
-      MavsdkExecutors.connectionExecutor().execute(plugin::bind);
+      MavsdkExecutors.bindExecutor().execute(plugin::bind);
       return plugin;
     });
 
     actionServerProvider = DoubleCheck.create(() -> {
       ActionServer plugin = new ActionServer(host, port);
-      MavsdkExecutors.connectionExecutor().execute(plugin::bind);
+      MavsdkExecutors.bindExecutor().execute(plugin::bind);
       return plugin;
     });
 
     calibrationProvider = DoubleCheck.create(() -> {
       Calibration plugin = new Calibration(host, port);
-      MavsdkExecutors.connectionExecutor().execute(plugin::bind);
+      MavsdkExecutors.bindExecutor().execute(plugin::bind);
       return plugin;
     });
 
     cameraProvider = DoubleCheck.create(() -> {
       Camera plugin = new Camera(host, port);
-      MavsdkExecutors.connectionExecutor().execute(plugin::bind);
+      MavsdkExecutors.bindExecutor().execute(plugin::bind);
       return plugin;
     });
 
     coreProvider = DoubleCheck.create(() -> {
       Core plugin = new Core(host, port);
-      MavsdkExecutors.connectionExecutor().execute(plugin::bind);
+      MavsdkExecutors.bindExecutor().execute(plugin::bind);
       return plugin;
     });
 
     failureProvider = DoubleCheck.create(() -> {
       Failure plugin = new Failure(host, port);
-      MavsdkExecutors.connectionExecutor().execute(plugin::bind);
+      MavsdkExecutors.bindExecutor().execute(plugin::bind);
       return plugin;
     });
 
     followMeProvider = DoubleCheck.create(() -> {
       FollowMe plugin = new FollowMe(host, port);
-      MavsdkExecutors.connectionExecutor().execute(plugin::bind);
+      MavsdkExecutors.bindExecutor().execute(plugin::bind);
       return plugin;
     });
 
     ftpProvider = DoubleCheck.create(() -> {
       Ftp plugin = new Ftp(host, port);
-      MavsdkExecutors.connectionExecutor().execute(plugin::bind);
+      MavsdkExecutors.bindExecutor().execute(plugin::bind);
       return plugin;
     });
 
     geofenceProvider = DoubleCheck.create(() -> {
       Geofence plugin = new Geofence(host, port);
-      MavsdkExecutors.connectionExecutor().execute(plugin::bind);
+      MavsdkExecutors.bindExecutor().execute(plugin::bind);
       return plugin;
     });
 
     gimbalProvider = DoubleCheck.create(() -> {
       Gimbal plugin = new Gimbal(host, port);
-      MavsdkExecutors.connectionExecutor().execute(plugin::bind);
+      MavsdkExecutors.bindExecutor().execute(plugin::bind);
       return plugin;
     });
 
     infoProvider = DoubleCheck.create(() -> {
       Info plugin = new Info(host, port);
-      MavsdkExecutors.connectionExecutor().execute(plugin::bind);
+      MavsdkExecutors.bindExecutor().execute(plugin::bind);
       return plugin;
     });
 
     logFilesProvider = DoubleCheck.create(() -> {
       LogFiles plugin = new LogFiles(host, port);
-      MavsdkExecutors.connectionExecutor().execute(plugin::bind);
+      MavsdkExecutors.bindExecutor().execute(plugin::bind);
       return plugin;
     });
 
     manualControlProvider = DoubleCheck.create(() -> {
       ManualControl plugin = new ManualControl(host, port);
-      MavsdkExecutors.connectionExecutor().execute(plugin::bind);
+      MavsdkExecutors.bindExecutor().execute(plugin::bind);
       return plugin;
     });
 
     missionProvider = DoubleCheck.create(() -> {
       Mission plugin = new Mission(host, port);
-      MavsdkExecutors.connectionExecutor().execute(plugin::bind);
+      MavsdkExecutors.bindExecutor().execute(plugin::bind);
       return plugin;
     });
 
     missionRawProvider = DoubleCheck.create(() -> {
       MissionRaw plugin = new MissionRaw(host, port);
-      MavsdkExecutors.connectionExecutor().execute(plugin::bind);
+      MavsdkExecutors.bindExecutor().execute(plugin::bind);
       return plugin;
     });
 
     missionRawServerProvider = DoubleCheck.create(() -> {
       MissionRawServer plugin = new MissionRawServer(host, port);
-      MavsdkExecutors.connectionExecutor().execute(plugin::bind);
+      MavsdkExecutors.bindExecutor().execute(plugin::bind);
       return plugin;
     });
 
     mocapProvider = DoubleCheck.create(() -> {
       Mocap plugin = new Mocap(host, port);
-      MavsdkExecutors.connectionExecutor().execute(plugin::bind);
+      MavsdkExecutors.bindExecutor().execute(plugin::bind);
       return plugin;
     });
 
     offboardProvider = DoubleCheck.create(() -> {
       Offboard plugin = new Offboard(host, port);
-      MavsdkExecutors.connectionExecutor().execute(plugin::bind);
+      MavsdkExecutors.bindExecutor().execute(plugin::bind);
       return plugin;
     });
 
     paramProvider = DoubleCheck.create(() -> {
       Param plugin = new Param(host, port);
-      MavsdkExecutors.connectionExecutor().execute(plugin::bind);
+      MavsdkExecutors.bindExecutor().execute(plugin::bind);
       return plugin;
     });
 
     paramServerProvider = DoubleCheck.create(() -> {
       ParamServer plugin = new ParamServer(host, port);
-      MavsdkExecutors.connectionExecutor().execute(plugin::bind);
+      MavsdkExecutors.bindExecutor().execute(plugin::bind);
       return plugin;
     });
 
     serverUtilityProvider = DoubleCheck.create(() -> {
       ServerUtility plugin = new ServerUtility(host, port);
-      MavsdkExecutors.connectionExecutor().execute(plugin::bind);
+      MavsdkExecutors.bindExecutor().execute(plugin::bind);
       return plugin;
     });
 
     shellProvider = DoubleCheck.create(() -> {
       Shell plugin = new Shell(host, port);
-      MavsdkExecutors.connectionExecutor().execute(plugin::bind);
+      MavsdkExecutors.bindExecutor().execute(plugin::bind);
       return plugin;
     });
 
     telemetryProvider = DoubleCheck.create(() -> {
       Telemetry plugin = new Telemetry(host, port);
-      MavsdkExecutors.connectionExecutor().execute(plugin::bind);
+      MavsdkExecutors.bindExecutor().execute(plugin::bind);
       return plugin;
     });
 
     telemetryServerProvider = DoubleCheck.create(() -> {
       TelemetryServer plugin = new TelemetryServer(host, port);
-      MavsdkExecutors.connectionExecutor().execute(plugin::bind);
+      MavsdkExecutors.bindExecutor().execute(plugin::bind);
       return plugin;
     });
 
     trackingServerProvider = DoubleCheck.create(() -> {
       TrackingServer plugin = new TrackingServer(host, port);
-      MavsdkExecutors.connectionExecutor().execute(plugin::bind);
+      MavsdkExecutors.bindExecutor().execute(plugin::bind);
       return plugin;
     });
 
     transponderProvider = DoubleCheck.create(() -> {
       Transponder plugin = new Transponder(host, port);
-      MavsdkExecutors.connectionExecutor().execute(plugin::bind);
+      MavsdkExecutors.bindExecutor().execute(plugin::bind);
       return plugin;
     });
 
     tuneProvider = DoubleCheck.create(() -> {
       Tune plugin = new Tune(host, port);
-      MavsdkExecutors.connectionExecutor().execute(plugin::bind);
+      MavsdkExecutors.bindExecutor().execute(plugin::bind);
       return plugin;
     });
   }
