@@ -7,7 +7,7 @@ public interface Plugin {
 
   /**
    * Initializes the `gRPC` channel, stub and other resources for managing the connection
-   * with the `gRPC` server. This also initializes the data flow of the streams.
+   * with the `gRPC` server.
    *
    * <p>Implementations need to make sure that the initialization of the {@link Plugin}
    * is thread-safe.
