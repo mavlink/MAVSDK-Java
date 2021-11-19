@@ -79,33 +79,87 @@ public class System {
    * @param port the port of mavsdk_server
    */
   public System(@NonNull String host, int port) {
-    actionProvider = DoubleCheckInitialize.provider(() -> new Action(host, port));
-    actionServerProvider = DoubleCheckInitialize.provider(() -> new ActionServer(host, port));
-    calibrationProvider = DoubleCheckInitialize.provider(() -> new Calibration(host, port));
-    cameraProvider = DoubleCheckInitialize.provider(() -> new Camera(host, port));
-    coreProvider = DoubleCheckInitialize.provider(() -> new Core(host, port));
-    failureProvider = DoubleCheckInitialize.provider(() -> new Failure(host, port));
-    followMeProvider = DoubleCheckInitialize.provider(() -> new FollowMe(host, port));
-    ftpProvider = DoubleCheckInitialize.provider(() -> new Ftp(host, port));
-    geofenceProvider = DoubleCheckInitialize.provider(() -> new Geofence(host, port));
-    gimbalProvider = DoubleCheckInitialize.provider(() -> new Gimbal(host, port));
-    infoProvider = DoubleCheckInitialize.provider(() -> new Info(host, port));
-    logFilesProvider = DoubleCheckInitialize.provider(() -> new LogFiles(host, port));
-    manualControlProvider = DoubleCheckInitialize.provider(() -> new ManualControl(host, port));
-    missionProvider = DoubleCheckInitialize.provider(() -> new Mission(host, port));
-    missionRawProvider = DoubleCheckInitialize.provider(() -> new MissionRaw(host, port));
-    missionRawServerProvider = DoubleCheckInitialize.provider(() -> new MissionRawServer(host, port));
-    mocapProvider = DoubleCheckInitialize.provider(() -> new Mocap(host, port));
-    offboardProvider = DoubleCheckInitialize.provider(() -> new Offboard(host, port));
-    paramProvider = DoubleCheckInitialize.provider(() -> new Param(host, port));
-    paramServerProvider = DoubleCheckInitialize.provider(() -> new ParamServer(host, port));
-    serverUtilityProvider = DoubleCheckInitialize.provider(() -> new ServerUtility(host, port));
-    shellProvider = DoubleCheckInitialize.provider(() -> new Shell(host, port));
-    telemetryProvider = DoubleCheckInitialize.provider(() -> new Telemetry(host, port));
-    telemetryServerProvider = DoubleCheckInitialize.provider(() -> new TelemetryServer(host, port));
-    trackingServerProvider = DoubleCheckInitialize.provider(() -> new TrackingServer(host, port));
-    transponderProvider = DoubleCheckInitialize.provider(() -> new Transponder(host, port));
-    tuneProvider = DoubleCheckInitialize.provider(() -> new Tune(host, port));
+    actionProvider = DoubleCheckInitialize.provider(() ->
+      new Action(host, port)
+    );
+    actionServerProvider = DoubleCheckInitialize.provider(() ->
+      new ActionServer(host, port)
+    );
+    calibrationProvider = DoubleCheckInitialize.provider(() ->
+      new Calibration(host, port)
+    );
+    cameraProvider = DoubleCheckInitialize.provider(() ->
+      new Camera(host, port)
+    );
+    coreProvider = DoubleCheckInitialize.provider(() ->
+      new Core(host, port)
+    );
+    failureProvider = DoubleCheckInitialize.provider(() ->
+      new Failure(host, port)
+    );
+    followMeProvider = DoubleCheckInitialize.provider(() ->
+      new FollowMe(host, port)
+    );
+    ftpProvider = DoubleCheckInitialize.provider(() ->
+      new Ftp(host, port)
+    );
+    geofenceProvider = DoubleCheckInitialize.provider(() ->
+      new Geofence(host, port)
+    );
+    gimbalProvider = DoubleCheckInitialize.provider(() ->
+      new Gimbal(host, port)
+    );
+    infoProvider = DoubleCheckInitialize.provider(() ->
+      new Info(host, port)
+    );
+    logFilesProvider = DoubleCheckInitialize.provider(() ->
+      new LogFiles(host, port)
+    );
+    manualControlProvider = DoubleCheckInitialize.provider(() ->
+      new ManualControl(host, port)
+    );
+    missionProvider = DoubleCheckInitialize.provider(() ->
+      new Mission(host, port)
+    );
+    missionRawProvider = DoubleCheckInitialize.provider(() ->
+      new MissionRaw(host, port)
+    );
+    missionRawServerProvider = DoubleCheckInitialize.provider(() ->
+      new MissionRawServer(host, port)
+    );
+    mocapProvider = DoubleCheckInitialize.provider(() ->
+      new Mocap(host, port)
+    );
+    offboardProvider = DoubleCheckInitialize.provider(() ->
+      new Offboard(host, port)
+    );
+    paramProvider = DoubleCheckInitialize.provider(() ->
+      new Param(host, port)
+    );
+    paramServerProvider = DoubleCheckInitialize.provider(() ->
+      new ParamServer(host, port)
+    );
+    serverUtilityProvider = DoubleCheckInitialize.provider(() ->
+      new ServerUtility(host, port)
+    );
+    shellProvider = DoubleCheckInitialize.provider(() ->
+      new Shell(host, port)
+    );
+    telemetryProvider = DoubleCheckInitialize.provider(() ->
+      new Telemetry(host, port)
+    );
+    telemetryServerProvider = DoubleCheckInitialize.provider(() ->
+      new TelemetryServer(host, port)
+    );
+    trackingServerProvider = DoubleCheckInitialize.provider(() ->
+      new TrackingServer(host, port)
+    );
+    transponderProvider = DoubleCheckInitialize.provider(() ->
+      new Transponder(host, port)
+    );
+    tuneProvider = DoubleCheckInitialize.provider(() ->
+      new Tune(host, port)
+    );
   }
 
   @NonNull

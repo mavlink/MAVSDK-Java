@@ -9,7 +9,7 @@ import io.reactivex.annotations.NonNull;
  * and initialize instances of {@link Plugin} only once. The memoized instances
  * are provided in the subsequent calls of `get()`.
  *
- * <p> This enables lazy construction and initialization of {@link Plugin}s, reducing
+ * <p>This enables lazy construction and initialization of {@link Plugin}s, reducing
  * the startup time of the application.
  */
 public class DoubleCheckInitialize<T extends Plugin> implements Provider<T> {

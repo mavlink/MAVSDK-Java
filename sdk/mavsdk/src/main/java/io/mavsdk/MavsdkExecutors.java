@@ -8,7 +8,7 @@ import java.util.concurrent.Executors;
 /**
  * Executors for the MAVSDK-Java library.
  *
- * This class uses the Initialize-On-Demand Holder idiom to lazily construct the executors.
+ * <p>This class uses the Initialize-On-Demand Holder idiom to lazily construct the executors.
  */
 public class MavsdkExecutors {
 
@@ -16,13 +16,14 @@ public class MavsdkExecutors {
   }
 
   private static final class InitializerHolder {
-    private static final Executor INITIALIZER = Executors.newSingleThreadExecutor();
+    private static final Executor INITIALIZER =
+      Executors.newSingleThreadExecutor(runnable -> new Thread(runnable, "MThread"));
   }
 
   /**
    * The `Executor` for initializing the {@link Plugin}s in the background in a FIFO manner.
    *
-   * Note: For Android, this executor should be used to run the MavsdkServer before
+   * <p>Note: For Android, this executor should be used to run the MavsdkServer before
    * any {@link Plugin} is called/initialized. Ideally, use this to run the MavsdkServer
    * before constructing the {@link System} instance.
    *
