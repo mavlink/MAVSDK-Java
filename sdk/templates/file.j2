@@ -2,6 +2,7 @@ package {{ package.lower_snake_case }};
 
 import io.mavsdk.Plugin;
 import io.mavsdk.MavsdkException;
+import io.mavsdk.MavsdkExecutors;
 import io.grpc.ManagedChannel;
 import io.grpc.okhttp.OkHttpChannelBuilder;
 import io.grpc.stub.StreamObserver;
@@ -59,7 +60,6 @@ public class {{ plugin_name.upper_camel_case }} implements Plugin {
           stub = {{ plugin_name.upper_camel_case }}ServiceGrpc.newStub(channel);
           scheduler = Schedulers.trampoline();
 
-          processStreams();
           isInitialized = true;
         } else {
           throw new RuntimeException("Already initialized!");
@@ -75,16 +75,6 @@ public class {{ plugin_name.upper_camel_case }} implements Plugin {
     if (isInitialized) {
       this.channel.shutdown();
     }
-  }
-
-  private void processStreams() {
-    {%- for method in methods %}
-      {%- if method.is_stream %}
-        {%- if method._params|length == 0 %}
-    process{{ method.name.upper_camel_case }}();
-        {%- endif%}
-      {%- endif %}
-    {%- endfor %}
   }
 
   {% if has_result %}
