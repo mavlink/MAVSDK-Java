@@ -19,29 +19,30 @@ public Completable {{ name.lower_camel_case }}({% for param in params %}@NonNull
     .build();
 
   return Completable.create(emitter -> {
-      stub.{{ name.lower_camel_case }}(request, new StreamObserver<{{plugin_name.upper_camel_case }}Proto.{{ name.upper_camel_case }}Response>() {
-        @Override
-        public void onNext({{ plugin_name.upper_camel_case }}Proto.{{ name.upper_camel_case }}Response value) {
-          {%- if has_result %}
-          {{ plugin_name.upper_camel_case }}Result result = {{ plugin_name.upper_camel_case }}Result.translateFromRpc(value.get{{ plugin_name.upper_camel_case }}Result());
+    stub.{{ name.lower_camel_case }}(request, new StreamObserver<{{plugin_name.upper_camel_case }}Proto.{{ name.upper_camel_case }}Response>() {
 
-          if (result.result != {{ plugin_name.upper_camel_case }}Result.Result.SUCCESS) {
-            emitter.onError(new {{ plugin_name.upper_camel_case }}Exception(result.result, result.resultStr));
-          } else {
-            emitter.onComplete();
-          }
-          {%- else %}
+      @Override
+      public void onNext({{ plugin_name.upper_camel_case }}Proto.{{ name.upper_camel_case }}Response value) {
+        {%- if has_result %}
+        {{ plugin_name.upper_camel_case }}Result result = {{ plugin_name.upper_camel_case }}Result.translateFromRpc(value.get{{ plugin_name.upper_camel_case }}Result());
+
+        if (result.result != {{ plugin_name.upper_camel_case }}Result.Result.SUCCESS) {
+          emitter.onError(new {{ plugin_name.upper_camel_case }}Exception(result.result, result.resultStr));
+        } else {
           emitter.onComplete();
-          {%- endif %}
         }
+        {%- else %}
+        emitter.onComplete();
+        {%- endif %}
+      }
 
-        @Override
-        public void onError(Throwable t) {
-          emitter.onError(t);
-        }
+      @Override
+      public void onError(Throwable t) {
+        emitter.onError(t);
+      }
 
-        @Override
-        public void onCompleted() {}
-      });
+      @Override
+      public void onCompleted() {}
+    });
   });
 }

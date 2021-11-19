@@ -19,41 +19,42 @@ public Single<{% if return_type.is_primitive %}{{ return_type.name }}{% elif ret
     .build();
 
   return Single.create(emitter -> {
-      stub.{{ name.lower_camel_case }}(request, new StreamObserver<{{plugin_name.upper_camel_case }}Proto.{{ name.upper_camel_case }}Response>() {
-        @Override
-        public void onNext({{ plugin_name.upper_camel_case }}Proto.{{ name.upper_camel_case }}Response value) {
-          {%- if has_result %}
-          {{ plugin_name.upper_camel_case }}Result result = {{ plugin_name.upper_camel_case }}Result.translateFromRpc(value.get{{ plugin_name.upper_camel_case }}Result());
+    stub.{{ name.lower_camel_case }}(request, new StreamObserver<{{plugin_name.upper_camel_case }}Proto.{{ name.upper_camel_case }}Response>() {
 
-          if (result.result != {{ plugin_name.upper_camel_case }}Result.Result.SUCCESS) {
-            emitter.onError(new {{ plugin_name.upper_camel_case }}Exception(result.result, result.resultStr));
-          } else {
-          {%- endif %}
-          {%- if return_type.is_primitive %}
-            {%- if return_type.is_repeated %}
-            emitter.onSuccess(value.get{{ return_name.upper_camel_case }}List());
-            {%- else %}
-            emitter.onSuccess(value.get{{ return_name.upper_camel_case }}());
-            {%- endif %}
+      @Override
+      public void onNext({{ plugin_name.upper_camel_case }}Proto.{{ name.upper_camel_case }}Response value) {
+        {%- if has_result %}
+        {{ plugin_name.upper_camel_case }}Result result = {{ plugin_name.upper_camel_case }}Result.translateFromRpc(value.get{{ plugin_name.upper_camel_case }}Result());
+
+        if (result.result != {{ plugin_name.upper_camel_case }}Result.Result.SUCCESS) {
+          emitter.onError(new {{ plugin_name.upper_camel_case }}Exception(result.result, result.resultStr));
+        } else {
+        {%- endif %}
+        {%- if return_type.is_primitive %}
+          {%- if return_type.is_repeated %}
+          emitter.onSuccess(value.get{{ return_name.upper_camel_case }}List());
           {%- else %}
-            {%- if return_type.is_repeated %}
-            emitter.onSuccess(value.get{{ return_name.upper_camel_case }}List().stream().map({{ return_type.inner_name }}::translateFromRpc).collect(Collectors.toList()));
-            {%- else %}
-            emitter.onSuccess({{ return_type.name }}.translateFromRpc(value.get{{ return_name.upper_camel_case }}()));
-            {%- endif %}
+          emitter.onSuccess(value.get{{ return_name.upper_camel_case }}());
           {%- endif %}
-          {%- if has_result %}
-          }
+        {%- else %}
+          {%- if return_type.is_repeated %}
+          emitter.onSuccess(value.get{{ return_name.upper_camel_case }}List().stream().map({{ return_type.inner_name }}::translateFromRpc).collect(Collectors.toList()));
+          {%- else %}
+          emitter.onSuccess({{ return_type.name }}.translateFromRpc(value.get{{ return_name.upper_camel_case }}()));
           {%- endif %}
+        {%- endif %}
+        {%- if has_result %}
         }
+        {%- endif %}
+      }
 
-        @Override
-        public void onError(Throwable t) {
-          emitter.onError(t);
-        }
+      @Override
+      public void onError(Throwable t) {
+        emitter.onError(t);
+      }
 
-        @Override
-        public void onCompleted() {}
+      @Override
+      public void onCompleted() {}
     });
   });
 }
