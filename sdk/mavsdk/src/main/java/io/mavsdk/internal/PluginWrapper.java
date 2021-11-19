@@ -12,16 +12,15 @@ import io.reactivex.annotations.NonNull;
  * <p>This enables lazy construction and initialization of {@link Plugin}s, reducing
  * the startup time of the application.
  */
-public class DoubleCheckInitialize<T extends Plugin> implements Provider<T> {
+public class PluginWrapper<T extends Plugin> {
 
   private final Provider<T> provider;
   private volatile T instance = null;
 
-  private DoubleCheckInitialize(@NonNull Provider<T> provider) {
+  private PluginWrapper(@NonNull Provider<T> provider) {
     this.provider = provider;
   }
 
-  @Override
   @NonNull
   public T get() {
     if (instance == null) {
@@ -46,13 +45,13 @@ public class DoubleCheckInitialize<T extends Plugin> implements Provider<T> {
   }
 
   /**
-   * Wraps a {@link Provider} into a {@link DoubleCheckInitialize}.
+   * Wraps a {@link Provider} into a {@link PluginWrapper}.
    *
    * @param provider The {@link Provider} to wrap.
-   * @return A {@link DoubleCheckInitialize} wrapping the given {@link Provider}.
+   * @return A {@link PluginWrapper} wrapping the given {@link Provider}.
    */
   @NonNull
-  public static <T extends Plugin> Provider<T> provider(@NonNull Provider<T> provider) {
-    return new DoubleCheckInitialize<>(provider);
+  public static <T extends Plugin> PluginWrapper<T> from(@NonNull Provider<T> provider) {
+    return new PluginWrapper<T>(provider);
   }
 }
