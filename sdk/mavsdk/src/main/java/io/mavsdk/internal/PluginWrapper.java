@@ -5,12 +5,16 @@ import io.mavsdk.Plugin;
 import io.reactivex.annotations.NonNull;
 
 /**
- * An implementation of {@link Provider} uses the Double-Check idiom to construct
- * and initialize instances of {@link Plugin} only once. The memoized instances
- * are provided in the subsequent calls of `get()`.
+ * Uses the Double-Check idiom to lazily construct and initialize instances of
+ * {@link Plugin} only once by adding the initialize method execution to the
+ * `mavsdk-event-queue`. The memoized instances are provided in the subsequent
+ * calls of `get()`.
  *
- * <p>This enables lazy construction and initialization of {@link Plugin}s, reducing
- * the startup time of the application.
+ * <p>The dispose method can be used to dispose of the underlying {@link Plugin}.
+ * The {@link Plugin} is disposed only if it has been initialized.
+ *
+ * <p>This class is thread-safe and makes sure that the `mavsdk-event-queue` has
+ * executions in the correct order.
  */
 public class PluginWrapper<T extends Plugin> {
 
@@ -21,6 +25,13 @@ public class PluginWrapper<T extends Plugin> {
     this.provider = provider;
   }
 
+  /**
+   * Uses the {@link Provider} to lazily constructs the instance of {@link Plugin}
+   * and adds the initialization to the `mavsdk-event-queue`.
+   *
+   * @return The instance of {@link Plugin} that will be initialized as per the
+   * `mavsdk-event-queue` order.
+   */
   @NonNull
   public T get() {
     if (instance == null) {
@@ -34,6 +45,10 @@ public class PluginWrapper<T extends Plugin> {
     return instance;
   }
 
+  /**
+   * Disposes the underlying {@link Plugin} if it has been initialized by adding
+   * the dispose method execution to the `mavsdk-event-queue`.
+   */
   public void dispose() {
     if (instance != null) {
       synchronized (this) {
