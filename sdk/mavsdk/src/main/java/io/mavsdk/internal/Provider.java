@@ -12,8 +12,8 @@ public interface Provider<T extends Plugin> {
   /**
    * Provides fully constructed instances of `T`.
    *
-   * <p>Note: The instances may not be initialized yet, i.e., {@link Plugin#initialize()}
-   * may not have been invoked.
+   * <p>Note: The instances may not have been initialized yet, i.e.,
+   * {@link Plugin#initialize()} may not have been invoked.
    *
    * @return Instance of {@link Plugin} `T`
    */
