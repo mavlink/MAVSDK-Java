@@ -35,6 +35,16 @@ public class DoubleCheckInitialize<T extends Plugin> implements Provider<T> {
     return instance;
   }
 
+  public void dispose() {
+    if (instance != null) {
+      synchronized (this) {
+        if (instance != null) {
+          MavsdkExecutors.initializeQueue().execute(instance::dispose);
+        }
+      }
+    }
+  }
+
   /**
    * Wraps a {@link Provider} into a {@link DoubleCheckInitialize}.
    *
