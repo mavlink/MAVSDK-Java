@@ -9,7 +9,6 @@ import io.grpc.stub.StreamObserver;
 import io.reactivex.Completable;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
-import io.reactivex.Scheduler;
 import io.reactivex.Single;
 import io.reactivex.annotations.CheckReturnValue;
 import io.reactivex.annotations.NonNull;
@@ -30,7 +29,6 @@ public class {{ plugin_name.upper_camel_case }} implements Plugin {
 
   private ManagedChannel channel;
   private {{ plugin_name.upper_camel_case }}ServiceGrpc.{{ plugin_name.upper_camel_case }}ServiceStub stub;
-  private Scheduler scheduler;
 
   private volatile boolean isInitialized = false;
 
@@ -58,7 +56,6 @@ public class {{ plugin_name.upper_camel_case }} implements Plugin {
         if (!isInitialized) {
           channel = createChannel(host, port);
           stub = {{ plugin_name.upper_camel_case }}ServiceGrpc.newStub(channel);
-          scheduler = Schedulers.trampoline();
 
           isInitialized = true;
         } else {

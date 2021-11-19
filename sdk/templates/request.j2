@@ -19,7 +19,6 @@ public Single<{% if return_type.is_primitive %}{{ return_type.name }}{% elif ret
     .build();
 
   return Single.create(emitter -> {
-    scheduler.scheduleDirect(() -> {
       stub.{{ name.lower_camel_case }}(request, new StreamObserver<{{plugin_name.upper_camel_case }}Proto.{{ name.upper_camel_case }}Response>() {
         @Override
         public void onNext({{ plugin_name.upper_camel_case }}Proto.{{ name.upper_camel_case }}Response value) {
@@ -55,7 +54,6 @@ public Single<{% if return_type.is_primitive %}{{ return_type.name }}{% elif ret
 
         @Override
         public void onCompleted() {}
-      });
     });
   });
 }

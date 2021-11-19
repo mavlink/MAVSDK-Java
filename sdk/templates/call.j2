@@ -19,7 +19,6 @@ public Completable {{ name.lower_camel_case }}({% for param in params %}@NonNull
     .build();
 
   return Completable.create(emitter -> {
-    scheduler.scheduleDirect(() -> {
       stub.{{ name.lower_camel_case }}(request, new StreamObserver<{{plugin_name.upper_camel_case }}Proto.{{ name.upper_camel_case }}Response>() {
         @Override
         public void onNext({{ plugin_name.upper_camel_case }}Proto.{{ name.upper_camel_case }}Response value) {
@@ -44,6 +43,5 @@ public Completable {{ name.lower_camel_case }}({% for param in params %}@NonNull
         @Override
         public void onCompleted() {}
       });
-    });
   });
 }
