@@ -29,8 +29,7 @@ public class PluginWrapper<T extends Plugin> {
    * Uses the {@link Provider} to lazily constructs the instance of {@link Plugin}
    * and adds the initialization to the `mavsdk-event-queue`.
    *
-   * @return The instance of {@link Plugin} that will be initialized as per the
-   * `mavsdk-event-queue` order.
+   * @return The instance of {@link Plugin}.
    */
   @NonNull
   public T get() {
@@ -38,7 +37,7 @@ public class PluginWrapper<T extends Plugin> {
       synchronized (this) {
         if (instance == null) {
           instance = provider.get();
-          MavsdkExecutors.initializeQueue().execute(instance::initialize);
+          MavsdkExecutors.eventQueue().execute(instance::initialize);
         }
       }
     }
@@ -53,7 +52,7 @@ public class PluginWrapper<T extends Plugin> {
     if (instance != null) {
       synchronized (this) {
         if (instance != null) {
-          MavsdkExecutors.initializeQueue().execute(instance::dispose);
+          MavsdkExecutors.eventQueue().execute(instance::dispose);
         }
       }
     }

@@ -16,16 +16,20 @@ public class MavsdkExecutors {
   private MavsdkExecutors() {
   }
 
-  private static final class InitializerHolder {
-    private static final Executor INITIALIZE_QUEUE = Executors.newSingleThreadExecutor(runnable ->
-        new Thread(runnable, "mavsdk-initialize-queue")
+  private static final class EventQueueHolder {
+    private static final Executor EVENT_QUEUE = Executors.newSingleThreadExecutor(runnable ->
+        new Thread(runnable, "mavsdk-event-queue")
     );
   }
 
   /**
-   * The `Executor` for initializing the {@link Plugin}s in the background in a
-   * FIFO manner. Apart from this, this executor is also used in the generated code
-   * to initialize the infinite streams.
+   * The `Executor` for running the mavsdk events in the background in a FIFO manner.
+   *
+   * <p>The events include:
+   * - Execution of `MavsdkServer#run()` (for Android)
+   * - Initialization of {@link Plugin}s
+   * - Disposal of {@link Plugin}s
+   * - Initialization of streams
    *
    * <p>The order of execution of the initialization methods of the plugins and
    * the streams is important, and library handles it for you.
@@ -36,10 +40,10 @@ public class MavsdkExecutors {
    * this mechanism ensures that the initialization of the plugins and the streams
    * is blocked until the MavsdkServer is ready after detecting a system.
    *
-   * @return The `Executor` for initializing the {@link Plugin}s in the background.
+   * @return The `mavsdk-event-queue` `Executor`
    */
   @NonNull
-  public static Executor initializeQueue() {
-    return InitializerHolder.INITIALIZE_QUEUE;
+  public static Executor eventQueue() {
+    return EventQueueHolder.EVENT_QUEUE;
   }
 }
