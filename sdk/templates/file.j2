@@ -55,6 +55,8 @@ public class {{ plugin_name.upper_camel_case }} implements Plugin {
         .build();
   }
 
+  // Double checked locking to ensure that two threads don't initialize the plugin at the same time.
+  // This is not a problem in practice, since the plugin is only initialized once.
   @Override
   public void initialize() {
     if (!isInitialized) {
@@ -65,11 +67,11 @@ public class {{ plugin_name.upper_camel_case }} implements Plugin {
 
           isInitialized = true;
         } else {
-          throw new RuntimeException("Already initialized!");
+          throw new IllegalStateException("Already initialized!");
         }
       }
     } else {
-      throw new RuntimeException("Already initialized!");
+      throw new IllegalStateException("Already initialized!");
     }
   }
 
