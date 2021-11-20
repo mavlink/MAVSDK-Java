@@ -51,7 +51,7 @@ ProGuard users may need to add the following rule:
 
 ```java
 MavsdkServer server = new MavsdkServer();
-MavsdkExecutors.eventQueue().execute(() -> server.run(SYSTEM_ADDRESS, MAVSDK_SERVER_PORT));
+MavsdkEventQueue.executor().execute(() -> server.run(SYSTEM_ADDRESS, MAVSDK_SERVER_PORT));
 ```
 
 This makes sure that the calling thread (which may be the UI thread) is not blocked as the `mavsdk_server` discovers a system. This should ideally be done before the user creates the `io.mavsdk.System` so that `MavsdkServer.run()` is the first command to run in the `mavsdk-event-queue`.
