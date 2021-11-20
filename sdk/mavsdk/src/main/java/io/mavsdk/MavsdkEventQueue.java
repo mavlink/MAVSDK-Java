@@ -26,10 +26,12 @@ public class MavsdkEventQueue {
    * The `Executor` for running the mavsdk events in the background in a FIFO manner.
    *
    * <p>The events include:
-   * - Execution of `MavsdkServer#run()` (for Android)
-   * - Initialization of {@link Plugin}s
-   * - Disposal of {@link Plugin}s
-   * - Initialization of streams
+   * <ul>
+   *   <li>Execution of `MavsdkServer#run()` (for Android)</li>
+   *   <li>Initialization of {@link Plugin}s</li>
+   *   <li>Disposal of {@link Plugin}s</li>
+   *   <li>Initialization of streams</li>
+   * </ul>
    *
    * <p>The order of execution of the initialization methods of the plugins and
    * the streams is important, and library handles it for you.
