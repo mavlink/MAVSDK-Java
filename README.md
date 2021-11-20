@@ -43,6 +43,27 @@ ProGuard users may need to add the following rule:
 -keep class io.mavsdk.** { *; }
 ```
 
+### Notes
+
+1. `MAVSDK-Java`'s plugins initialize on a background thread (`mavsdk-event-queue`).  The initializations happen in a thread-safe manner and the library handles the correct order itself. This is done to provide a simple API to the users.
+
+2. For Android, run the `mavsdk_server` as follows:
+
+```java
+MavsdkServer server = new MavsdkServer();
+MavsdkExecutors.eventQueue().execute(() -> server.run(SYSTEM_ADDRESS, MAVSDK_SERVER_PORT));
+```
+
+This makes sure that the calling thread (which may be the UI thread) is not blocked as the `mavsdk_server` discovers a system. This should ideally be done before the user creates the `io.mavsdk.System` so that `MavsdkServer.run()` is the first command to run in the `mavsdk-event-queue`.
+
+3. Users should avoid using the plugins directly by accessing them only through `io.mavsdk.System` objects.
+
+The plugins are constructed and initialized lazily upon their first call through `System`, therefore the users do not bear any runtime overhead for the plugins that they won't be using.
+
+4. Data streams start flowing in the background once the system is discovered by the `mavsdk_server`, so they are safe to subscribe to immediately after the creation of a `System` object. Streams that are not accessed won't start flowing.
+
+5. One-shot calls like `takeoff` and `land` are not added to the `mavsdk-event-queue` when the user subscribes to them. This is done to avoid their piling up while the `mavsdk_server` discovers a system. Instead, the `onError` callback will be triggered after a 100ms delay indicating that no system was available for the command.
+
 ## Contributing
 
 ### Coding style
