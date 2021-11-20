@@ -65,7 +65,7 @@ public class PluginWrapper<T extends Plugin> {
    * @return A {@link PluginWrapper} wrapping the given {@link Provider}.
    */
   @NonNull
-  public static <T extends Plugin> PluginWrapper<T> from(@NonNull Provider<T> provider) {
+  public static <T extends Plugin> PluginWrapper<T> wrap(@NonNull Provider<T> provider) {
     return new PluginWrapper<T>(provider);
   }
 }

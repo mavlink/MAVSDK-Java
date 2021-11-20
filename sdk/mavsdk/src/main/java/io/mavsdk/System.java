@@ -78,33 +78,33 @@ public class System {
    * @param port the port of mavsdk_server
    */
   public System(@NonNull String host, int port) {
-    action = PluginWrapper.from(() -> new Action(host, port));
-    actionServer = PluginWrapper.from(() -> new ActionServer(host, port));
-    calibration = PluginWrapper.from(() -> new Calibration(host, port));
-    camera = PluginWrapper.from(() -> new Camera(host, port));
-    core = PluginWrapper.from(() -> new Core(host, port));
-    failure = PluginWrapper.from(() -> new Failure(host, port));
-    followMe = PluginWrapper.from(() -> new FollowMe(host, port));
-    ftp = PluginWrapper.from(() -> new Ftp(host, port));
-    geofence = PluginWrapper.from(() -> new Geofence(host, port));
-    gimbal = PluginWrapper.from(() -> new Gimbal(host, port));
-    info = PluginWrapper.from(() -> new Info(host, port));
-    logFiles = PluginWrapper.from(() -> new LogFiles(host, port));
-    manualControl = PluginWrapper.from(() -> new ManualControl(host, port));
-    mission = PluginWrapper.from(() -> new Mission(host, port));
-    missionRaw = PluginWrapper.from(() -> new MissionRaw(host, port));
-    missionRawServer = PluginWrapper.from(() -> new MissionRawServer(host, port));
-    mocap = PluginWrapper.from(() -> new Mocap(host, port));
-    offboard = PluginWrapper.from(() -> new Offboard(host, port));
-    param = PluginWrapper.from(() -> new Param(host, port));
-    paramServer = PluginWrapper.from(() -> new ParamServer(host, port));
-    serverUtility = PluginWrapper.from(() -> new ServerUtility(host, port));
-    shell = PluginWrapper.from(() -> new Shell(host, port));
-    telemetry = PluginWrapper.from(() -> new Telemetry(host, port));
-    telemetryServer = PluginWrapper.from(() -> new TelemetryServer(host, port));
-    trackingServer = PluginWrapper.from(() -> new TrackingServer(host, port));
-    transponder = PluginWrapper.from(() -> new Transponder(host, port));
-    tune = PluginWrapper.from(() -> new Tune(host, port));
+    action = PluginWrapper.wrap(() -> new Action(host, port));
+    actionServer = PluginWrapper.wrap(() -> new ActionServer(host, port));
+    calibration = PluginWrapper.wrap(() -> new Calibration(host, port));
+    camera = PluginWrapper.wrap(() -> new Camera(host, port));
+    core = PluginWrapper.wrap(() -> new Core(host, port));
+    failure = PluginWrapper.wrap(() -> new Failure(host, port));
+    followMe = PluginWrapper.wrap(() -> new FollowMe(host, port));
+    ftp = PluginWrapper.wrap(() -> new Ftp(host, port));
+    geofence = PluginWrapper.wrap(() -> new Geofence(host, port));
+    gimbal = PluginWrapper.wrap(() -> new Gimbal(host, port));
+    info = PluginWrapper.wrap(() -> new Info(host, port));
+    logFiles = PluginWrapper.wrap(() -> new LogFiles(host, port));
+    manualControl = PluginWrapper.wrap(() -> new ManualControl(host, port));
+    mission = PluginWrapper.wrap(() -> new Mission(host, port));
+    missionRaw = PluginWrapper.wrap(() -> new MissionRaw(host, port));
+    missionRawServer = PluginWrapper.wrap(() -> new MissionRawServer(host, port));
+    mocap = PluginWrapper.wrap(() -> new Mocap(host, port));
+    offboard = PluginWrapper.wrap(() -> new Offboard(host, port));
+    param = PluginWrapper.wrap(() -> new Param(host, port));
+    paramServer = PluginWrapper.wrap(() -> new ParamServer(host, port));
+    serverUtility = PluginWrapper.wrap(() -> new ServerUtility(host, port));
+    shell = PluginWrapper.wrap(() -> new Shell(host, port));
+    telemetry = PluginWrapper.wrap(() -> new Telemetry(host, port));
+    telemetryServer = PluginWrapper.wrap(() -> new TelemetryServer(host, port));
+    trackingServer = PluginWrapper.wrap(() -> new TrackingServer(host, port));
+    transponder = PluginWrapper.wrap(() -> new Transponder(host, port));
+    tune = PluginWrapper.wrap(() -> new Tune(host, port));
   }
 
   @NonNull
