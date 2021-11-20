@@ -1,6 +1,6 @@
 package io.mavsdk.internal;
 
-import io.mavsdk.MavsdkExecutors;
+import io.mavsdk.MavsdkEventQueue;
 import io.mavsdk.Plugin;
 import io.reactivex.annotations.NonNull;
 
@@ -37,7 +37,7 @@ public class PluginWrapper<T extends Plugin> {
       synchronized (this) {
         if (instance == null) {
           instance = provider.get();
-          MavsdkExecutors.eventQueue().execute(instance::initialize);
+          MavsdkEventQueue.executor().execute(instance::initialize);
         }
       }
     }
@@ -52,7 +52,7 @@ public class PluginWrapper<T extends Plugin> {
     if (instance != null) {
       synchronized (this) {
         if (instance != null) {
-          MavsdkExecutors.eventQueue().execute(instance::dispose);
+          MavsdkEventQueue.executor().execute(instance::dispose);
         }
       }
     }
