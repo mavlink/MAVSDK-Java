@@ -24,6 +24,12 @@ import org.slf4j.LoggerFactory;
 public class {{ plugin_name.upper_camel_case }} implements Plugin {
   private static final Logger logger = LoggerFactory.getLogger({{ plugin_name.upper_camel_case }}.class);
 
+  /*
+  Wait for 100ms for plugin to initialize in the mavsdk-event-queue before calls/requests/finite streams.
+  If the plugin isn't ready after this time, then it is assumed that no system was present.
+   */
+  private static final long PLUGIN_INIT_TIMEOUT_MS = 100;
+
   private final String host;
   private final int port;
 

@@ -77,6 +77,13 @@ private Flowable<{% if return_type.is_primitive %}{{ return_type.name }}{% elif 
     .build();
 
   Flowable<{% if return_type.is_primitive %}{{ return_type.name }}{% elif return_type.is_repeated %}List<{{ plugin_name.upper_camel_case }}.{{ return_type.inner_name }}>{% else %}{{ plugin_name.upper_camel_case }}.{{ return_type.name }}{% endif %}> flowable = Flowable.create(emitter -> {
+    if (!isInitialized) {
+      Thread.sleep(PLUGIN_INIT_TIMEOUT_MS);
+      if (!isInitialized) {
+        throw new MavsdkException("No System");
+      }
+    }
+
     stub.subscribe{{ name.upper_camel_case }}(request, new StreamObserver<{{ plugin_name.upper_camel_case }}Proto.{{ name.upper_camel_case }}Response>() {
 
       @Override
@@ -120,17 +127,11 @@ private Flowable<{% if return_type.is_primitive %}{{ return_type.name }}{% elif 
     });
   }, BackpressureStrategy.BUFFER);
 
-  return flowable.share();
+  return flowable.subscribeOn(Schedulers.io()).share();
 }
 
 @CheckReturnValue
 public Flowable<{% if return_type.is_primitive %}{{ return_type.name }}{% elif return_type.is_repeated %}List<{{ plugin_name.upper_camel_case }}.{{ return_type.inner_name }}>{% else %}{{ plugin_name.upper_camel_case }}.{{ return_type.name }}{% endif %}> get{{ name.upper_camel_case }}({% for param in params %}@NonNull {{ param.type_info.name }} {{ param.name.lower_camel_case }}{{ ", " if not loop.last }}{% endfor %}) {
-  {%- if has_result %}
-  if (!isInitialized) return Flowable.error(new {{ plugin_name.upper_camel_case }}Exception({{ plugin_name.upper_camel_case }}Result.Result.NO_SYSTEM, "No System"));
-  {%- else %}
-  if (!isInitialized) return Flowable.error(new MavsdkException("No System"));
-  {%- endif %}
-
   return create{{ name.upper_camel_case }}({% for param in params %}{{ param.name.lower_camel_case }}{{ ", " if not loop.last }}{% endfor %});
 }
 
