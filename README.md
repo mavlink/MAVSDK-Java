@@ -56,6 +56,13 @@ MavsdkEventQueue.executor().execute(() -> server.run(SYSTEM_ADDRESS, MAVSDK_SERV
 
 This makes sure that the calling thread (which may be the UI thread) is not blocked as the `mavsdk_server` discovers a system. This should ideally be done before the user creates the `io.mavsdk.System` so that `MavsdkServer.run()` is the first command to run in the `mavsdk-event-queue`.
 
+
+To stop the server:
+
+```java
+MavsdkEventQueue.executor().execute(() -> server.stop());
+```
+
 3. Users should avoid using the plugins directly by accessing them only through `io.mavsdk.System` objects.
 
 The plugins are constructed and initialized lazily upon their first call through `System`, therefore the users do not bear any runtime overhead for the plugins that they won't be using.
