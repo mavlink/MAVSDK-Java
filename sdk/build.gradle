@@ -184,7 +184,7 @@ subprojects {
     dependencies {
         // The protobuf configuration which was set earlier would generate well-known
         // protos which would create conflicts with other libraries that use them as well
-        implementation "io.grpc:grpc-protobuf:${grpcVersion}"
+        compileOnly "io.grpc:grpc-protobuf:${grpcVersion}"
 
         implementation "io.grpc:grpc-okhttp:${grpcVersion}"
         implementation "io.grpc:grpc-protobuf-lite:${grpcVersion}"
