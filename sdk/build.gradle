@@ -34,7 +34,7 @@ subprojects {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
 
-    def grpcVersion = '1.36.2'
+    def grpcVersion = '1.42.1'
 
     protobuf {
         protoc {
