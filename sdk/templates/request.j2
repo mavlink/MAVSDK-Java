@@ -1,56 +1,63 @@
 @CheckReturnValue
 public Single<{% if return_type.is_primitive %}{{ return_type.name }}{% elif return_type.is_repeated %}List<{{ plugin_name.upper_camel_case }}.{{ return_type.inner_name }}>{% else %}{{ plugin_name.upper_camel_case }}.{{ return_type.name }}{% endif %}> {{ name.lower_camel_case }}({% for param in params %}@NonNull {{ param.type_info.name }} {{ param.name.lower_camel_case }}{{ ", " if not loop.last }}{% endfor %}) {
-  {{ plugin_name.upper_camel_case }}Proto.{{ name.upper_camel_case }}Request request = {{ plugin_name.upper_camel_case }}Proto.{{ name.upper_camel_case }}Request
-          .newBuilder()
-          {%- for param in params %}
-            {%- if param.type_info.is_primitive %}
-          .set{{ param.name.upper_camel_case }}({{ param.name.lower_camel_case }})
-            {%- elif param.type_info.is_repeated %}
-          .addAll{{ param.name.upper_camel_case }}({{ param.name.lower_camel_case }}.stream().map(elem -> elem.rpc{{ param.type_info.inner_name }}())::iterator)
-            {%- else %}
-          .set{{ param.name.upper_camel_case }}({{ param.name.lower_camel_case }}.rpc{{ param.type_info.name }}())
-            {%- endif %}
-          {%- endfor %}
-          .build();
+  {{ plugin_name.upper_camel_case }}Proto.{{ name.upper_camel_case }}Request request = {{ plugin_name.upper_camel_case }}Proto.{{ name.upper_camel_case }}Request.newBuilder()
+  {%- for param in params %}
+    {%- if param.type_info.is_primitive %}
+    .set{{ param.name.upper_camel_case }}({{ param.name.lower_camel_case }})
+    {%- elif param.type_info.is_repeated %}
+    .addAll{{ param.name.upper_camel_case }}({{ param.name.lower_camel_case }}.stream().map(elem -> elem.rpc{{ param.type_info.inner_name }}())::iterator)
+    {%- else %}
+    .set{{ param.name.upper_camel_case }}({{ param.name.lower_camel_case }}.rpc{{ param.type_info.name }}())
+    {%- endif %}
+  {%- endfor %}
+    .build();
 
-  return Single.create(emitter -> {
-    scheduler.scheduleDirect(() -> {
-      stub.{{ name.lower_camel_case }}(request, new StreamObserver<{{plugin_name.upper_camel_case }}Proto.{{ name.upper_camel_case }}Response>() {
-        @Override
-        public void onNext({{ plugin_name.upper_camel_case }}Proto.{{ name.upper_camel_case }}Response value) {
-          {%- if has_result %}
-          {{ plugin_name.upper_camel_case }}Result result = {{ plugin_name.upper_camel_case }}Result.translateFromRpc(value.get{{ plugin_name.upper_camel_case }}Result());
+  Single<{% if return_type.is_primitive %}{{ return_type.name }}{% elif return_type.is_repeated %}List<{{ plugin_name.upper_camel_case }}.{{ return_type.inner_name }}>{% else %}{{ plugin_name.upper_camel_case }}.{{ return_type.name }}{% endif %}> single = Single.create(emitter -> {
+    if (!isInitialized) {
+      Thread.sleep(PLUGIN_INIT_TIMEOUT_MS);
+      if (!isInitialized) {
+        throw new MavsdkException("No System");
+      }
+    }
 
-          if (result.result != {{ plugin_name.upper_camel_case }}Result.Result.SUCCESS) {
-            emitter.onError(new {{ plugin_name.upper_camel_case }}Exception(result.result, result.resultStr));
-          } else {
-          {%- endif %}
-          {%- if return_type.is_primitive %}
-            {%- if return_type.is_repeated %}
-            emitter.onSuccess(value.get{{ return_name.upper_camel_case }}List());
-            {%- else %}
-            emitter.onSuccess(value.get{{ return_name.upper_camel_case }}());
-            {%- endif %}
+    stub.{{ name.lower_camel_case }}(request, new StreamObserver<{{plugin_name.upper_camel_case }}Proto.{{ name.upper_camel_case }}Response>() {
+
+      @Override
+      public void onNext({{ plugin_name.upper_camel_case }}Proto.{{ name.upper_camel_case }}Response value) {
+        {%- if has_result %}
+        {{ plugin_name.upper_camel_case }}Result result = {{ plugin_name.upper_camel_case }}Result.translateFromRpc(value.get{{ plugin_name.upper_camel_case }}Result());
+
+        if (result.result != {{ plugin_name.upper_camel_case }}Result.Result.SUCCESS) {
+          emitter.onError(new {{ plugin_name.upper_camel_case }}Exception(result.result, result.resultStr));
+        } else {
+        {%- endif %}
+        {%- if return_type.is_primitive %}
+          {%- if return_type.is_repeated %}
+          emitter.onSuccess(value.get{{ return_name.upper_camel_case }}List());
           {%- else %}
-            {%- if return_type.is_repeated %}
-            emitter.onSuccess(value.get{{ return_name.upper_camel_case }}List().stream().map({{ return_type.inner_name }}::translateFromRpc).collect(Collectors.toList()));
-            {%- else %}
-            emitter.onSuccess({{ return_type.name }}.translateFromRpc(value.get{{ return_name.upper_camel_case }}()));
-            {%- endif %}
+          emitter.onSuccess(value.get{{ return_name.upper_camel_case }}());
           {%- endif %}
-          {%- if has_result %}
-          }
+        {%- else %}
+          {%- if return_type.is_repeated %}
+          emitter.onSuccess(value.get{{ return_name.upper_camel_case }}List().stream().map({{ return_type.inner_name }}::translateFromRpc).collect(Collectors.toList()));
+          {%- else %}
+          emitter.onSuccess({{ return_type.name }}.translateFromRpc(value.get{{ return_name.upper_camel_case }}()));
           {%- endif %}
+        {%- endif %}
+        {%- if has_result %}
         }
+        {%- endif %}
+      }
 
-        @Override
-        public void onError(Throwable t) {
-          emitter.onError(t);
-        }
+      @Override
+      public void onError(Throwable t) {
+        emitter.onError(t);
+      }
 
-        @Override
-        public void onCompleted() {}
-      });
+      @Override
+      public void onCompleted() {}
     });
   });
+
+  return single.subscribeOn(Schedulers.io());
 }

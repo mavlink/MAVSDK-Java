@@ -1,44 +1,52 @@
 @CheckReturnValue
 public Completable {{ name.lower_camel_case }}({% for param in params %}@NonNull {{ param.type_info.name }} {{ param.name.lower_camel_case }}{{ ", " if not loop.last }}{% endfor %}) {
-  {{ plugin_name.upper_camel_case }}Proto.{{ name.upper_camel_case }}Request request = {{ plugin_name.upper_camel_case }}Proto.{{ name.upper_camel_case }}Request
-          .newBuilder()
-          {%- for param in params %}
-            {%- if param.type_info.is_primitive %}
-          .set{{ param.name.upper_camel_case }}({{ param.name.lower_camel_case }})
-            {% elif param.type_info.is_repeated %}
-          .addAll{{ param.name.upper_camel_case }}({{ param.name.lower_camel_case }}.stream().map(elem -> elem.rpc{{ param.type_info.inner_name }}())::iterator)
-            {%- else %}
-          .set{{ param.name.upper_camel_case }}({{ param.name.lower_camel_case }}.rpc{{ param.type_info.name }}())
-            {%- endif %}
-          {%- endfor %}
-          .build();
 
-  return Completable.create(emitter -> {
-    scheduler.scheduleDirect(() -> {
-      stub.{{ name.lower_camel_case }}(request, new StreamObserver<{{plugin_name.upper_camel_case }}Proto.{{ name.upper_camel_case }}Response>() {
-        @Override
-        public void onNext({{ plugin_name.upper_camel_case }}Proto.{{ name.upper_camel_case }}Response value) {
-          {%- if has_result %}
-          {{ plugin_name.upper_camel_case }}Result result = {{ plugin_name.upper_camel_case }}Result.translateFromRpc(value.get{{ plugin_name.upper_camel_case }}Result());
+  {{ plugin_name.upper_camel_case }}Proto.{{ name.upper_camel_case }}Request request = {{ plugin_name.upper_camel_case }}Proto.{{ name.upper_camel_case }}Request.newBuilder()
+  {%- for param in params %}
+    {%- if param.type_info.is_primitive %}
+    .set{{ param.name.upper_camel_case }}({{ param.name.lower_camel_case }})
+    {%- elif param.type_info.is_repeated %}
+    .addAll{{ param.name.upper_camel_case }}({{ param.name.lower_camel_case }}.stream().map(elem -> elem.rpc{{ param.type_info.inner_name }}())::iterator)
+    {%- else %}
+    .set{{ param.name.upper_camel_case }}({{ param.name.lower_camel_case }}.rpc{{ param.type_info.name }}())
+    {%- endif %}
+  {%- endfor %}
+    .build();
 
-          if (result.result != {{ plugin_name.upper_camel_case }}Result.Result.SUCCESS) {
-            emitter.onError(new {{ plugin_name.upper_camel_case }}Exception(result.result, result.resultStr));
-          } else {
-            emitter.onComplete();
-          }
-          {%- else %}
+  Completable completable = Completable.create(emitter -> {
+    if (!isInitialized) {
+      Thread.sleep(PLUGIN_INIT_TIMEOUT_MS);
+      if (!isInitialized) {
+        throw new MavsdkException("No System");
+      }
+    }
+
+    stub.{{ name.lower_camel_case }}(request, new StreamObserver<{{plugin_name.upper_camel_case }}Proto.{{ name.upper_camel_case }}Response>() {
+
+      @Override
+      public void onNext({{ plugin_name.upper_camel_case }}Proto.{{ name.upper_camel_case }}Response value) {
+        {%- if has_result %}
+        {{ plugin_name.upper_camel_case }}Result result = {{ plugin_name.upper_camel_case }}Result.translateFromRpc(value.get{{ plugin_name.upper_camel_case }}Result());
+
+        if (result.result != {{ plugin_name.upper_camel_case }}Result.Result.SUCCESS) {
+          emitter.onError(new {{ plugin_name.upper_camel_case }}Exception(result.result, result.resultStr));
+        } else {
           emitter.onComplete();
-          {%- endif %}
         }
+        {%- else %}
+        emitter.onComplete();
+        {%- endif %}
+      }
 
-        @Override
-        public void onError(Throwable t) {
-          emitter.onError(t);
-        }
+      @Override
+      public void onError(Throwable t) {
+        emitter.onError(t);
+      }
 
-        @Override
-        public void onCompleted() {}
-      });
+      @Override
+      public void onCompleted() {}
     });
   });
+
+  return completable.subscribeOn(Schedulers.io());
 }

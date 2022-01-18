@@ -11,6 +11,7 @@ import io.mavsdk.ftp.Ftp;
 import io.mavsdk.geofence.Geofence;
 import io.mavsdk.gimbal.Gimbal;
 import io.mavsdk.info.Info;
+import io.mavsdk.internal.LazyPlugin;
 import io.mavsdk.log_files.LogFiles;
 import io.mavsdk.manual_control.ManualControl;
 import io.mavsdk.mission.Mission;
@@ -27,218 +28,250 @@ import io.mavsdk.telemetry_server.TelemetryServer;
 import io.mavsdk.tracking_server.TrackingServer;
 import io.mavsdk.transponder.Transponder;
 import io.mavsdk.tune.Tune;
+import io.reactivex.annotations.NonNull;
 
 public class System {
-  private final Action action;
-  private final ActionServer actionServer;
-  private final Calibration calibration;
-  private final Camera camera;
-  private final Core core;
-  private final Failure failure;
-  private final FollowMe followMe;
-  private final Ftp ftp;
-  private final Geofence geofence;
-  private final Gimbal gimbal;
-  private final Info info;
-  private final LogFiles logFiles;
-  private final ManualControl manualControl;
-  private final Mission mission;
-  private final MissionRaw missionRaw;
-  private final MissionRawServer missionRawServer;
-  private final Mocap mocap;
-  private final Offboard offboard;
-  private final Param param;
-  private final ParamServer paramServer;
-  private final ServerUtility serverUtility;
-  private final Shell shell;
-  private final Telemetry telemetry;
-  private final TelemetryServer telemetryServer;
-  private final TrackingServer trackingServer;
-  private final Transponder transponder;
-  private final Tune tune;
+
+  private final LazyPlugin<Action> action;
+  private final LazyPlugin<ActionServer> actionServer;
+  private final LazyPlugin<Calibration> calibration;
+  private final LazyPlugin<Camera> camera;
+  private final LazyPlugin<Core> core;
+  private final LazyPlugin<Failure> failure;
+  private final LazyPlugin<FollowMe> followMe;
+  private final LazyPlugin<Ftp> ftp;
+  private final LazyPlugin<Geofence> geofence;
+  private final LazyPlugin<Gimbal> gimbal;
+  private final LazyPlugin<Info> info;
+  private final LazyPlugin<LogFiles> logFiles;
+  private final LazyPlugin<ManualControl> manualControl;
+  private final LazyPlugin<Mission> mission;
+  private final LazyPlugin<MissionRaw> missionRaw;
+  private final LazyPlugin<MissionRawServer> missionRawServer;
+  private final LazyPlugin<Mocap> mocap;
+  private final LazyPlugin<Offboard> offboard;
+  private final LazyPlugin<Param> param;
+  private final LazyPlugin<ParamServer> paramServer;
+  private final LazyPlugin<ServerUtility> serverUtility;
+  private final LazyPlugin<Shell> shell;
+  private final LazyPlugin<Telemetry> telemetry;
+  private final LazyPlugin<TelemetryServer> telemetryServer;
+  private final LazyPlugin<TrackingServer> trackingServer;
+  private final LazyPlugin<Transponder> transponder;
+  private final LazyPlugin<Tune> tune;
 
   /**
-   * Create a System object, initializing the plugins and connecting them to mavsdk_server.
+   * Create a System object. The plugins are initialized lazily, when the corresponding
+   * get method is called.
    *
-   * <p>This defaults to a mavsdk_server running on localhost:50051.</p>
+   * <p>This defaults to a mavsdk_server running on localhost:50051.
    */
   public System() {
     this("localhost", 50051);
   }
 
   /**
-   * Create a System object, initializing the plugins and connecting them to mavsdk_server.
+   * Create a System object.The plugins are initialized lazily, when the corresponding
+   * get method is called.
+   *
    * @param host the address of mavsdk_server
    * @param port the port of mavsdk_server
    */
-  public System(String host, int port) {
-    this.action = new Action(host, port);
-    this.actionServer = new ActionServer(host, port);
-    this.calibration = new Calibration(host, port);
-    this.camera = new Camera(host, port);
-    this.core = new Core(host, port);
-    this.failure = new Failure(host, port);
-    this.followMe = new FollowMe(host, port);
-    this.ftp = new Ftp(host, port);
-    this.geofence = new Geofence(host, port);
-    this.gimbal = new Gimbal(host, port);
-    this.info = new Info(host, port);
-    this.logFiles = new LogFiles(host, port);
-    this.manualControl = new ManualControl(host, port);
-    this.mission = new Mission(host, port);
-    this.missionRaw = new MissionRaw(host, port);
-    this.missionRawServer = new MissionRawServer(host, port);
-    this.mocap = new Mocap(host, port);
-    this.offboard = new Offboard(host, port);
-    this.param = new Param(host, port);
-    this.paramServer = new ParamServer(host, port);
-    this.serverUtility = new ServerUtility(host, port);
-    this.shell = new Shell(host, port);
-    this.telemetry = new Telemetry(host, port);
-    this.telemetryServer = new TelemetryServer(host, port);
-    this.trackingServer = new TrackingServer(host, port);
-    this.transponder = new Transponder(host, port);
-    this.tune = new Tune(host, port);
+  public System(@NonNull String host, int port) {
+    action = LazyPlugin.from(() -> new Action(host, port));
+    actionServer = LazyPlugin.from(() -> new ActionServer(host, port));
+    calibration = LazyPlugin.from(() -> new Calibration(host, port));
+    camera = LazyPlugin.from(() -> new Camera(host, port));
+    core = LazyPlugin.from(() -> new Core(host, port));
+    failure = LazyPlugin.from(() -> new Failure(host, port));
+    followMe = LazyPlugin.from(() -> new FollowMe(host, port));
+    ftp = LazyPlugin.from(() -> new Ftp(host, port));
+    geofence = LazyPlugin.from(() -> new Geofence(host, port));
+    gimbal = LazyPlugin.from(() -> new Gimbal(host, port));
+    info = LazyPlugin.from(() -> new Info(host, port));
+    logFiles = LazyPlugin.from(() -> new LogFiles(host, port));
+    manualControl = LazyPlugin.from(() -> new ManualControl(host, port));
+    mission = LazyPlugin.from(() -> new Mission(host, port));
+    missionRaw = LazyPlugin.from(() -> new MissionRaw(host, port));
+    missionRawServer = LazyPlugin.from(() -> new MissionRawServer(host, port));
+    mocap = LazyPlugin.from(() -> new Mocap(host, port));
+    offboard = LazyPlugin.from(() -> new Offboard(host, port));
+    param = LazyPlugin.from(() -> new Param(host, port));
+    paramServer = LazyPlugin.from(() -> new ParamServer(host, port));
+    serverUtility = LazyPlugin.from(() -> new ServerUtility(host, port));
+    shell = LazyPlugin.from(() -> new Shell(host, port));
+    telemetry = LazyPlugin.from(() -> new Telemetry(host, port));
+    telemetryServer = LazyPlugin.from(() -> new TelemetryServer(host, port));
+    trackingServer = LazyPlugin.from(() -> new TrackingServer(host, port));
+    transponder = LazyPlugin.from(() -> new Transponder(host, port));
+    tune = LazyPlugin.from(() -> new Tune(host, port));
   }
 
+  @NonNull
   public Action getAction() {
-    return action;
+    return action.get();
   }
 
+  @NonNull
   public ActionServer getActionServer() {
-    return actionServer;
+    return actionServer.get();
   }
 
+  @NonNull
   public Calibration getCalibration() {
-    return calibration;
+    return calibration.get();
   }
 
+  @NonNull
   public Camera getCamera() {
-    return camera;
+    return camera.get();
   }
 
+  @NonNull
   public Core getCore() {
-    return core;
+    return core.get();
   }
 
+  @NonNull
   public Failure getFailure() {
-    return failure;
+    return failure.get();
   }
 
+  @NonNull
   public FollowMe getFollowMe() {
-    return followMe;
+    return followMe.get();
   }
 
+  @NonNull
   public Ftp getFtp() {
-    return ftp;
+    return ftp.get();
   }
 
+  @NonNull
   public Geofence getGeofence() {
-    return geofence;
+    return geofence.get();
   }
 
+  @NonNull
   public Gimbal getGimbal() {
-    return gimbal;
+    return gimbal.get();
   }
 
+  @NonNull
   public Info getInfo() {
-    return info;
+    return info.get();
   }
 
+  @NonNull
   public LogFiles getLogFiles() {
-    return logFiles;
+    return logFiles.get();
   }
 
+  @NonNull
   public ManualControl getManualControl() {
-    return manualControl;
+    return manualControl.get();
   }
 
+  @NonNull
   public Mission getMission() {
-    return mission;
+    return mission.get();
   }
 
+  @NonNull
   public MissionRaw getMissionRaw() {
-    return missionRaw;
+    return missionRaw.get();
   }
 
+  @NonNull
   public MissionRawServer getMissionRawServer() {
-    return missionRawServer;
+    return missionRawServer.get();
   }
 
+  @NonNull
   public Mocap getMocap() {
-    return mocap;
+    return mocap.get();
   }
 
+  @NonNull
   public Offboard getOffboard() {
-    return offboard;
+    return offboard.get();
   }
 
+  @NonNull
   public Param getParam() {
-    return param;
+    return param.get();
   }
 
+  @NonNull
   public ParamServer getParamServer() {
-    return paramServer;
+    return paramServer.get();
   }
 
+  @NonNull
   public ServerUtility getServerUtility() {
-    return serverUtility;
+    return serverUtility.get();
   }
 
+  @NonNull
   public Shell getShell() {
-    return shell;
+    return shell.get();
   }
 
+  @NonNull
   public Telemetry getTelemetry() {
-    return telemetry;
+    return telemetry.get();
   }
 
+  @NonNull
   public TelemetryServer getTelemetryServer() {
-    return telemetryServer;
+    return telemetryServer.get();
   }
 
+  @NonNull
   public TrackingServer getTrackingServer() {
-    return trackingServer;
+    return trackingServer.get();
   }
 
+  @NonNull
   public Transponder getTransponder() {
-    return transponder;
+    return transponder.get();
   }
 
+  @NonNull
   public Tune getTune() {
-    return tune;
+    return tune.get();
   }
 
   /**
    * Dispose of all the plugins.
    */
   public void dispose() {
-    this.action.dispose();
-    this.actionServer.dispose();
-    this.calibration.dispose();
-    this.camera.dispose();
-    this.core.dispose();
-    this.failure.dispose();
-    this.followMe.dispose();
-    this.ftp.dispose();
-    this.geofence.dispose();
-    this.gimbal.dispose();
-    this.info.dispose();
-    this.logFiles.dispose();
-    this.manualControl.dispose();
-    this.mission.dispose();
-    this.missionRaw.dispose();
-    this.missionRawServer.dispose();
-    this.mocap.dispose();
-    this.offboard.dispose();
-    this.param.dispose();
-    this.paramServer.dispose();
-    this.serverUtility.dispose();
-    this.shell.dispose();
-    this.telemetry.dispose();
-    this.telemetryServer.dispose();
-    this.trackingServer.dispose();
-    this.transponder.dispose();
-    this.tune.dispose();
+    action.dispose();
+    actionServer.dispose();
+    calibration.dispose();
+    camera.dispose();
+    core.dispose();
+    failure.dispose();
+    followMe.dispose();
+    ftp.dispose();
+    geofence.dispose();
+    gimbal.dispose();
+    info.dispose();
+    logFiles.dispose();
+    manualControl.dispose();
+    mission.dispose();
+    missionRaw.dispose();
+    missionRawServer.dispose();
+    mocap.dispose();
+    offboard.dispose();
+    param.dispose();
+    paramServer.dispose();
+    serverUtility.dispose();
+    shell.dispose();
+    telemetry.dispose();
+    telemetryServer.dispose();
+    trackingServer.dispose();
+    transponder.dispose();
+    tune.dispose();
   }
 }

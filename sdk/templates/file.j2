@@ -1,15 +1,19 @@
 package {{ package.lower_snake_case }};
 
+import io.mavsdk.Plugin;
+import io.mavsdk.MavsdkException;
+import io.mavsdk.MavsdkEventQueue;
 import io.grpc.ManagedChannel;
 import io.grpc.okhttp.OkHttpChannelBuilder;
 import io.grpc.stub.StreamObserver;
 import io.reactivex.Completable;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
-import io.reactivex.Scheduler;
 import io.reactivex.Single;
 import io.reactivex.annotations.CheckReturnValue;
 import io.reactivex.annotations.NonNull;
+import io.reactivex.processors.FlowableProcessor;
+import io.reactivex.processors.PublishProcessor;
 import io.reactivex.schedulers.Schedulers;
 import java.lang.String;
 import java.util.List;
@@ -17,19 +21,30 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class {{ plugin_name.upper_camel_case }} {
+public class {{ plugin_name.upper_camel_case }} implements Plugin {
   private static final Logger logger = LoggerFactory.getLogger({{ plugin_name.upper_camel_case }}.class);
+
+  /*
+  Wait for 100ms for plugin to initialize in the mavsdk-event-queue before calls/requests/finite streams.
+  If the plugin isn't ready after this time, then it is assumed that no system was present.
+   */
+  private static final long PLUGIN_INIT_TIMEOUT_MS = 100;
+
+  private final String host;
+  private final int port;
 
   private ManagedChannel channel;
   private {{ plugin_name.upper_camel_case }}ServiceGrpc.{{ plugin_name.upper_camel_case }}ServiceStub stub;
-  private Scheduler scheduler;
+
+  private volatile boolean isInitialized = false;
+
+  public {{ plugin_name.upper_camel_case }}(String host, int port) {
+    this.host = host;
+    this.port = port;
+  }
 
   public {{ plugin_name.upper_camel_case }}() {
     this("127.0.0.1", 50051);
-  }
-
-  public {{ plugin_name.upper_camel_case }}(String host, int port) {
-    this(createChannel(host, port));
   }
 
   private static ManagedChannel createChannel(String host, int port) {
@@ -40,18 +55,35 @@ public class {{ plugin_name.upper_camel_case }} {
         .build();
   }
 
-  private {{ plugin_name.upper_camel_case }}(ManagedChannel channel) {
-    this.channel = channel;
-    stub = {{ plugin_name.upper_camel_case }}ServiceGrpc.newStub(channel);
-    scheduler = Schedulers.trampoline();
+  // Double checked locking to ensure that two threads don't initialize the plugin at the same time.
+  // This is not a problem in practice, since the plugin is only initialized once.
+  @Override
+  public void initialize() {
+    if (!isInitialized) {
+      synchronized (this) {
+        if (!isInitialized) {
+          channel = createChannel(host, port);
+          stub = {{ plugin_name.upper_camel_case }}ServiceGrpc.newStub(channel);
+
+          isInitialized = true;
+        } else {
+          throw new IllegalStateException("Already initialized!");
+        }
+      }
+    } else {
+      throw new IllegalStateException("Already initialized!");
+    }
   }
 
+  @Override
   public void dispose() {
-    this.channel.shutdown();
+    if (isInitialized) {
+      this.channel.shutdown();
+    }
   }
 
   {% if has_result %}
-  public class {{ plugin_name.upper_camel_case }}Exception extends Exception {
+  public class {{ plugin_name.upper_camel_case }}Exception extends MavsdkException {
     private {{ plugin_name.upper_camel_case }}Result.Result code;
     private String description;
 
@@ -74,13 +106,16 @@ public class {{ plugin_name.upper_camel_case }} {
 
 {%- for enum in enums %}
 {{ indent(enum, 1) }}
+
 {%- endfor %}
 
 {% for struct in structs %}
 {{ indent(struct, 1) }}
+
 {% endfor %}
 
 {%- for method in methods %}
 {{ indent(method, 1) }}
+
 {%- endfor %}
 }
