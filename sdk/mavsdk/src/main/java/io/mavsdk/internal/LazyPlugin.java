@@ -16,12 +16,12 @@ import io.reactivex.annotations.NonNull;
  * <p>This class is thread-safe and makes sure that the `mavsdk-event-queue` has
  * executions in the correct order.
  */
-public class PluginWrapper<T extends Plugin> {
+public class LazyPlugin<T extends Plugin> {
 
   private final Provider<T> provider;
   private volatile T instance = null;
 
-  private PluginWrapper(@NonNull Provider<T> provider) {
+  private LazyPlugin(@NonNull Provider<T> provider) {
     this.provider = provider;
   }
 
@@ -59,13 +59,13 @@ public class PluginWrapper<T extends Plugin> {
   }
 
   /**
-   * Wraps a {@link Provider} into a {@link PluginWrapper}.
+   * Wraps a {@link Provider} into a {@link LazyPlugin}.
    *
    * @param provider The {@link Provider} to wrap.
-   * @return A {@link PluginWrapper} wrapping the given {@link Provider}.
+   * @return A {@link LazyPlugin} wrapping the given {@link Provider}.
    */
   @NonNull
-  public static <T extends Plugin> PluginWrapper<T> wrap(@NonNull Provider<T> provider) {
-    return new PluginWrapper<T>(provider);
+  public static <T extends Plugin> LazyPlugin<T> from(@NonNull Provider<T> provider) {
+    return new LazyPlugin<T>(provider);
   }
 }

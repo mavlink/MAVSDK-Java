@@ -11,7 +11,7 @@ import io.mavsdk.ftp.Ftp;
 import io.mavsdk.geofence.Geofence;
 import io.mavsdk.gimbal.Gimbal;
 import io.mavsdk.info.Info;
-import io.mavsdk.internal.PluginWrapper;
+import io.mavsdk.internal.LazyPlugin;
 import io.mavsdk.log_files.LogFiles;
 import io.mavsdk.manual_control.ManualControl;
 import io.mavsdk.mission.Mission;
@@ -32,33 +32,33 @@ import io.reactivex.annotations.NonNull;
 
 public class System {
 
-  private final PluginWrapper<Action> action;
-  private final PluginWrapper<ActionServer> actionServer;
-  private final PluginWrapper<Calibration> calibration;
-  private final PluginWrapper<Camera> camera;
-  private final PluginWrapper<Core> core;
-  private final PluginWrapper<Failure> failure;
-  private final PluginWrapper<FollowMe> followMe;
-  private final PluginWrapper<Ftp> ftp;
-  private final PluginWrapper<Geofence> geofence;
-  private final PluginWrapper<Gimbal> gimbal;
-  private final PluginWrapper<Info> info;
-  private final PluginWrapper<LogFiles> logFiles;
-  private final PluginWrapper<ManualControl> manualControl;
-  private final PluginWrapper<Mission> mission;
-  private final PluginWrapper<MissionRaw> missionRaw;
-  private final PluginWrapper<MissionRawServer> missionRawServer;
-  private final PluginWrapper<Mocap> mocap;
-  private final PluginWrapper<Offboard> offboard;
-  private final PluginWrapper<Param> param;
-  private final PluginWrapper<ParamServer> paramServer;
-  private final PluginWrapper<ServerUtility> serverUtility;
-  private final PluginWrapper<Shell> shell;
-  private final PluginWrapper<Telemetry> telemetry;
-  private final PluginWrapper<TelemetryServer> telemetryServer;
-  private final PluginWrapper<TrackingServer> trackingServer;
-  private final PluginWrapper<Transponder> transponder;
-  private final PluginWrapper<Tune> tune;
+  private final LazyPlugin<Action> action;
+  private final LazyPlugin<ActionServer> actionServer;
+  private final LazyPlugin<Calibration> calibration;
+  private final LazyPlugin<Camera> camera;
+  private final LazyPlugin<Core> core;
+  private final LazyPlugin<Failure> failure;
+  private final LazyPlugin<FollowMe> followMe;
+  private final LazyPlugin<Ftp> ftp;
+  private final LazyPlugin<Geofence> geofence;
+  private final LazyPlugin<Gimbal> gimbal;
+  private final LazyPlugin<Info> info;
+  private final LazyPlugin<LogFiles> logFiles;
+  private final LazyPlugin<ManualControl> manualControl;
+  private final LazyPlugin<Mission> mission;
+  private final LazyPlugin<MissionRaw> missionRaw;
+  private final LazyPlugin<MissionRawServer> missionRawServer;
+  private final LazyPlugin<Mocap> mocap;
+  private final LazyPlugin<Offboard> offboard;
+  private final LazyPlugin<Param> param;
+  private final LazyPlugin<ParamServer> paramServer;
+  private final LazyPlugin<ServerUtility> serverUtility;
+  private final LazyPlugin<Shell> shell;
+  private final LazyPlugin<Telemetry> telemetry;
+  private final LazyPlugin<TelemetryServer> telemetryServer;
+  private final LazyPlugin<TrackingServer> trackingServer;
+  private final LazyPlugin<Transponder> transponder;
+  private final LazyPlugin<Tune> tune;
 
   /**
    * Create a System object. The plugins are initialized lazily, when the corresponding
@@ -78,33 +78,33 @@ public class System {
    * @param port the port of mavsdk_server
    */
   public System(@NonNull String host, int port) {
-    action = PluginWrapper.wrap(() -> new Action(host, port));
-    actionServer = PluginWrapper.wrap(() -> new ActionServer(host, port));
-    calibration = PluginWrapper.wrap(() -> new Calibration(host, port));
-    camera = PluginWrapper.wrap(() -> new Camera(host, port));
-    core = PluginWrapper.wrap(() -> new Core(host, port));
-    failure = PluginWrapper.wrap(() -> new Failure(host, port));
-    followMe = PluginWrapper.wrap(() -> new FollowMe(host, port));
-    ftp = PluginWrapper.wrap(() -> new Ftp(host, port));
-    geofence = PluginWrapper.wrap(() -> new Geofence(host, port));
-    gimbal = PluginWrapper.wrap(() -> new Gimbal(host, port));
-    info = PluginWrapper.wrap(() -> new Info(host, port));
-    logFiles = PluginWrapper.wrap(() -> new LogFiles(host, port));
-    manualControl = PluginWrapper.wrap(() -> new ManualControl(host, port));
-    mission = PluginWrapper.wrap(() -> new Mission(host, port));
-    missionRaw = PluginWrapper.wrap(() -> new MissionRaw(host, port));
-    missionRawServer = PluginWrapper.wrap(() -> new MissionRawServer(host, port));
-    mocap = PluginWrapper.wrap(() -> new Mocap(host, port));
-    offboard = PluginWrapper.wrap(() -> new Offboard(host, port));
-    param = PluginWrapper.wrap(() -> new Param(host, port));
-    paramServer = PluginWrapper.wrap(() -> new ParamServer(host, port));
-    serverUtility = PluginWrapper.wrap(() -> new ServerUtility(host, port));
-    shell = PluginWrapper.wrap(() -> new Shell(host, port));
-    telemetry = PluginWrapper.wrap(() -> new Telemetry(host, port));
-    telemetryServer = PluginWrapper.wrap(() -> new TelemetryServer(host, port));
-    trackingServer = PluginWrapper.wrap(() -> new TrackingServer(host, port));
-    transponder = PluginWrapper.wrap(() -> new Transponder(host, port));
-    tune = PluginWrapper.wrap(() -> new Tune(host, port));
+    action = LazyPlugin.from(() -> new Action(host, port));
+    actionServer = LazyPlugin.from(() -> new ActionServer(host, port));
+    calibration = LazyPlugin.from(() -> new Calibration(host, port));
+    camera = LazyPlugin.from(() -> new Camera(host, port));
+    core = LazyPlugin.from(() -> new Core(host, port));
+    failure = LazyPlugin.from(() -> new Failure(host, port));
+    followMe = LazyPlugin.from(() -> new FollowMe(host, port));
+    ftp = LazyPlugin.from(() -> new Ftp(host, port));
+    geofence = LazyPlugin.from(() -> new Geofence(host, port));
+    gimbal = LazyPlugin.from(() -> new Gimbal(host, port));
+    info = LazyPlugin.from(() -> new Info(host, port));
+    logFiles = LazyPlugin.from(() -> new LogFiles(host, port));
+    manualControl = LazyPlugin.from(() -> new ManualControl(host, port));
+    mission = LazyPlugin.from(() -> new Mission(host, port));
+    missionRaw = LazyPlugin.from(() -> new MissionRaw(host, port));
+    missionRawServer = LazyPlugin.from(() -> new MissionRawServer(host, port));
+    mocap = LazyPlugin.from(() -> new Mocap(host, port));
+    offboard = LazyPlugin.from(() -> new Offboard(host, port));
+    param = LazyPlugin.from(() -> new Param(host, port));
+    paramServer = LazyPlugin.from(() -> new ParamServer(host, port));
+    serverUtility = LazyPlugin.from(() -> new ServerUtility(host, port));
+    shell = LazyPlugin.from(() -> new Shell(host, port));
+    telemetry = LazyPlugin.from(() -> new Telemetry(host, port));
+    telemetryServer = LazyPlugin.from(() -> new TelemetryServer(host, port));
+    trackingServer = LazyPlugin.from(() -> new TrackingServer(host, port));
+    transponder = LazyPlugin.from(() -> new Transponder(host, port));
+    tune = LazyPlugin.from(() -> new Tune(host, port));
   }
 
   @NonNull
