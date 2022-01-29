@@ -1,22 +1,22 @@
 buildscript {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.6.0'
+        classpath 'com.android.tools.build:gradle:7.0.4'
     }
 }
 
 allprojects {
     apply plugin: 'com.android.library'
-    apply plugin: 'maven'
+    apply plugin: 'maven-publish'
     apply plugin: 'signing'
 
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
 
     def mavsdk_server_release = "v0.48.0"
@@ -28,11 +28,11 @@ allprojects {
             def archiveName = "mavsdk_server_android-" + arch + "_" + mavsdk_server_release + ".tar"
             def archiveFile = new File(project.buildDir.getAbsolutePath() + "/tmp/" + archiveName)
             def archiveUrl = "https://github.com/mavlink/MAVSDK/releases/download/" + mavsdk_server_release + "/mavsdk_server_android-" + arch + ".tar"
-            def destDir = project.projectDir.getAbsolutePath() + "/src/main/jniLibs"
+            def destDir = project.projectDir.getAbsolutePath() + "/src/main/prebuiltLibs"
 
             if (!archiveFile.exists()) {
                 project.logger.lifecycle("Downloading " + archiveFile.getName() + " into " + archiveFile.getAbsolutePath() + "...")
-                new URL(archiveUrl).withInputStream{ i -> archiveFile.withOutputStream{ it << i }}
+                new URL(archiveUrl).withInputStream { i -> archiveFile.withOutputStream { it << i } }
             } else {
                 project.logger.lifecycle("Archive already exists! Skipping download!")
             }
@@ -41,7 +41,7 @@ allprojects {
             copy {
                 from tarTree(archiveFile)
                 eachFile({ file -> if (file.getName().endsWith(".so")) file.setMode(0755) })
-                into (destDir)
+                into(destDir)
             }
         }
 
@@ -62,61 +62,61 @@ allprojects {
     }
 
     if (project.hasProperty('ossrhUsername')
-        && project.hasProperty('ossrhPassword')) {
+            && project.hasProperty('ossrhPassword')) {
 
-    signing {
-        useGpgCmd()
-        sign configurations.archives
-    }
+        signing {
+            useGpgCmd()
+            sign configurations.archives
+        }
 
-    uploadArchives {
-        repositories {
-            mavenDeployer {
-                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+        publishing {
+            publications {
+                mavenJava(MavenPublication) {
+                    pom {
+                        name = 'MAVSDK-Server'
+                        packaging = 'aar'
+                        description = 'MAVSDK server for Android.'
+                        url = 'https://github.com/mavlink/MAVSDK-Java'
 
-                repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-                    authentication(userName: ossrhUsername, password: ossrhPassword)
-                }
+                        scm {
+                            connection = 'scm:git:https://github.com/mavlink/MAVSDK-Java'
+                            developerConnection = 'scm:git:https://github.com/mavlink/MAVSDK-Java'
+                            url = 'https://github.com/mavlink/MAVSDK-Java'
+                        }
 
-                snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-                    authentication(userName: ossrhUsername, password: ossrhPassword)
-                }
+                        licenses {
+                            license {
+                                name = 'BSD 3-Clause "New"'
+                                url = 'https://opensource.org/licenses/BSD-3-Clause'
+                            }
+                        }
 
-                pom.project {
-                    name 'MAVSDK-Server'
-                    packaging 'aar'
-                    description 'MAVSDK server for Android.'
-                    url 'https://github.com/mavlink/MAVSDK-Java'
-
-                    scm {
-                        connection 'scm:git:https://github.com/mavlink/MAVSDK-Java'
-                        developerConnection 'scm:git:https://github.com/mavlink/MAVSDK-Java'
-                        url 'https://github.com/mavlink/MAVSDK-Java'
-                    }
-
-                    licenses {
-                        license {
-                            name 'BSD 3-Clause "New"'
-                            url 'https://opensource.org/licenses/BSD-3-Clause'
+                        developers {
+                            developer {
+                                id = 'jonasvautherin'
+                                name = 'Jonas Vautherin'
+                                email = 'jonas.vautherin@gmail.com'
+                            }
                         }
                     }
+                }
+            }
+            repositories {
+                maven {
+                    url = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
 
-                    developers {
-                        developer {
-                            id 'jonasvautherin'
-                            name 'Jonas Vautherin'
-                            email 'jonas.vautherin@gmail.com'
-                        }
+                    credentials {
+                        username = ossrhUsername
+                        password = ossrhPassword
                     }
                 }
             }
         }
     }
-    }
 }
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 31
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -125,7 +125,7 @@ android {
 
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 29
+        targetSdkVersion 31
 
         archivesBaseName = 'mavsdk-server'
         group = 'io.mavsdk'
@@ -149,5 +149,5 @@ android {
         }
     }
 
-    ndkVersion "22.1.7171670"
+    ndkVersion "23.1.7779620"
 }

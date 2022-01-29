@@ -1,6 +1,7 @@
 buildscript {
     repositories {
         jcenter()
+        mavenCentral()
     }
 
     dependencies {
@@ -12,7 +13,7 @@ subprojects {
     apply plugin: 'com.google.protobuf'
     apply plugin: 'idea'
     apply plugin: 'java-library'
-    apply plugin: 'maven'
+    apply plugin: 'maven-publish'
     apply plugin: 'signing'
 
     group = 'io.mavsdk'
@@ -21,6 +22,7 @@ subprojects {
 
     repositories {
         jcenter()
+        mavenCentral()
     }
 
     configurations {
@@ -100,54 +102,54 @@ subprojects {
     if (project.hasProperty('ossrhUsername')
         && project.hasProperty('ossrhPassword')) {
 
-    signing {
-        useGpgCmd()
-        sign configurations.archives
-    }
+        signing {
+            useGpgCmd()
+            sign configurations.archives
+        }
 
-    uploadArchives {
-        repositories {
-            mavenDeployer {
-                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+        publishing {
+            publications {
+                mavenJava(MavenPublication) {
+                    pom {
+                        name = 'MAVSDK-Java'
+                        packaging = 'jar'
+                        description = 'MAVSDK client for Java.'
+                        url = 'https://github.com/mavlink/MAVSDK-Java'
 
-                repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-                    authentication(userName: ossrhUsername, password: ossrhPassword)
-                }
-
-                snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-                    authentication(userName: ossrhUsername, password: ossrhPassword)
-                }
-
-                pom.project {
-                    name 'MAVSDK-Java'
-                    packaging 'jar'
-                    description 'MAVSDK client for Java.'
-                    url 'https://github.com/mavlink/MAVSDK-Java'
-
-                    scm {
-                        connection 'scm:git:https://github.com/mavlink/MAVSDK-Java'
-                        developerConnection 'scm:git:https://github.com/mavlink/MAVSDK-Java'
-                        url 'https://github.com/mavlink/MAVSDK-Java'
-                    }
-
-                    licenses {
-                        license {
-                            name 'BSD 3-Clause "New"'
-                            url 'https://opensource.org/licenses/BSD-3-Clause'
+                        scm {
+                            connection = 'scm:git:https://github.com/mavlink/MAVSDK-Java'
+                            developerConnection = 'scm:git:https://github.com/mavlink/MAVSDK-Java'
+                            url = 'https://github.com/mavlink/MAVSDK-Java'
                         }
-                    }
 
-                    developers {
-                        developer {
-                            id 'jonasvautherin'
-                            name 'Jonas Vautherin'
-                            email 'jonas.vautherin@gmail.com'
+                        licenses {
+                            license {
+                                name = 'BSD 3-Clause "New"'
+                                url = 'https://opensource.org/licenses/BSD-3-Clause'
+                            }
+                        }
+
+                        developers {
+                            developer {
+                                id = 'jonasvautherin'
+                                name = 'Jonas Vautherin'
+                                email = 'jonas.vautherin@gmail.com'
+                            }
                         }
                     }
                 }
             }
+            repositories {
+                maven {
+                    url = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+
+                    credentials {
+                        username = ossrhUsername
+                        password = ossrhPassword
+                    }
+                }
+            }
         }
-    }
     }
 
     task checkstyle(type: Checkstyle) {
@@ -189,7 +191,7 @@ subprojects {
         implementation "io.grpc:grpc-okhttp:${grpcVersion}"
         implementation "io.grpc:grpc-protobuf-lite:${grpcVersion}"
         implementation "io.grpc:grpc-stub:${grpcVersion}"
-        implementation 'org.slf4j:slf4j-api:1.7.25'
+        implementation 'org.slf4j:slf4j-api:1.7.35'
         api 'io.reactivex.rxjava2:rxjava:2.2.21'
 
         compileOnly "javax.annotation:javax.annotation-api:1.3.2"

@@ -1,5 +1,6 @@
 .gradle
 build
+prebuiltLibs
 
 libmavsdk_server.so
 libc++_shared.so
