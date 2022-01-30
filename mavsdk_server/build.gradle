@@ -64,11 +64,6 @@ allprojects {
     if (project.hasProperty('ossrhUsername')
             && project.hasProperty('ossrhPassword')) {
 
-        signing {
-            useGpgCmd()
-            sign configurations.archives
-        }
-
         publishing {
             publications {
                 mavenJava(MavenPublication) {
@@ -111,6 +106,11 @@ allprojects {
                     }
                 }
             }
+        }
+
+        signing {
+            useGpgCmd()
+            sign publishing.publications.mavenJava
         }
     }
 }
