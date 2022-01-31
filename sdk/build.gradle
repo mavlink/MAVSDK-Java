@@ -85,18 +85,9 @@ subprojects {
         }
     }
 
-    task javadocJar(type: Jar) {
-        classifier = 'javadoc'
-        from javadoc
-    }
-
-    task sourcesJar(type: Jar) {
-        classifier = 'sources'
-        from sourceSets.main.allSource
-    }
-
-    artifacts {
-        archives javadocJar, sourcesJar
+    java {
+        withJavadocJar()
+        withSourcesJar()
     }
 
     if (project.hasProperty('ossrhUsername')
@@ -105,6 +96,8 @@ subprojects {
         publishing {
             publications {
                 mavenJava(MavenPublication) {
+                    from components.java
+
                     pom {
                         name = 'MAVSDK-Java'
                         packaging = 'jar'
