@@ -18,7 +18,7 @@ subprojects {
 
     group = 'io.mavsdk'
     archivesBaseName = 'mavsdk'
-    version = '0.12.0'
+    version = '1.0.0'
 
     repositories {
         jcenter()
@@ -85,31 +85,19 @@ subprojects {
         }
     }
 
-    task javadocJar(type: Jar) {
-        classifier = 'javadoc'
-        from javadoc
-    }
-
-    task sourcesJar(type: Jar) {
-        classifier = 'sources'
-        from sourceSets.main.allSource
-    }
-
-    artifacts {
-        archives javadocJar, sourcesJar
+    java {
+        withJavadocJar()
+        withSourcesJar()
     }
 
     if (project.hasProperty('ossrhUsername')
         && project.hasProperty('ossrhPassword')) {
 
-        signing {
-            useGpgCmd()
-            sign configurations.archives
-        }
-
         publishing {
             publications {
                 mavenJava(MavenPublication) {
+                    from components.java
+
                     pom {
                         name = 'MAVSDK-Java'
                         packaging = 'jar'
@@ -149,6 +137,11 @@ subprojects {
                     }
                 }
             }
+        }
+
+        signing {
+            useGpgCmd()
+            sign publishing.publications.mavenJava
         }
     }
 

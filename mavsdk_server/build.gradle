@@ -19,7 +19,7 @@ allprojects {
         mavenCentral()
     }
 
-    def mavsdk_server_release = "v0.48.0"
+    def mavsdk_server_release = "v1.0.8"
 
     task extractMavsdkServer(type: Copy) {
         mkdir project.buildDir.getAbsolutePath() + "/tmp"
@@ -57,21 +57,14 @@ allprojects {
         from android.sourceSets.main.java.srcDirs
     }
 
-    artifacts {
-        archives sourcesJar
-    }
-
     if (project.hasProperty('ossrhUsername')
             && project.hasProperty('ossrhPassword')) {
-
-        signing {
-            useGpgCmd()
-            sign configurations.archives
-        }
 
         publishing {
             publications {
                 mavenJava(MavenPublication) {
+                    artifact(sourcesJar)
+
                     pom {
                         name = 'MAVSDK-Server'
                         packaging = 'aar'
@@ -112,6 +105,11 @@ allprojects {
                 }
             }
         }
+
+        signing {
+            useGpgCmd()
+            sign publishing.publications.mavenJava
+        }
     }
 }
 
@@ -130,7 +128,7 @@ android {
         archivesBaseName = 'mavsdk-server'
         group = 'io.mavsdk'
         versionCode 1
-        version '0.11.0'
+        version '1.0.0'
 
         ndk {
             abiFilters 'arm64-v8a', 'armeabi-v7a', 'x86', 'x86_64'
