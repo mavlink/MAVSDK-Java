@@ -18,7 +18,7 @@ subprojects {
 
     group = 'io.mavsdk'
     archivesBaseName = 'mavsdk'
-    version = '1.0.0'
+    version = '1.0.1'
 
     repositories {
         jcenter()
@@ -93,55 +93,57 @@ subprojects {
     if (project.hasProperty('ossrhUsername')
         && project.hasProperty('ossrhPassword')) {
 
-        publishing {
-            publications {
-                mavenJava(MavenPublication) {
-                    from components.java
+        afterEvaluate {
+            publishing {
+                publications {
+                    mavenJava(MavenPublication) {
+                        from components.java
 
-                    pom {
-                        name = 'MAVSDK-Java'
-                        packaging = 'jar'
-                        description = 'MAVSDK client for Java.'
-                        url = 'https://github.com/mavlink/MAVSDK-Java'
-
-                        scm {
-                            connection = 'scm:git:https://github.com/mavlink/MAVSDK-Java'
-                            developerConnection = 'scm:git:https://github.com/mavlink/MAVSDK-Java'
+                        pom {
+                            name = 'MAVSDK-Java'
+                            packaging = 'jar'
+                            description = 'MAVSDK client for Java.'
                             url = 'https://github.com/mavlink/MAVSDK-Java'
-                        }
 
-                        licenses {
-                            license {
-                                name = 'BSD 3-Clause "New"'
-                                url = 'https://opensource.org/licenses/BSD-3-Clause'
+                            scm {
+                                connection = 'scm:git:https://github.com/mavlink/MAVSDK-Java'
+                                developerConnection = 'scm:git:https://github.com/mavlink/MAVSDK-Java'
+                                url = 'https://github.com/mavlink/MAVSDK-Java'
                             }
-                        }
 
-                        developers {
-                            developer {
-                                id = 'jonasvautherin'
-                                name = 'Jonas Vautherin'
-                                email = 'jonas.vautherin@gmail.com'
+                            licenses {
+                                license {
+                                    name = 'BSD 3-Clause "New"'
+                                    url = 'https://opensource.org/licenses/BSD-3-Clause'
+                                }
+                            }
+
+                            developers {
+                                developer {
+                                    id = 'jonasvautherin'
+                                    name = 'Jonas Vautherin'
+                                    email = 'jonas.vautherin@gmail.com'
+                                }
                             }
                         }
                     }
                 }
-            }
-            repositories {
-                maven {
-                    url = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+                repositories {
+                    maven {
+                        url = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
 
-                    credentials {
-                        username = ossrhUsername
-                        password = ossrhPassword
+                        credentials {
+                            username = ossrhUsername
+                            password = ossrhPassword
+                        }
                     }
                 }
             }
-        }
 
-        signing {
-            useGpgCmd()
-            sign publishing.publications.mavenJava
+            signing {
+                useGpgCmd()
+                sign publishing.publications.mavenJava
+            }
         }
     }
 
