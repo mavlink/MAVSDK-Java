@@ -4,7 +4,7 @@ private final FlowableProcessor<{% if return_type.is_primitive %}{{ return_type.
 private final Flowable<{% if return_type.is_primitive %}{{ return_type.name }}{% elif return_type.is_repeated %}List<{{ plugin_name.upper_camel_case }}.{{ return_type.inner_name }}>{% else %}{{ plugin_name.upper_camel_case }}.{{ return_type.name }}{% endif %}> {{ name.lower_camel_case }} = {{ name.lower_camel_case }}Processor.onBackpressureBuffer().share();;
 private volatile boolean is{{ name.upper_camel_case }}Initialized = false;
 
-private void process{{ name.upper_camel_case }}() {
+private void process{{ name.upper_camel_case }}({% for param in params %}@NonNull {{ param.type_info.name }} {{ param.name.lower_camel_case }}{{ ", " if not loop.last }}{% endfor %}) {
   {{ plugin_name.upper_camel_case }}Proto.Subscribe{{ name.upper_camel_case }}Request request = {{ plugin_name.upper_camel_case }}Proto.Subscribe{{ name.upper_camel_case }}Request.newBuilder()
     {%- for param in params %}
       {%- if param.type_info.is_primitive %}
@@ -49,11 +49,11 @@ private void process{{ name.upper_camel_case }}() {
 }
 
 @CheckReturnValue
-public Flowable<{% if return_type.is_primitive %}{{ return_type.name }}{% elif return_type.is_repeated %}List<{{ plugin_name.upper_camel_case }}.{{ return_type.inner_name }}>{% else %}{{ plugin_name.upper_camel_case }}.{{ return_type.name }}{% endif %}> get{{ name.upper_camel_case }}() {
+public Flowable<{% if return_type.is_primitive %}{{ return_type.name }}{% elif return_type.is_repeated %}List<{{ plugin_name.upper_camel_case }}.{{ return_type.inner_name }}>{% else %}{{ plugin_name.upper_camel_case }}.{{ return_type.name }}{% endif %}> get{{ name.upper_camel_case }}({% for param in params %}@NonNull {{ param.type_info.name }} {{ param.name.lower_camel_case }}{{ ", " if not loop.last }}{% endfor %}) {
   if (!is{{ name.upper_camel_case }}Initialized) {
     synchronized (this) {
       if (!is{{ name.upper_camel_case }}Initialized) {
-        MavsdkEventQueue.executor().execute(() -> process{{ name.upper_camel_case }}());
+        MavsdkEventQueue.executor().execute(() -> process{{ name.upper_camel_case }}({% for param in params %}{{ param.name.lower_camel_case }}{{ ", " if not loop.last }}{% endfor %}));
         is{{ name.upper_camel_case }}Initialized = true;
       }
     }
