@@ -18,7 +18,7 @@ public class DownloadLastLog {
             .toFlowable()
             .map(entries -> entries.get(entries.size() - 1))
             .flatMap(lastEntry ->
-                    drone.getLogFiles().getDownloadLogFile(lastEntry, "./example_log.ulg"))
+                    drone.getLogFiles().downloadLogFile(lastEntry, "./example_log.ulg"))
             .map(progressData -> Math.round(progressData.getProgress() * 100))
             .filter(progressPercent -> progressPercent % 5 == 0)
             .distinctUntilChanged()

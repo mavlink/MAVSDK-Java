@@ -3,12 +3,11 @@ package io.mavsdk.example;
 import io.mavsdk.System;
 import io.mavsdk.calibration.Calibration;
 import io.reactivex.Flowable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class Calibrate {
   private static final Logger logger = LoggerFactory.getLogger(Calibrate.class);
@@ -20,12 +19,12 @@ public class Calibrate {
     CountDownLatch latch = new CountDownLatch(1);
 
     Flowable<Calibration.ProgressData> gyroFlowable
-            = drone.getCalibration().getCalibrateGyro()
+            = drone.getCalibration().calibrateGyro()
                 .delay(2, TimeUnit.SECONDS)
                 .doOnSubscribe(subscription -> logger.debug("Starting Gyro calibration"));
 
     Flowable<Calibration.ProgressData> accelFlowable
-            = drone.getCalibration().getCalibrateAccelerometer()
+            = drone.getCalibration().calibrateAccelerometer()
                 .delay(2, TimeUnit.SECONDS)
                 .doOnSubscribe(subscription -> logger.debug("Starting Accelerometer calibration"));
 

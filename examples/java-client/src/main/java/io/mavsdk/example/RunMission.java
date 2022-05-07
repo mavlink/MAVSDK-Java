@@ -66,7 +66,10 @@ public class RunMission {
         Float.NaN,
         Mission.MissionItem.CameraAction.NONE,
         Float.NaN,
-        1.0);
+        Double.NaN,
+        Float.NaN,
+        Float.NaN,
+        Float.NaN);
   }
 }
 
