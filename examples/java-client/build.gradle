@@ -3,6 +3,7 @@ apply plugin: 'idea'
 
 repositories {
     jcenter()
+    mavenCentral()
 }
 
 configurations {
@@ -44,6 +45,11 @@ task listPhotos(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
 }
 
+task systemShell(dependsOn: 'classes', type: JavaExec) {
+    main = "io.mavsdk.example.SystemShell"
+    classpath = sourceSets.main.runtimeClasspath
+}
+
 task checkstyle(type: Checkstyle) {
     configFile = rootProject.file("config/checkstyle/checkstyle.xml")
     source 'src'
@@ -75,11 +81,11 @@ idea {
 }
 
 dependencies {
-    checkstyleClasspath 'com.puppycrawl.tools:checkstyle:8.5'
+    checkstyleClasspath 'com.puppycrawl.tools:checkstyle:10.2'
 
-    implementation 'io.mavsdk:mavsdk:0.9.0'
+    implementation 'io.mavsdk:mavsdk:1.1.1'
 
-    implementation 'ch.qos.logback:logback-core:1.2.3'
-    implementation 'ch.qos.logback:logback-classic:1.2.3'
-    implementation 'org.slf4j:slf4j-api:1.7.28'
+    implementation 'ch.qos.logback:logback-core:1.2.11'
+    implementation 'ch.qos.logback:logback-classic:1.2.11'
+    implementation 'org.slf4j:slf4j-api:1.7.36'
 }
