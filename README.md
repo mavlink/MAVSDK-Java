@@ -128,6 +128,50 @@ ossrhUsername=<username>
 ossrhPassword=<password>
 ```
 
+### Debugging without pushing to maven
+
+Sometimes you just need to rebuild `mavsdk_server` or even `libmavsdk_server.so` a couple of times to directly debug a problem.
+
+This can be achieved by these gradle changes:
+
+```
+examples/android-client/app/build.gradle:
+
+-    implementation 'io.mavsdk:mavsdk-server:1.1.1'
++    implementation project(path: ':io.mavsdk:mavsdk-server')
+```
+
+```
+examples/android-client/settings.gradle:
+
++include 'io.mavsdk:mavsdk-server'
++project(':io.mavsdk:mavsdk-server').projectDir = new File(settingsDir, '../../mavsdk_server/')
+ include ':app'
+```
+
+```
+mavsdk_server/build.gradle:
+
+allprojects {
+- [everything in that function]
++ apply plugin: 'android-library'
+}
+```
+
+Then you can just build the example and it will in turn build `mavsdk_server`.
+
+To replace the `libmavsdk_server.so`, you have to build it using dockcross and replace the file for the architecture that you're testing on. This is assuming you have MAVSDK-Java and MAVSDK side to side in the same directory:
+
+```
+cd ../MAVSDK
+docker run --rm dockcross/android-arm64 > ./dockcross-android-arm64 && chmod +x ./dockcross-android-arm64
+tools/generate_mavlink_headers.sh
+./dockcross-android-arm64 cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_MAVSDK_SERVER=ON -DBUILD_SHARED_LIBS=OFF -Bbuild/android-arm64 -DMAVLINK_HEADERS="mavlink-headers/include" -H. -DCMAKE_INSTALL_PREFIX=build/android-arm64/install
+./dockcross-android-arm64 cmake --build build/android-arm64 --target install && cp build/android-arm64/install/lib/libmavsdk_server.so ../mavsdk-android-test/mavsdk_server/src/main/prebuiltLibs/arm64-v8a/libmavsdk_server.so
+```
+
+Now build, install, run the Android app again.
+
 ## Further Information
 
 - [Getting started with MAVSDK – Java](https://auterion.com/getting-started-with-mavsdk-java/) (Jonas Vautherin, Auterion blog)
