@@ -132,31 +132,7 @@ ossrhPassword=<password>
 
 Sometimes you just need to rebuild `mavsdk_server` or even `libmavsdk_server.so` a couple of times to directly debug a problem.
 
-This can be achieved by these gradle changes:
-
-```
-examples/android-client/app/build.gradle:
-
--    implementation 'io.mavsdk:mavsdk-server:1.1.1'
-+    implementation project(path: ':io.mavsdk:mavsdk-server')
-```
-
-```
-examples/android-client/settings.gradle:
-
-+include 'io.mavsdk:mavsdk-server'
-+project(':io.mavsdk:mavsdk-server').projectDir = new File(settingsDir, '../../mavsdk_server/')
- include ':app'
-```
-
-```
-mavsdk_server/build.gradle:
-
-allprojects {
-- [everything in that function]
-+ apply plugin: 'android-library'
-}
-```
+This can be achieved with the Gradle [composite builds](https://docs.gradle.org/current/userguide/composite_builds.html). This is already setup in the Android example project [here](https://github.com/mavlink/MAVSDK-Java/blob/main/examples/android-client/settings.gradle#L3-L11) (just uncomment the lines to build `sdk` and/or `mavsdk_server` from sources, as described in the Gradle documentation).
 
 Then you can just build the example and it will in turn build `mavsdk_server`.
 
