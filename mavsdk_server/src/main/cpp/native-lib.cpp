@@ -51,4 +51,11 @@ extern "C"
         auto mavsdk_server = reinterpret_cast<MavsdkServer*>(mavsdkServerHandle);
         mavsdk_server_stop(mavsdk_server);
     }
+
+    JNIEXPORT void JNICALL
+    Java_io_mavsdk_mavsdkserver_MavsdkServer_destroy(JNIEnv* env, jobject thiz, jlong mavsdkServerHandle)
+    {
+        auto mavsdk_server = reinterpret_cast<MavsdkServer*>(mavsdkServerHandle);
+        mavsdk_server_destroy(mavsdk_server);
+    }
 };
