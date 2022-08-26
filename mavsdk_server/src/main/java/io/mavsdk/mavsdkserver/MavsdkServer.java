@@ -83,4 +83,10 @@ public class MavsdkServer {
   }
 
   private native void stop(long mavsdkServerHandle);
+
+  public void destroy() {
+    destroy(mavsdkServerHandle);
+  }
+
+  private native void destroy(long mavsdkServerHandle);
 }
