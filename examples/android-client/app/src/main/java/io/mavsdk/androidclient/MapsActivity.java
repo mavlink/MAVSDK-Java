@@ -5,6 +5,8 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,6 +27,8 @@ import com.mapbox.mapboxsdk.plugins.annotation.Symbol;
 import com.mapbox.mapboxsdk.plugins.annotation.SymbolManager;
 import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions;
 import com.mapbox.mapboxsdk.utils.ColorUtils;
+
+import io.mavsdk.MavsdkEventQueue;
 import io.mavsdk.System;
 import io.mavsdk.mavsdkserver.MavsdkServer;
 import io.reactivex.disposables.Disposable;
@@ -50,11 +54,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
   private MapView mapView;
   private MapboxMap map;
 
+  private Button buttonRunDestroyMavsdkServer;
+
   private MapsViewModel viewModel;
   private Symbol currentPositionMarker;
 
   private MavsdkServer mavsdkServer = new MavsdkServer();
   private System drone;
+  private boolean isMavsdkServerRunning = false;
   private final List<Circle> waypoints = new ArrayList<>();
   private final List<Disposable> disposables = new ArrayList<>();
 
@@ -69,6 +76,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     mapView = findViewById(R.id.mapView);
     mapView.onCreate(savedInstanceState);
     mapView.getMapAsync(this);
+
+    buttonRunDestroyMavsdkServer = findViewById(R.id.buttonRunDestroyMavsdkServer);
+    buttonRunDestroyMavsdkServer.setOnClickListener(v -> runDestroyMavsdkServer());
 
     viewModel = ViewModelProviders.of(this).get(MapsViewModel.class);
 
@@ -88,18 +98,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     mapView.onResume();
     viewModel.currentPositionLiveData.observe(this, currentPositionObserver);
     viewModel.currentMissionPlanLiveData.observe(this, currentMissionPlanObserver);
-
-    int mavsdkServerPort = mavsdkServer.run();
-    drone = new System(BACKEND_IP_ADDRESS, mavsdkServerPort);
-
-    disposables.add(drone.getTelemetry().getFlightMode().distinctUntilChanged()
-        .subscribe(flightMode -> logger.debug("flight mode: " + flightMode)));
-    disposables.add(drone.getTelemetry().getArmed().distinctUntilChanged()
-        .subscribe(armed -> logger.debug("armed: " + armed)));
-    disposables.add(drone.getTelemetry().getPosition().subscribe(position -> {
-      LatLng latLng = new LatLng(position.getLatitudeDeg(), position.getLongitudeDeg());
-      viewModel.currentPositionLiveData.postValue(latLng);
-    }));
   }
 
   @Override
@@ -108,16 +106,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     mapView.onPause();
     viewModel.currentPositionLiveData.removeObserver(currentPositionObserver);
     viewModel.currentMissionPlanLiveData.removeObserver(currentMissionPlanObserver);
-
-    for (Disposable disposable : disposables) {
-      disposable.dispose();
-    }
-    disposables.clear();
-
-
-    drone.dispose();
-    drone = null;
-    mavsdkServer.stop();
   }
 
   @Override
@@ -211,12 +199,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     for (LatLng latLng : latLngs) {
       CircleOptions circleOptions = new CircleOptions()
-          .withLatLng(latLng)
-          .withCircleColor(ColorUtils.colorToRgbaString(Color.BLUE))
-          .withCircleStrokeColor(ColorUtils.colorToRgbaString(Color.BLACK))
-          .withCircleStrokeWidth(1.0f)
-          .withCircleRadius(12f)
-          .withDraggable(false);
+              .withLatLng(latLng)
+              .withCircleColor(ColorUtils.colorToRgbaString(Color.BLUE))
+              .withCircleStrokeColor(ColorUtils.colorToRgbaString(Color.BLACK))
+              .withCircleStrokeWidth(1.0f)
+              .withCircleRadius(12f)
+              .withDraggable(false);
 
       circleManager.create(circleOptions);
     }
@@ -239,8 +227,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     mapboxMap.setStyle(Style.LIGHT, style -> {
       // Add the marker image to map
       style.addImage("marker-icon-id",
-          BitmapFactory.decodeResource(
-              MapsActivity.this.getResources(), R.drawable.mapbox_marker_icon_default));
+              BitmapFactory.decodeResource(
+                      MapsActivity.this.getResources(), R.drawable.mapbox_marker_icon_default));
 
       symbolManager = new SymbolManager(this.mapView, this.map, style);
       symbolManager.setIconAllowOverlap(true);
@@ -248,5 +236,52 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     });
 
     map = mapboxMap;
+  }
+
+  private void runDestroyMavsdkServer() {
+    if (!isMavsdkServerRunning) {
+      runMavsdkServer();
+    } else {
+      destroyMavsdkServer();
+    }
+  }
+
+  private void runMavsdkServer() {
+    MavsdkEventQueue.executor().execute(() -> {
+      int mavsdkServerPort = mavsdkServer.run();
+      drone = new System(BACKEND_IP_ADDRESS, mavsdkServerPort);
+
+      disposables.add(drone.getTelemetry().getFlightMode().distinctUntilChanged()
+              .subscribe(flightMode -> logger.debug("flight mode: " + flightMode)));
+      disposables.add(drone.getTelemetry().getArmed().distinctUntilChanged()
+              .subscribe(armed -> logger.debug("armed: " + armed)));
+      disposables.add(drone.getTelemetry().getPosition().subscribe(position -> {
+        LatLng latLng = new LatLng(position.getLatitudeDeg(), position.getLongitudeDeg());
+        viewModel.currentPositionLiveData.postValue(latLng);
+      }));
+
+      isMavsdkServerRunning = true;
+      runOnUiThread(() -> buttonRunDestroyMavsdkServer.setText(R.string.destroy_mavsdk_server));
+    });
+  }
+
+  private void destroyMavsdkServer() {
+    MavsdkEventQueue.executor().execute(() -> {
+      for (Disposable disposable : disposables) {
+        disposable.dispose();
+      }
+      disposables.clear();
+      drone.dispose();
+      drone = null;
+      mavsdkServer.stop();
+      mavsdkServer.destroy();
+
+      isMavsdkServerRunning = false;
+      runOnUiThread(() -> {
+        symbolManager.delete(currentPositionMarker);
+        currentPositionMarker = null;
+        buttonRunDestroyMavsdkServer.setText(R.string.run_mavsdk_server);
+      });
+    });
   }
 }

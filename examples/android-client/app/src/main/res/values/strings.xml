@@ -6,4 +6,6 @@
     <string name="return_home">Return</string>
     <string name="land">Land</string>
     <string name="takeoff">Takeoff</string>
+    <string name="run_mavsdk_server">Run Mavsdk Server</string>
+    <string name="destroy_mavsdk_server">Destroy Mavsdk Server</string>
 </resources>
