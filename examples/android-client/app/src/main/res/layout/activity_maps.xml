@@ -23,6 +23,14 @@
         android:tint="@color/white"
         android:layout_gravity="end|bottom"/>
 
+    <Button
+        android:id="@+id/buttonRunDestroyMavsdkServer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:text="@string/run_mavsdk_server"
+        android:layout_gravity="start|top"/>
+
     <FrameLayout
         android:id="@+id/start_mission_fragment_container"
         android:layout_width="match_parent"

@@ -54,6 +54,7 @@ public class MapsViewModel extends ViewModel {
             Float.NaN,
             1.0,
             Float.NaN,
+            Float.NaN,
             Float.NaN);
         missionItems.add(missionItem);
       }
