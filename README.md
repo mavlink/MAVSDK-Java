@@ -30,7 +30,7 @@ For Android, `mavsdk_server` is distributed as an Android library (`aar`):
 dependencies {
     ...
     implementation 'io.mavsdk:mavsdk:1.3.1'
-    implementation 'io.mavsdk:mavsdk-server:1.3.1'
+    implementation 'io.mavsdk:mavsdk-server:1.3.2'
     ...
 }
 ```
