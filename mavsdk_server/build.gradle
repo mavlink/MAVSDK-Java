@@ -19,7 +19,7 @@ allprojects {
         mavenCentral()
     }
 
-    def mavsdk_server_release = "v1.4.11"
+    def mavsdk_server_release = "v1.4.16"
 
     task extractMavsdkServer(type: Copy) {
         mkdir project.buildDir.getAbsolutePath() + "/tmp"
@@ -124,7 +124,7 @@ android {
         archivesBaseName = 'mavsdk-server'
         group = 'io.mavsdk'
         versionCode 1
-        version '1.3.1'
+        version '1.3.2'
 
         ndk {
             abiFilters 'arm64-v8a', 'armeabi-v7a', 'x86', 'x86_64'
