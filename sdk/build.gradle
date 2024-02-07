@@ -5,7 +5,7 @@ buildscript {
     }
 
     dependencies {
-        classpath "com.google.protobuf:protobuf-gradle-plugin:0.8.18"
+        classpath "com.google.protobuf:protobuf-gradle-plugin:0.9.4"
     }
 }
 
@@ -33,14 +33,14 @@ subprojects {
         checkstyleClasspath 'com.puppycrawl.tools:checkstyle:8.17'
     }
 
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 
-    def grpcVersion = '1.42.1'
+    def grpcVersion = '1.61.1'
 
     protobuf {
         protoc {
-            artifact = 'com.google.protobuf:protoc:3.17.2' // Same protoc version as grpc-java
+            artifact = 'com.google.protobuf:protoc:3.25.2'
         }
 
         plugins {
@@ -85,6 +85,10 @@ subprojects {
         }
     }
 
+    task sourcesJar(type: Jar) {
+        duplicatesStrategy = 'include'
+    }
+
     java {
         withJavadocJar()
         withSourcesJar()
@@ -122,7 +126,7 @@ subprojects {
                                 developer {
                                     id = 'jonasvautherin'
                                     name = 'Jonas Vautherin'
-                                    email = 'jonas.vautherin@gmail.com'
+                                    email = 'dev@jonas.vautherin.ch'
                                 }
                             }
                         }
@@ -147,29 +151,6 @@ subprojects {
         }
     }
 
-    task checkstyle(type: Checkstyle) {
-        configFile = rootProject.file("config/checkstyle/checkstyle.xml")
-        configDir = project.provider({ rootProject.file("config/checkstyle") })
-        source 'src'
-        include '**/*.java'
-        exclude '**/generated/**'
-
-        classpath = project.files()
-        checkstyleClasspath = project.configurations.checkstyleClasspath
-
-        maxWarnings 0
-
-        reports {
-            xml.enabled true
-            xml.destination new File("$project.buildDir/reports/checkstyle/checkstyle_report.xml")
-
-            html.enabled true
-            html.destination new File("$project.buildDir/reports/checkstyle/checkstyle_report.html")
-        }
-    }
-
-    build.dependsOn 'checkstyle'
-
     idea {
         module {
             inheritOutputDirs = false
@@ -186,7 +167,7 @@ subprojects {
         implementation "io.grpc:grpc-okhttp:${grpcVersion}"
         implementation "io.grpc:grpc-protobuf-lite:${grpcVersion}"
         implementation "io.grpc:grpc-stub:${grpcVersion}"
-        implementation 'org.slf4j:slf4j-api:1.7.35'
+        implementation 'org.slf4j:slf4j-api:2.0.12'
         api 'io.reactivex.rxjava2:rxjava:2.2.21'
 
         compileOnly "javax.annotation:javax.annotation-api:1.3.2"
