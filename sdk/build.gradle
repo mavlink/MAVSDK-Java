@@ -18,7 +18,7 @@ subprojects {
 
     group = 'io.mavsdk'
     archivesBaseName = 'mavsdk'
-    version = '2.0.0'
+    version = '2.0.1'
 
     repositories {
         jcenter()
@@ -85,8 +85,8 @@ subprojects {
         }
     }
 
-    task sourcesJar(type: Jar) {
-        duplicatesStrategy = 'include'
+    tasks.withType(Copy).all {
+        duplicatesStrategy 'include'
     }
 
     java {

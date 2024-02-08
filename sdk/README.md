@@ -8,7 +8,7 @@ Because it is deployed on Maven Central, adding MAVSDK-Java to your project is a
 
 ```groovy
 dependencies {
-    implementation 'io.mavsdk:mavsdk:1.1.1'
+    implementation 'io.mavsdk:mavsdk:2.0.1'
 }
 ```
 
