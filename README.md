@@ -147,7 +147,3 @@ tools/generate_mavlink_headers.sh
 ```
 
 Now build, install, run the Android app again.
-
-## Further Information
-
-- [Getting started with MAVSDK – Java](https://auterion.com/getting-started-with-mavsdk-java/) (Jonas Vautherin, Auterion blog)
