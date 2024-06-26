@@ -4,8 +4,6 @@ import io.mavsdk.action.Action;
 import io.mavsdk.action_server.ActionServer;
 import io.mavsdk.calibration.Calibration;
 import io.mavsdk.camera.Camera;
-import io.mavsdk.component_information.ComponentInformation;
-import io.mavsdk.component_information_server.ComponentInformationServer;
 import io.mavsdk.core.Core;
 import io.mavsdk.failure.Failure;
 import io.mavsdk.follow_me.FollowMe;
@@ -27,7 +25,6 @@ import io.mavsdk.server_utility.ServerUtility;
 import io.mavsdk.shell.Shell;
 import io.mavsdk.telemetry.Telemetry;
 import io.mavsdk.telemetry_server.TelemetryServer;
-import io.mavsdk.tracking_server.TrackingServer;
 import io.mavsdk.transponder.Transponder;
 import io.mavsdk.tune.Tune;
 import io.reactivex.annotations.NonNull;
@@ -38,8 +35,6 @@ public class System {
   private final LazyPlugin<ActionServer> actionServer;
   private final LazyPlugin<Calibration> calibration;
   private final LazyPlugin<Camera> camera;
-  private final LazyPlugin<ComponentInformation> componentInformation;
-  private final LazyPlugin<ComponentInformationServer> componentInformationServer;
   private final LazyPlugin<Core> core;
   private final LazyPlugin<Failure> failure;
   private final LazyPlugin<FollowMe> followMe;
@@ -60,7 +55,6 @@ public class System {
   private final LazyPlugin<Shell> shell;
   private final LazyPlugin<Telemetry> telemetry;
   private final LazyPlugin<TelemetryServer> telemetryServer;
-  private final LazyPlugin<TrackingServer> trackingServer;
   private final LazyPlugin<Transponder> transponder;
   private final LazyPlugin<Tune> tune;
 
@@ -86,8 +80,6 @@ public class System {
     actionServer = LazyPlugin.from(() -> new ActionServer(host, port));
     calibration = LazyPlugin.from(() -> new Calibration(host, port));
     camera = LazyPlugin.from(() -> new Camera(host, port));
-    componentInformation = LazyPlugin.from(() -> new ComponentInformation(host, port));
-    componentInformationServer = LazyPlugin.from(() -> new ComponentInformationServer(host, port));
     core = LazyPlugin.from(() -> new Core(host, port));
     failure = LazyPlugin.from(() -> new Failure(host, port));
     followMe = LazyPlugin.from(() -> new FollowMe(host, port));
@@ -108,7 +100,6 @@ public class System {
     shell = LazyPlugin.from(() -> new Shell(host, port));
     telemetry = LazyPlugin.from(() -> new Telemetry(host, port));
     telemetryServer = LazyPlugin.from(() -> new TelemetryServer(host, port));
-    trackingServer = LazyPlugin.from(() -> new TrackingServer(host, port));
     transponder = LazyPlugin.from(() -> new Transponder(host, port));
     tune = LazyPlugin.from(() -> new Tune(host, port));
   }
@@ -131,16 +122,6 @@ public class System {
   @NonNull
   public Camera getCamera() {
     return camera.get();
-  }
-
-  @NonNull
-  public ComponentInformation getComponentInformation() {
-    return componentInformation.get();
-  }
-
-  @NonNull
-  public ComponentInformationServer getComponentInformationServer() {
-    return componentInformationServer.get();
   }
 
   @NonNull
@@ -243,10 +224,6 @@ public class System {
     return telemetryServer.get();
   }
 
-  @NonNull
-  public TrackingServer getTrackingServer() {
-    return trackingServer.get();
-  }
 
   @NonNull
   public Transponder getTransponder() {
@@ -266,8 +243,6 @@ public class System {
     actionServer.dispose();
     calibration.dispose();
     camera.dispose();
-    componentInformation.dispose();
-    componentInformationServer.dispose();
     core.dispose();
     failure.dispose();
     followMe.dispose();
@@ -288,7 +263,6 @@ public class System {
     shell.dispose();
     telemetry.dispose();
     telemetryServer.dispose();
-    trackingServer.dispose();
     transponder.dispose();
     tune.dispose();
   }
