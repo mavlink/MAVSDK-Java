@@ -5,17 +5,19 @@ configurations {
 }
 
 android {
-    compileSdkVersion 30
+    namespace "io.mavsdk.androidclient"
+
+    compileSdkVersion 33
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     defaultConfig {
         applicationId "io.mavsdk.androidclient"
         minSdkVersion 21
-        targetSdkVersion 30
+        targetSdkVersion 33
         versionCode 2
         versionName "1.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -40,10 +42,8 @@ task checkstyle(type: Checkstyle) {
     maxWarnings 0
 
     reports {
-        xml.enabled true
         xml.destination new File("$project.buildDir/reports/checkstyle/checkstyle_report.xml")
 
-        html.enabled true
         html.destination new File("$project.buildDir/reports/checkstyle/checkstyle_report.html")
     }
 }
@@ -58,11 +58,11 @@ dependencies {
     implementation 'com.github.tony19:logback-android:2.0.0'
     implementation 'com.google.android.material:material:1.2.0'
     implementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-annotation-v9:0.9.0'
-    implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:9.2.0'
-    implementation 'com.mapbox.mapboxsdk:mapbox-android-telemetry:6.1.0'
-    implementation 'io.mavsdk:mavsdk:1.2.0'
-    implementation 'io.mavsdk:mavsdk-server:1.2.1'
-    implementation 'org.slf4j:slf4j-api:1.7.28'
+    implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:9.2.1'
+    implementation 'com.mapbox.mapboxsdk:mapbox-android-telemetry:7.0.0'
+    implementation 'io.mavsdk:mavsdk:2.1.0'
+    implementation 'io.mavsdk:mavsdk-server:2.1.0'
+    implementation 'org.slf4j:slf4j-api:2.0.13'
 
     testImplementation 'junit:junit:4.13'
 

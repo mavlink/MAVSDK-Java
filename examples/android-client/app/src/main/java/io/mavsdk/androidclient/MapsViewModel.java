@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import io.mavsdk.System;
 import io.mavsdk.mission.Mission;
+import io.mavsdk.mission.Mission.MissionItem.VehicleAction;
 import io.mavsdk.mission.Mission.MissionPlan;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +56,8 @@ public class MapsViewModel extends ViewModel {
             1.0,
             Float.NaN,
             Float.NaN,
-            Float.NaN);
+            Float.NaN,
+            VehicleAction.NONE);
         missionItems.add(missionItem);
       }
 
