@@ -141,21 +141,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
     // Handle item selection
-    switch (item.getItemId()) {
-      case R.id.disarm:
-        drone.getAction().kill().subscribe();
-        break;
-      case R.id.land:
-        drone.getAction().land().subscribe();
-        break;
-      case R.id.return_home:
-        drone.getAction().returnToLaunch().subscribe();
-        break;
-      case R.id.takeoff:
-        drone.getAction().arm().andThen(drone.getAction().takeoff()).subscribe();
-        break;
-      default:
-        return super.onOptionsItemSelected(item);
+    int itemId = item.getItemId();
+    if(itemId == R.id.disarm) {
+      drone.getAction().kill().subscribe();
+    } else if (itemId == R.id.land) {
+      drone.getAction().land().subscribe();
+    } else if (itemId == R.id.return_home) {
+      drone.getAction().returnToLaunch().subscribe();
+    } else if (itemId == R.id.takeoff) {
+      drone.getAction().arm().andThen(drone.getAction().takeoff()).subscribe();
+    } else {
+      return super.onOptionsItemSelected(item);
     }
     return true;
   }
@@ -228,7 +224,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
       // Add the marker image to map
       style.addImage("marker-icon-id",
               BitmapFactory.decodeResource(
-                      MapsActivity.this.getResources(), R.drawable.mapbox_marker_icon_default));
+                      MapsActivity.this.getResources(), com.mapbox.mapboxsdk.plugins.annotation.R.drawable.mapbox_marker_icon_default));
 
       symbolManager = new SymbolManager(this.mapView, this.map, style);
       symbolManager.setIconAllowOverlap(true);
