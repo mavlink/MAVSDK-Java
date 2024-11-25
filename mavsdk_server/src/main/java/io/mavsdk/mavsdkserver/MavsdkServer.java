@@ -63,9 +63,37 @@ public class MavsdkServer {
     return getPort(mavsdkServerHandle);
   }
 
+  /**
+   * Run MavsdkServer with MAVLink on `systemAddress` with custom MAVLink IDs.
+   *
+   * <p>MavsdkServer will listen for a `System` to connect on `mavsdkServerPort`.</p>
+   *
+   * @param systemAddress The address on which the remote MAVLink system is expected.
+   *     Valid formats are:
+   *     For TCP : tcp://[server_host][:server_port]
+   *     For UDP : udp://[bind_host][:bind_port]
+   *     For Serial : serial:///path/to/serial/dev[:baudrate]
+   * @param mavsdkServerPort The port on which the server should listen for a `System`.
+   * @param systemId The identifier which the system should connect with.
+   * @param componentId The identifier which the component should connect with.
+   * @return The port on which MavsdkServer listens for a `System` to connect.
+   *     A return value of 0 means that the server failed to start.
+   */
+  public int runWithMavIds(String systemAddress, int mavsdkServerPort, int systemId, int componentId) {
+    mavsdkServerHandle = initNative();
+
+    if (!runNativeWithMavIds(mavsdkServerHandle, systemAddress, mavsdkServerPort, systemId, componentId)) {
+      return 0;
+    }
+
+    return getPort(mavsdkServerHandle);
+  }
+
   private native long initNative();
 
   private native boolean runNative(long mavsdkServerHandle, String systemAddress, int mavsdkServerPort);
+
+  private native boolean runNativeWithMavIds(long mavsdkServerHandle, String systemAddress, int mavsdkServerPort, int systemId, int componentId);
 
   private native int getPort(long mavsdkServerHandle);
 

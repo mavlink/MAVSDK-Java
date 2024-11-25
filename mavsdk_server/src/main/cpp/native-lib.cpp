@@ -31,6 +31,22 @@ extern "C"
         return true;
     }
 
+    JNIEXPORT jboolean JNICALL
+    Java_io_mavsdk_mavsdkserver_MavsdkServer_runNativeWithMavIds(JNIEnv* env, jobject thiz, jlong mavsdkServerHandle, jstring system_address, jint mavsdk_server_port, jint system_id, jint component_id)
+    {
+        const char* native_connection_url = env->GetStringUTFChars(system_address, 0);
+        auto mavsdk_server = reinterpret_cast<MavsdkServer*>(mavsdkServerHandle);
+
+        LOGD("Running mavsdk_server with connection url: %s", native_connection_url);
+        if (!mavsdk_server_run_with_mavlink_ids(mavsdk_server, native_connection_url, mavsdk_server_port, system_id, component_id)) {
+            return false;
+        }
+
+        auto server_port = mavsdk_server_get_port(mavsdk_server);
+        LOGD("mavsdk_server is now running, listening on port %d", server_port);
+        return true;
+    }
+
     JNIEXPORT jint JNICALL
     Java_io_mavsdk_mavsdkserver_MavsdkServer_getPort(JNIEnv* env, jobject thiz, jlong mavsdkServerHandle)
     {
