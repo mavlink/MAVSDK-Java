@@ -74,7 +74,7 @@ public class MavsdkServer {
    *     For UDP : udp://[bind_host][:bind_port]
    *     For Serial : serial:///path/to/serial/dev[:baudrate]
    * @param mavsdkServerPort The port on which the server should listen for a `System`.
-   * @param systemId The identifier which the system should connect with.
+   * @param systemId The MAVLink sysid that MAVSDK should use.
    * @param componentId The identifier which the component should connect with.
    * @return The port on which MavsdkServer listens for a `System` to connect.
    *     A return value of 0 means that the server failed to start.
