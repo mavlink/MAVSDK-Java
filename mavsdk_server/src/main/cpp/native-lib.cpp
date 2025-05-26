@@ -22,7 +22,9 @@ extern "C"
         auto mavsdk_server = reinterpret_cast<MavsdkServer*>(mavsdkServerHandle);
 
         LOGD("Running mavsdk_server with connection url: %s", native_connection_url);
-        if (!mavsdk_server_run(mavsdk_server, native_connection_url, mavsdk_server_port)) {
+        auto result = mavsdk_server_run(mavsdk_server, native_connection_url, mavsdk_server_port);
+        if (result != 0) {
+            LOGD("Failed to start mavsdk_server: %d", result);
             return false;
         }
 

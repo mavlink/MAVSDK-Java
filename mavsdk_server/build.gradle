@@ -5,7 +5,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.2.2'
+        classpath 'com.android.tools.build:gradle:8.10.0'
     }
 }
 
@@ -19,9 +19,9 @@ allprojects {
         mavenCentral()
     }
 
-    def mavsdk_server_release = "v2.14.1"
+    def mavsdk_server_release = "v3.5.0"
 
-    task extractMavsdkServer(type: Copy) {
+    tasks.register('extractMavsdkServer', Copy) {
         mkdir project.buildDir.getAbsolutePath() + "/tmp"
 
         def extractForArch = { arch ->
@@ -110,7 +110,6 @@ allprojects {
 }
 
 android {
-    compileSdkVersion 33
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
@@ -119,7 +118,8 @@ android {
 
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 33
+        targetSdkVersion 35
+        compileSdk 35
 
         archivesBaseName = 'mavsdk-server'
         group = 'io.mavsdk'
