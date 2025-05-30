@@ -19,7 +19,7 @@ MAVSDK-Java is distributed through MavenCentral, meaning that it can be imported
 ```
 dependencies {
     ...
-    implementation 'io.mavsdk:mavsdk:2.1.0'
+    implementation 'io.mavsdk:mavsdk:3.0.0'
     ...
 }
 ```
@@ -29,8 +29,8 @@ For Android, `mavsdk_server` is distributed as an Android library (`aar`):
 ```
 dependencies {
     ...
-    implementation 'io.mavsdk:mavsdk:2.1.0'
-    implementation 'io.mavsdk:mavsdk-server:2.1.6'
+    implementation 'io.mavsdk:mavsdk:3.0.0'
+    implementation 'io.mavsdk:mavsdk-server:3.0.0'
     ...
 }
 ```
