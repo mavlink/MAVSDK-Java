@@ -9,7 +9,7 @@ public class MavsdkServer {
   private long mavsdkServerHandle;
 
   /**
-   * Run MavsdkServer with MAVLink defaulting to udp://:14540.
+   * Run MavsdkServer with MAVLink defaulting to udpin://:14540.
    *
    * <p>MavsdkServer will start a gRPC server listening on an
    * arbitrary port, to which a `System` should connect.</p>
@@ -18,7 +18,7 @@ public class MavsdkServer {
    *     A return value of 0 means that the server failed to start.
    */
   public int run() {
-    return run("udp://:14540");
+    return run("udpin://:14540");
   }
 
   /**
@@ -29,9 +29,12 @@ public class MavsdkServer {
    *
    * @param systemAddress The address on which the remote MAVLink system is expected.
    *     Valid formats are:
-   *     For TCP : tcp://[server_host][:server_port].
-   *     For UDP : udp://[bind_host][:bind_port].
-   *     For Serial : serial:///path/to/serial/dev[:baudrate].
+   *     UDP in (server): udpin://our_ip:port
+   *     UDP out (client): udpout://remote_ip:port
+   *     TCP in (server): tcpin://our_ip:port
+   *     TCP out (client): tcpout://remote_ip:port
+   *     Serial: serial://dev_node:baudrate
+   *     Serial with flow control: serial_flowcontrol://dev_node:baudrate
    * @return The port on which MavsdkServer listens for a `System` to connect.
    *     A return value of 0 means that the server failed to start.
    */
@@ -46,9 +49,12 @@ public class MavsdkServer {
    *
    * @param systemAddress The address on which the remote MAVLink system is expected.
    *     Valid formats are:
-   *     For TCP : tcp://[server_host][:server_port]
-   *     For UDP : udp://[bind_host][:bind_port]
-   *     For Serial : serial:///path/to/serial/dev[:baudrate]
+   *     UDP in (server): udpin://our_ip:port
+   *     UDP out (client): udpout://remote_ip:port
+   *     TCP in (server): tcpin://our_ip:port
+   *     TCP out (client): tcpout://remote_ip:port
+   *     Serial: serial://dev_node:baudrate
+   *     Serial with flow control: serial_flowcontrol://dev_node:baudrate
    * @param mavsdkServerPort The port on which the server should listen for a `System`.
    * @return The port on which MavsdkServer listens for a `System` to connect.
    *     A return value of 0 means that the server failed to start.
@@ -69,10 +75,12 @@ public class MavsdkServer {
    * <p>MavsdkServer will listen for a `System` to connect on `mavsdkServerPort`.</p>
    *
    * @param systemAddress The address on which the remote MAVLink system is expected.
-   *     Valid formats are:
-   *     For TCP : tcp://[server_host][:server_port]
-   *     For UDP : udp://[bind_host][:bind_port]
-   *     For Serial : serial:///path/to/serial/dev[:baudrate]
+   *     UDP in (server): udpin://our_ip:port
+   *     UDP out (client): udpout://remote_ip:port
+   *     TCP in (server): tcpin://our_ip:port
+   *     TCP out (client): tcpout://remote_ip:port
+   *     Serial: serial://dev_node:baudrate
+   *     Serial with flow control: serial_flowcontrol://dev_node:baudrate
    * @param mavsdkServerPort The port on which the server should listen for a `System`.
    * @param systemId The MAVLink sysid that MAVSDK should use.
    * @param componentId The MAVLink compid that MAVSDK should use.

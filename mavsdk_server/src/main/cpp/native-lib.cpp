@@ -18,7 +18,7 @@ extern "C"
     JNIEXPORT jboolean JNICALL
     Java_io_mavsdk_mavsdkserver_MavsdkServer_runNative(JNIEnv* env, jobject thiz, jlong mavsdkServerHandle, jstring system_address, jint mavsdk_server_port)
     {
-        const char* native_connection_url = env->GetStringUTFChars(system_address, 0);
+        const char* native_connection_url = env->GetStringUTFChars(system_address, nullptr);
         auto mavsdk_server = reinterpret_cast<MavsdkServer*>(mavsdkServerHandle);
 
         LOGD("Running mavsdk_server with connection url: %s", native_connection_url);
@@ -36,14 +36,15 @@ extern "C"
     JNIEXPORT jboolean JNICALL
     Java_io_mavsdk_mavsdkserver_MavsdkServer_runNativeWithMavIds(JNIEnv* env, jobject thiz, jlong mavsdkServerHandle, jstring system_address, jint mavsdk_server_port, jint system_id, jint component_id)
     {
-        const char* native_connection_url = env->GetStringUTFChars(system_address, 0);
+        const char* native_connection_url = env->GetStringUTFChars(system_address, nullptr);
         auto mavsdk_server = reinterpret_cast<MavsdkServer*>(mavsdkServerHandle);
 
         LOGD("Running mavsdk_server with connection url: %s", native_connection_url);
-        if (!mavsdk_server_run_with_mavlink_ids(mavsdk_server, native_connection_url, mavsdk_server_port, system_id, component_id)) {
+        auto result = mavsdk_server_run_with_mavlink_ids(mavsdk_server, native_connection_url, mavsdk_server_port, system_id, component_id);
+        if (result != 0) {
+            LOGD("Failed to start mavsdk_server: %d", result);
             return false;
         }
-
         auto server_port = mavsdk_server_get_port(mavsdk_server);
         LOGD("mavsdk_server is now running, listening on port %d", server_port);
         return true;
