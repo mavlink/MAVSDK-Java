@@ -126,5 +126,5 @@ public class MavsdkServer {
 
   private native void destroy(long mavsdkServerHandle);
 
-  private native void setTempDirectory(String dir);
+  public native void setTempDirectory(String dir);
 }
