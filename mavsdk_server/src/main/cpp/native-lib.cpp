@@ -83,7 +83,6 @@ extern "C"
     JNIEXPORT void JNICALL
     Java_io_mavsdk_mavsdkserver_MavsdkServer_setTempDirectory(JNIEnv *env, jobject thiz, jstring temp_dir)
     {
-
         const char* temp_c_str = env->GetStringUTFChars(temp_dir, 0);
 
         static char our_copy[256];
