@@ -71,62 +71,31 @@ The plugins are constructed and initialized lazily upon their first call through
 
 5. One-shot calls like `takeoff` and `land` are not added to the `mavsdk-event-queue` when the user subscribes to them. This is done to avoid their piling up while the `mavsdk_server` discovers a system. Instead, the `onError` callback will be triggered after a 100ms delay indicating that no system was available for the command.
 
-## Contributing
-
-### Coding style
-
-Java/Android coding style is ensured using CheckStyle with the Google style.
-
-#### Command line
-
-A `checkstyle` task is defined in the root `build.gradle` of each project and can be run as follows:
-
-    $ ./gradlew checkstyle
-
-The `build` task depends on `checkstyle`, meaning that `$ ./gradlew build` runs the checks as well.
-
-#### IntelliJ / Android-Studio
-
-There exist a plugin for CheckStyle in JetBrains' IDEs.
-
-##### Setup
-
-1. Install the plugin called "CheckStyle-IDEA" in IntelliJ / Android-Studio.
-2. Import the checkstyle configuration as a code style scheme in _Settings > Editor > Code Style > Java > Manage... >
-   Import..._ by selecting "CheckStyle configuration" and then browsing to `config/checkstyle/checkstyle.xml`.
-3. In _Settings > Other Settings > Checkstyle_, change the "Scan Scope" to "Only Java sources (including tests)".
-4. Still in _Settings > Other Settings > Checkstyle_, add a new configuration file and browse to
-   `config/checkstyle/checkstyle.xml`.
-
-##### Usage
-
-In IntelliJ / Android-Studio's bottom task bar, you should see a "CheckStyle" tab. It will allow you to select your configuration
-with the "Rules" dropdown-list, and to run the analysis on your code.
-
-Note that by default, the IDE will not run checkstyle when building the project (whereas `$ ./gradlew build` always does it).
-
-#### Troubleshooting
-
-In IntelliJ / Android-Studio, the IDE might force the order of the imports in a way that is not following the checkstyle rules. For some reason, this is not set when importing `checkstyle.xml` as a code style scheme. However, it can be manually updated in _Settings > Code Style > Java > Import Layout_.
-
 ### Releasing
 
-Both [sdk](./sdk) and [mavsdk_server](./mavsdk_server) are released with Maven. Publishing can be done through a gradle task:
-
-```gradle
-./gradlew uploadArchives
-```
-
-This task requires a few secrets in `gradle.properties`:
-
-```
-signing.keyId=<keyId>
-signing.password=<password>
-signing.secretKeyRingFile=<ring_file>
-
-ossrhUsername=<username>
-ossrhPassword=<password>
-```
+1. Update the proto submodule (./sdk/proto) to match the version of
+   `mavsdk_server` you want to use. The proto submodule should point to the same
+   commit hash as the proto submodule in
+   [MAVSDK-C++](https://github.com/mavlink/mavsdk) (make sure you check the hash
+   associated with the right release tag!).
+1. Update the version in both modules:
+   [./sdk/build.gradle.kts](./sdk/build.gradle.kts) and
+   [./mavsdk_server/build.gradle.kts](./mavsdk_server/build.gradle.kts). The new version
+   should be the version of `mavsdk_server` followed by an optional build
+   number, e.g. `3.6.0` or `3.6.0-2`. This means that the proto definitions
+   should match with the `v3.6.0` tag of
+   [MAVSDK-C++](https://github.com/mavlink/mavsdk). We support snapshots, e.g.
+   `3.6.0-SNAPSHOT` will publish a temporary snapshot to Maven Central (this is
+   convenient for testing before the final release).
+1. In [./mavsdk_server/build.gradle.kts](./mavsdk_server/build.gradle.kts),
+   change `mavsdk_server_release` to point to the version of `mavsdk_server` you
+   want to use. This should correspond to the proto submodule and to the version
+   numbers set in the previous step (e.g. if you set 3.6.0-2, the proto
+   submodule should point to the same hash as MAVSDK-C++ v3.6.0, and
+   `mavsdk_server_release` should be set to "v3.6.0").
+1. Update the README to point to the new version.
+1. Tag a release. The CI will publish the artifacts to Maven Central
+   automatically.
 
 ### Debugging without pushing to maven
 
