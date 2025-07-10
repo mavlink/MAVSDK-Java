@@ -1,0 +1,9 @@
+[versions]
+jreleaser-plugin = "1.19.0"
+protobuf-gradle-plugin = "0.9.4"
+
+[libraries]
+
+[plugins]
+jreleaser = { id = "org.jreleaser", version.ref = "jreleaser-plugin" }
+protobuf = { id = "com.google.protobuf", version.ref = "protobuf-gradle-plugin" }
