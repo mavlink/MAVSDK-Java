@@ -187,6 +187,10 @@ if (keystoreProperties.containsKey("centralUsername") && keystoreProperties.cont
             keystoreProperties["gpgPass"]?.let {
                 passphrase.set(it as String)
             }
+
+            command {
+                keyName.set("CF3FF35732A465F680A89BC25B01A8023597C84B")
+            }
         }
         deploy {
             release {

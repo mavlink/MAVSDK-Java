@@ -126,7 +126,7 @@ if (keystoreProperties.containsKey("centralUsername") && keystoreProperties.cont
             }
 
             command {
-                keyName.set("72D6223E657BDA72EDEA45F021A81CC9B3DDE00B")
+                keyName.set("CF3FF35732A465F680A89BC25B01A8023597C84B")
             }
         }
         deploy {
