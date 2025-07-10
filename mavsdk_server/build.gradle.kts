@@ -87,7 +87,7 @@ android {
         minSdk = 21
 
         group = "io.mavsdk"
-        version = "3.6.0-SNAPSHOT"
+        version = "3.6.0"
 
 
         ndk {

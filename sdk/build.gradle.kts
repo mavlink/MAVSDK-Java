@@ -22,7 +22,7 @@ try {
 }
 
 group = "io.mavsdk"
-version = "3.6.0-SNAPSHOT"
+version = "3.6.0"
 
 val grpcVersion = "1.61.1"
 
