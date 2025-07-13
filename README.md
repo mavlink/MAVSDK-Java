@@ -35,6 +35,24 @@ dependencies {
 }
 ```
 
+It is possible to fetch SNAPSHOTs by adding the repository to your Gradle config, as per the [sonatype documentation](https://central.sonatype.org/publish/publish-portal-snapshots/#consuming-via-gradle):
+
+```
+repositories {
+  maven {
+    name = 'Central Portal Snapshots'
+    url = 'https://central.sonatype.com/repository/maven-snapshots/'
+
+    // Only search this repository for the specific dependency
+    content {
+      includeModule("io.mavsdk", "mavsdk")
+      includeModule("io.mavsdk", "mavsdk-server")
+    }
+  }
+  mavenCentral()
+}
+```
+
 ### ProGuard
 
 ProGuard users may need to add the following rule:
