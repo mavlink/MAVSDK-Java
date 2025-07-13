@@ -22,7 +22,15 @@ try {
 }
 
 group = "io.mavsdk"
-version = "3.6.0"
+
+// The version must be of the form "X.Y.Z-b[-SNAPSHOT]", where "X.Y.Z"
+// is the MAVSDK-C++ version, "b" is the build number of this
+// MAVSDK-Java package and "SNAPSHOT" optionally sets it as a SNAPSHOT.
+// For instance, if the version is 3.6.0-2, it should be built with the same
+// version of the proto files as MAVSDK-C++ v3.6.0.
+version =
+    if (project.hasProperty("VERSION")) project.property("VERSION").toString()
+    else "3.6.0-SNAPSHOT"
 
 val grpcVersion = "1.61.1"
 

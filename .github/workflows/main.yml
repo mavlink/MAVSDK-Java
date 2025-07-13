@@ -1,5 +1,4 @@
 name: MAVSDK-Java
-
 on:
   push:
     branches:
@@ -9,22 +8,14 @@ on:
     - '**'
   release:
     types: [created]
-
 jobs:
-  main:
+  build:
+    if: github.event_name != 'release'
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
-      - name: Prepare tokens keystore
-        run: |
-          echo "${{ secrets.TOKENS_KEYSTORE }}" > /tmp/keystore.properties.b64
-          base64 -d -i /tmp/keystore.properties.b64 > /tmp/keystore.properties
-          cp /tmp/keystore.properties sdk
-          cp /tmp/keystore.properties mavsdk_server
-      - name: Prepare GPG key
-        run: echo "${{ secrets.SIGNING_PGP_KEY }}" | gpg --batch --import
       - name: Build and prepare mavsdk
         working-directory: ./sdk
         run: |
@@ -33,19 +24,75 @@ jobs:
           source ./venv/bin/activate
           pip install protoc-gen-mavsdk
           ./gradlew build
-          ./gradlew publish
+      - name: Build and prepare mavsdk-server
+        working-directory: ./mavsdk_server
+        run: ./gradlew build
+
+  release:
+    if: github.event_name == 'release' && github.event.action == 'created'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Validate version
+        id: version
+        run: |
+          set -o pipefail
+          tag_name="${{ github.ref_name }}"
+          python ./tools/version_validator.py "$tag_name"
+          echo "tag_name=$tag_name" >> $GITHUB_OUTPUT
+      - name: Prepare tokens keystore
+        run: |
+          echo "${{ secrets.TOKENS_KEYSTORE }}" > /tmp/keystore.properties.b64
+          base64 -d -i /tmp/keystore.properties.b64 > /tmp/keystore.properties
+          cp /tmp/keystore.properties sdk
+          cp /tmp/keystore.properties mavsdk_server
+      - name: Prepare GPG key
+        run: echo "${{ secrets.SIGNING_PGP_KEY }}" | gpg --batch --import
+      - name: Extract version and sync proto submodule
+        run: |
+          set -o pipefail
+          tag_name="${{ steps.version.outputs.tag_name }}"
+
+          # Extract version number
+          extracted_version=$(python ./tools/version_validator.py -e "$tag_name")
+
+          # Clone MAVSDK repo with minimal depth to get proto submodule hash
+          git clone --depth 1 --branch "${extracted_version}" https://github.com/mavlink/mavsdk.git /tmp/mavsdk
+
+          # Get the proto submodule commit hash from the MAVSDK repo
+          cd /tmp/mavsdk
+          proto_commit_hash=$(git ls-tree HEAD proto | awk '{print $3}')
+
+          # Update our local proto submodule to match
+          cd $GITHUB_WORKSPACE/sdk/proto
+          git fetch origin
+          git checkout $proto_commit_hash
+
+          # Cleanup
+          rm -rf /tmp/mavsdk
+
+          echo "Updated proto submodule to commit: $proto_commit_hash for MAVSDK version: $extracted_version"
+      - name: Build and prepare mavsdk
+        working-directory: ./sdk
+        run: |
+          set -o pipefail
+          python3 -m venv venv
+          source ./venv/bin/activate
+          pip install protoc-gen-mavsdk
+          ./gradlew build -PVERSION=${{ steps.version.outputs.tag_name }}
+          ./gradlew publish -PVERSION=${{ steps.version.outputs.tag_name }}
       - name: Build and prepare mavsdk-server
         working-directory: ./mavsdk_server
         run: |
           set -o pipefail
-          ./gradlew build
-          ./gradlew publish
+          ./gradlew build -PVERSION=${{ steps.version.outputs.tag_name }}
+          ./gradlew publish -PVERSION=${{ steps.version.outputs.tag_name }}
       - name: Deploy mavsdk
-        if: github.event_name == 'release' && github.event.action == 'created'
         working-directory: ./sdk
-        run: ./gradlew jreleaserDeploy
+        run: ./gradlew jreleaserDeploy -PVERSION=${{ steps.version.outputs.tag_name }}
       - name: Deploy mavsdk-server
-        if: github.event_name == 'release' && github.event.action == 'created'
         working-directory: ./mavsdk_server
-        run: ./gradlew jreleaserDeploy
+        run: ./gradlew jreleaserDeploy -PVERSION=${{ steps.version.outputs.tag_name }}
 
