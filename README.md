@@ -19,7 +19,7 @@ MAVSDK-Java is distributed through MavenCentral, meaning that it can be imported
 ```
 dependencies {
     ...
-    implementation 'io.mavsdk:mavsdk:3.6.0'
+    implementation 'io.mavsdk:mavsdk:<version_number>'
     ...
 }
 ```
@@ -29,8 +29,8 @@ For Android, `mavsdk_server` is distributed as an Android library (`aar`):
 ```
 dependencies {
     ...
-    implementation 'io.mavsdk:mavsdk:3.6.0'
-    implementation 'io.mavsdk:mavsdk-server:3.6.0'
+    implementation 'io.mavsdk:mavsdk:<version_number>'
+    implementation 'io.mavsdk:mavsdk-server:<version_number>'
     ...
 }
 ```
@@ -73,29 +73,17 @@ The plugins are constructed and initialized lazily upon their first call through
 
 ### Releasing
 
-1. Update the proto submodule (./sdk/proto) to match the version of
-   `mavsdk_server` you want to use. The proto submodule should point to the same
-   commit hash as the proto submodule in
-   [MAVSDK-C++](https://github.com/mavlink/mavsdk) (make sure you check the hash
-   associated with the right release tag!).
-1. Update the version in both modules:
-   [./sdk/build.gradle.kts](./sdk/build.gradle.kts) and
-   [./mavsdk_server/build.gradle.kts](./mavsdk_server/build.gradle.kts). The new version
-   should be the version of `mavsdk_server` followed by an optional build
-   number, e.g. `3.6.0` or `3.6.0-2`. This means that the proto definitions
-   should match with the `v3.6.0` tag of
-   [MAVSDK-C++](https://github.com/mavlink/mavsdk). We support snapshots, e.g.
-   `3.6.0-SNAPSHOT` will publish a temporary snapshot to Maven Central (this is
-   convenient for testing before the final release).
-1. In [./mavsdk_server/build.gradle.kts](./mavsdk_server/build.gradle.kts),
-   change `mavsdk_server_release` to point to the version of `mavsdk_server` you
-   want to use. This should correspond to the proto submodule and to the version
-   numbers set in the previous step (e.g. if you set 3.6.0-2, the proto
-   submodule should point to the same hash as MAVSDK-C++ v3.6.0, and
-   `mavsdk_server_release` should be set to "v3.6.0").
-1. Update the README to point to the new version.
-1. Tag a release. The CI will publish the artifacts to Maven Central
-   automatically.
+When a GitHub release is created, the CI runs the release pipeline, which:
+
+1. Extracts the package version from the release tag. The release tag is expected
+   to be in the form "X.Y.Z-b[-SNAPSHOT]", where "X.Y.Z" correspond to the
+   matching version of MAVSDK-C++ and "b" is for build numbers of MAVSDK-Java.
+   For instance, 3.6.0, 3.6.0-2, 3.6.0-SNAPSHOT or 3.6.0-2-SNAPSHOT.
+1. Updates the ./sdk/proto submodule to point to the same commit as the
+   corresponding proto submodule in MAVSDK-C++ (for version X.Y.Z of
+   MAVSDK-C++).
+1. Build mavsdk and mavsdk_server and deploy them, either as SNAPSHOTs or as
+   definitive releases.
 
 ### Debugging without pushing to maven
 
