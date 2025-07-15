@@ -6,6 +6,8 @@
 
 #define  LOGD(...)  __android_log_print(ANDROID_LOG_DEBUG,"MAVSDK-Server",__VA_ARGS__)
 
+extern "C" char* mavsdk_temp_path;
+
 extern "C"
 {
     JNIEXPORT jlong JNICALL
@@ -76,5 +78,17 @@ extern "C"
     {
         auto mavsdk_server = reinterpret_cast<MavsdkServer*>(mavsdkServerHandle);
         mavsdk_server_destroy(mavsdk_server);
+    }
+
+    JNIEXPORT void JNICALL
+    Java_io_mavsdk_mavsdkserver_MavsdkServer_setTempDirectory(JNIEnv *env, jobject thiz, jstring temp_dir)
+    {
+        const char* temp_c_str = env->GetStringUTFChars(temp_dir, 0);
+
+        static char our_copy[256];
+        strncpy(our_copy, temp_c_str, sizeof(our_copy));
+        mavsdk_temp_path = our_copy;
+
+        env->ReleaseStringUTFChars(temp_dir, temp_c_str);
     }
 };
