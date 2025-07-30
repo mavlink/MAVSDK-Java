@@ -45,6 +45,7 @@ public class System {
   private final LazyPlugin<Info> info;
   private final LazyPlugin<LogFiles> logFiles;
   private final LazyPlugin<ManualControl> manualControl;
+  private final LazyPlugin<MavlinkDirect> mavlinkDirect;
   private final LazyPlugin<Mission> mission;
   private final LazyPlugin<MissionRaw> missionRaw;
   private final LazyPlugin<MissionRawServer> missionRawServer;
@@ -58,7 +59,6 @@ public class System {
   private final LazyPlugin<TelemetryServer> telemetryServer;
   private final LazyPlugin<Transponder> transponder;
   private final LazyPlugin<Tune> tune;
-  private final LazyPlugin<MavlinkDirect> mavlinkDirect;
 
   /**
    * Create a System object. The plugins are initialized lazily, when the corresponding
@@ -91,6 +91,7 @@ public class System {
     info = LazyPlugin.from(() -> new Info(host, port));
     logFiles = LazyPlugin.from(() -> new LogFiles(host, port));
     manualControl = LazyPlugin.from(() -> new ManualControl(host, port));
+    mavlinkDirect = LazyPlugin.from(() -> new MavlinkDirect(host, port));
     mission = LazyPlugin.from(() -> new Mission(host, port));
     missionRaw = LazyPlugin.from(() -> new MissionRaw(host, port));
     missionRawServer = LazyPlugin.from(() -> new MissionRawServer(host, port));
@@ -104,7 +105,6 @@ public class System {
     telemetryServer = LazyPlugin.from(() -> new TelemetryServer(host, port));
     transponder = LazyPlugin.from(() -> new Transponder(host, port));
     tune = LazyPlugin.from(() -> new Tune(host, port));
-    mavlinkDirect = LazyPlugin.from(() -> new MavlinkDirect(host, port));
   }
 
   @NonNull
@@ -173,6 +173,11 @@ public class System {
   }
 
   @NonNull
+  public MavlinkDirect getMavlinkDirect() {
+    return mavlinkDirect.get();
+  }
+
+  @NonNull
   public Mission getMission() {
     return mission.get();
   }
@@ -238,9 +243,6 @@ public class System {
     return tune.get();
   }
 
-  @NonNull
-  public MavlinkDirect getMavlinkDirect() { return mavlinkDirect.get(); }
-
   /**
    * Dispose of all the plugins.
    */
@@ -258,6 +260,7 @@ public class System {
     info.dispose();
     logFiles.dispose();
     manualControl.dispose();
+    mavlinkDirect.dispose();
     mission.dispose();
     missionRaw.dispose();
     missionRawServer.dispose();
@@ -271,6 +274,5 @@ public class System {
     telemetryServer.dispose();
     transponder.dispose();
     tune.dispose();
-    mavlinkDirect.dispose();
   }
 }
