@@ -14,6 +14,7 @@ import io.mavsdk.info.Info;
 import io.mavsdk.internal.LazyPlugin;
 import io.mavsdk.log_files.LogFiles;
 import io.mavsdk.manual_control.ManualControl;
+import io.mavsdk.mavlink_direct.MavlinkDirect;
 import io.mavsdk.mission.Mission;
 import io.mavsdk.mission_raw.MissionRaw;
 import io.mavsdk.mission_raw_server.MissionRawServer;
@@ -57,6 +58,7 @@ public class System {
   private final LazyPlugin<TelemetryServer> telemetryServer;
   private final LazyPlugin<Transponder> transponder;
   private final LazyPlugin<Tune> tune;
+  private final LazyPlugin<MavlinkDirect> mavlinkDirect;
 
   /**
    * Create a System object. The plugins are initialized lazily, when the corresponding
@@ -102,6 +104,7 @@ public class System {
     telemetryServer = LazyPlugin.from(() -> new TelemetryServer(host, port));
     transponder = LazyPlugin.from(() -> new Transponder(host, port));
     tune = LazyPlugin.from(() -> new Tune(host, port));
+    mavlinkDirect = LazyPlugin.from(() -> new MavlinkDirect(host, port));
   }
 
   @NonNull
@@ -235,6 +238,9 @@ public class System {
     return tune.get();
   }
 
+  @NonNull
+  public MavlinkDirect getMavlinkDirect() { return mavlinkDirect.get(); }
+
   /**
    * Dispose of all the plugins.
    */
@@ -265,5 +271,6 @@ public class System {
     telemetryServer.dispose();
     transponder.dispose();
     tune.dispose();
+    mavlinkDirect.dispose();
   }
 }
