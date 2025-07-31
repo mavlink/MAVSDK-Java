@@ -14,6 +14,7 @@ import io.mavsdk.info.Info;
 import io.mavsdk.internal.LazyPlugin;
 import io.mavsdk.log_files.LogFiles;
 import io.mavsdk.manual_control.ManualControl;
+import io.mavsdk.mavlink_direct.MavlinkDirect;
 import io.mavsdk.mission.Mission;
 import io.mavsdk.mission_raw.MissionRaw;
 import io.mavsdk.mission_raw_server.MissionRawServer;
@@ -44,6 +45,7 @@ public class System {
   private final LazyPlugin<Info> info;
   private final LazyPlugin<LogFiles> logFiles;
   private final LazyPlugin<ManualControl> manualControl;
+  private final LazyPlugin<MavlinkDirect> mavlinkDirect;
   private final LazyPlugin<Mission> mission;
   private final LazyPlugin<MissionRaw> missionRaw;
   private final LazyPlugin<MissionRawServer> missionRawServer;
@@ -89,6 +91,7 @@ public class System {
     info = LazyPlugin.from(() -> new Info(host, port));
     logFiles = LazyPlugin.from(() -> new LogFiles(host, port));
     manualControl = LazyPlugin.from(() -> new ManualControl(host, port));
+    mavlinkDirect = LazyPlugin.from(() -> new MavlinkDirect(host, port));
     mission = LazyPlugin.from(() -> new Mission(host, port));
     missionRaw = LazyPlugin.from(() -> new MissionRaw(host, port));
     missionRawServer = LazyPlugin.from(() -> new MissionRawServer(host, port));
@@ -167,6 +170,11 @@ public class System {
   @NonNull
   public ManualControl getManualControl() {
     return manualControl.get();
+  }
+
+  @NonNull
+  public MavlinkDirect getMavlinkDirect() {
+    return mavlinkDirect.get();
   }
 
   @NonNull
@@ -252,6 +260,7 @@ public class System {
     info.dispose();
     logFiles.dispose();
     manualControl.dispose();
+    mavlinkDirect.dispose();
     mission.dispose();
     missionRaw.dispose();
     missionRawServer.dispose();
