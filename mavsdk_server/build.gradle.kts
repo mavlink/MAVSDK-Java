@@ -26,7 +26,7 @@ allprojects {
     // version. Say we set this package to be 3.6.0-2-SNAPSHOT, it means that it
     // corresponds to mavsdk_server 3.6.0.
     val mavsdk_server_release = if (!project.hasProperty("VERSION")) {
-        "v3.7.1"
+        "v3.10.0"
     } else {
         val versionString = project.property("VERSION").toString()
         val regex = Regex("v?(\\d+\\.\\d+\\.\\d+)")
@@ -103,7 +103,7 @@ android {
         // MAVSDK-Java package and "SNAPSHOT" optionally sets it as a SNAPSHOT.
         version =
             if (project.hasProperty("VERSION")) project.property("VERSION").toString()
-            else "3.7.1-SNAPSHOT"
+            else "3.10.0-SNAPSHOT"
 
         ndk {
             abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86", "x86_64")

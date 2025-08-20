@@ -30,7 +30,7 @@ group = "io.mavsdk"
 // version of the proto files as MAVSDK-C++ v3.6.0.
 version =
     if (project.hasProperty("VERSION")) project.property("VERSION").toString()
-    else "3.7.1-SNAPSHOT"
+    else "3.10.0-SNAPSHOT"
 
 val grpcVersion = "1.61.1"
 
