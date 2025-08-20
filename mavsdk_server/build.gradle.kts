@@ -94,7 +94,7 @@ android {
     compileSdk = 35
 
     defaultConfig {
-        minSdk = 21
+        minSdk = 24
 
         group = "io.mavsdk"
 
@@ -140,7 +140,7 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    ndkVersion = "28.0.13004108"
+    ndkVersion = "28.1.13356709"
 }
 
 
