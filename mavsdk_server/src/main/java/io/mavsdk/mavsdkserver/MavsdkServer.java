@@ -1,9 +1,20 @@
 package io.mavsdk.mavsdkserver;
 
+import android.content.Context;
+
 public class MavsdkServer {
 
   static {
     java.lang.System.loadLibrary("native_lib");
+  }
+
+  public MavsdkServer(Context context) {
+    String cacheDir = context.getCacheDir().getAbsolutePath();
+    setTempDirectory(cacheDir);
+  }
+
+  public MavsdkServer(String tempDirectory) {
+    setTempDirectory(tempDirectory);
   }
 
   private long mavsdkServerHandle;
