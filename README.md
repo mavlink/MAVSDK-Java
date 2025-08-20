@@ -35,6 +35,8 @@ dependencies {
 }
 ```
 
+### SNAPSHOTs
+
 It is possible to fetch SNAPSHOTs by adding the repository to your Gradle config, as per the [sonatype documentation](https://central.sonatype.org/publish/publish-portal-snapshots/#consuming-via-gradle):
 
 ```
