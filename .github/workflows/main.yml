@@ -68,6 +68,7 @@ jobs:
           # Update our local proto submodule to match
           cd $GITHUB_WORKSPACE/sdk/proto
           git fetch origin
+          echo "About to checkout $proto_commit_hash"
           git checkout $proto_commit_hash
 
           # Cleanup
