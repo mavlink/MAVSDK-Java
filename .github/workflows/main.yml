@@ -22,7 +22,7 @@ jobs:
           set -o pipefail
           python3 -m venv venv
           source ./venv/bin/activate
-          pip install protoc-gen-mavsdk
+          pip install "protoc-gen-mavsdk~=2.0"
           ./gradlew build
       - name: Build and prepare mavsdk-server
         working-directory: ./mavsdk_server
@@ -81,7 +81,7 @@ jobs:
           set -o pipefail
           python3 -m venv venv
           source ./venv/bin/activate
-          pip install protoc-gen-mavsdk
+          pip install "protoc-gen-mavsdk~=2.0"
           ./gradlew build -PVERSION=${{ steps.version.outputs.tag_name }}
           ./gradlew publish -PVERSION=${{ steps.version.outputs.tag_name }}
       - name: Build and prepare mavsdk-server
