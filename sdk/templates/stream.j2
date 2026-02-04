@@ -1,18 +1,18 @@
 {% if not is_finite %}
 // Infinite stream
-private final FlowableProcessor<{% if return_type.is_primitive %}{{ return_type.name }}{% elif return_type.is_repeated %}List<{{ plugin_name.upper_camel_case }}.{{ return_type.inner_name }}>{% else %}{{ plugin_name.upper_camel_case }}.{{ return_type.name }}{% endif %}> {{ name.lower_camel_case }}Processor = PublishProcessor.create();
-private final Flowable<{% if return_type.is_primitive %}{{ return_type.name }}{% elif return_type.is_repeated %}List<{{ plugin_name.upper_camel_case }}.{{ return_type.inner_name }}>{% else %}{{ plugin_name.upper_camel_case }}.{{ return_type.name }}{% endif %}> {{ name.lower_camel_case }} = {{ name.lower_camel_case }}Processor.onBackpressureBuffer().share();;
+private final FlowableProcessor<{% if return_type.is_primitive %}{{ return_type.name }}{% elif return_type.is_repeated %}List<{{ plugin_name.upper_camel_case }}.{{ return_type.inner_name.upper_camel_case }}>{% else %}{{ plugin_name.upper_camel_case }}.{{ return_type.name.upper_camel_case }}{% endif %}> {{ name.lower_camel_case }}Processor = PublishProcessor.create();
+private final Flowable<{% if return_type.is_primitive %}{{ return_type.name }}{% elif return_type.is_repeated %}List<{{ plugin_name.upper_camel_case }}.{{ return_type.inner_name.upper_camel_case }}>{% else %}{{ plugin_name.upper_camel_case }}.{{ return_type.name.upper_camel_case }}{% endif %}> {{ name.lower_camel_case }} = {{ name.lower_camel_case }}Processor.onBackpressureBuffer().share();;
 private volatile boolean is{{ name.upper_camel_case }}Initialized = false;
 
-private void process{{ name.upper_camel_case }}({% for param in params %}@NonNull {{ param.type_info.name }} {{ param.name.lower_camel_case }}{{ ", " if not loop.last }}{% endfor %}) {
+private void process{{ name.upper_camel_case }}({% for param in params %}@NonNull {% if param.type_info.is_primitive %}{{ param.type_info.name }}{% else %}{{ param.type_info.name.upper_camel_case }}{% endif %} {{ param.name.lower_camel_case }}{{ ", " if not loop.last }}{% endfor %}) {
   {{ plugin_name.upper_camel_case }}Proto.Subscribe{{ name.upper_camel_case }}Request request = {{ plugin_name.upper_camel_case }}Proto.Subscribe{{ name.upper_camel_case }}Request.newBuilder()
     {%- for param in params %}
       {%- if param.type_info.is_primitive %}
     .set{{ param.name.upper_camel_case }}({{ param.name.lower_camel_case }})
       {%- elif param.type_info.is_repeated %}
-    .addAll{{ param.name.upper_camel_case }}({{ param.name.lower_camel_case }}.stream().map(elem -> elem.rpc{{ param.type_info.inner_name }}())::iterator)
+    .addAll{{ param.name.upper_camel_case }}({{ param.name.lower_camel_case }}.stream().map(elem -> elem.rpc{{ param.type_info.inner_name.upper_camel_case }}())::iterator)
       {%- else %}
-    .set{{ param.name.upper_camel_case }}({{ param.name.lower_camel_case }}.rpc{{ param.type_info.name }}())
+    .set{{ param.name.upper_camel_case }}({{ param.name.lower_camel_case }}.rpc{{ param.type_info.name.upper_camel_case }}())
       {%- endif %}
     {%- endfor %}
     .build();
@@ -25,13 +25,13 @@ private void process{{ name.upper_camel_case }}({% for param in params %}@NonNul
         {%- if return_type.is_primitive %}
       {{ name.lower_camel_case }}Processor.onNext(value.get{{ return_name.upper_camel_case }}List());
         {%- else %}
-      {{ name.lower_camel_case }}Processor.onNext(value.get{{ return_name.upper_camel_case }}List().stream().map({{ return_type.inner_name }}::translateFromRpc).collect(Collectors.toList()));
+      {{ name.lower_camel_case }}Processor.onNext(value.get{{ return_name.upper_camel_case }}List().stream().map({{ return_type.inner_name.upper_camel_case }}::translateFromRpc).collect(Collectors.toList()));
         {%- endif %}
       {%- else %}
         {%- if return_type.is_primitive %}
       {{ name.lower_camel_case }}Processor.onNext(value.get{{ return_name.upper_camel_case }}());
         {%- else %}
-      {{ name.lower_camel_case }}Processor.onNext({{ return_type.name }}.translateFromRpc(value.get{{ return_name.upper_camel_case }}()));
+      {{ name.lower_camel_case }}Processor.onNext({{ return_type.name.upper_camel_case }}.translateFromRpc(value.get{{ return_name.upper_camel_case }}()));
         {%- endif %}
       {%- endif %}
     }
@@ -49,7 +49,7 @@ private void process{{ name.upper_camel_case }}({% for param in params %}@NonNul
 }
 
 @CheckReturnValue
-public Flowable<{% if return_type.is_primitive %}{{ return_type.name }}{% elif return_type.is_repeated %}List<{{ plugin_name.upper_camel_case }}.{{ return_type.inner_name }}>{% else %}{{ plugin_name.upper_camel_case }}.{{ return_type.name }}{% endif %}> get{{ name.upper_camel_case }}({% for param in params %}@NonNull {{ param.type_info.name }} {{ param.name.lower_camel_case }}{{ ", " if not loop.last }}{% endfor %}) {
+public Flowable<{% if return_type.is_primitive %}{{ return_type.name }}{% elif return_type.is_repeated %}List<{{ plugin_name.upper_camel_case }}.{{ return_type.inner_name.upper_camel_case }}>{% else %}{{ plugin_name.upper_camel_case }}.{{ return_type.name.upper_camel_case }}{% endif %}> get{{ name.upper_camel_case }}({% for param in params %}@NonNull {% if param.type_info.is_primitive %}{{ param.type_info.name }}{% else %}{{ param.type_info.name.upper_camel_case }}{% endif %} {{ param.name.lower_camel_case }}{{ ", " if not loop.last }}{% endfor %}) {
   if (!is{{ name.upper_camel_case }}Initialized) {
     synchronized (this) {
       if (!is{{ name.upper_camel_case }}Initialized) {
@@ -63,20 +63,20 @@ public Flowable<{% if return_type.is_primitive %}{{ return_type.name }}{% elif r
 
 {% else %}
 // Finite stream
-private Flowable<{% if return_type.is_primitive %}{{ return_type.name }}{% elif return_type.is_repeated %}List<{{ plugin_name.upper_camel_case }}.{{ return_type.inner_name }}>{% else %}{{ plugin_name.upper_camel_case }}.{{ return_type.name }}{% endif %}> create{{ name.upper_camel_case }}({% for param in params %}{{ param.type_info.name }} {{ param.name.lower_camel_case }}{{ ", " if not loop.last }}{% endfor %}) {
+private Flowable<{% if return_type.is_primitive %}{{ return_type.name }}{% elif return_type.is_repeated %}List<{{ plugin_name.upper_camel_case }}.{{ return_type.inner_name.upper_camel_case }}>{% else %}{{ plugin_name.upper_camel_case }}.{{ return_type.name.upper_camel_case }}{% endif %}> create{{ name.upper_camel_case }}({% for param in params %}{% if param.type_info.is_primitive %}{{ param.type_info.name }}{% else %}{{ param.type_info.name.upper_camel_case }}{% endif %} {{ param.name.lower_camel_case }}{{ ", " if not loop.last }}{% endfor %}) {
   {{ plugin_name.upper_camel_case }}Proto.Subscribe{{ name.upper_camel_case }}Request request = {{ plugin_name.upper_camel_case }}Proto.Subscribe{{ name.upper_camel_case }}Request.newBuilder()
   {%- for param in params %}
     {%- if param.type_info.is_primitive %}
     .set{{ param.name.upper_camel_case }}({{ param.name.lower_camel_case }})
     {%- elif param.type_info.is_repeated %}
-    .addAll{{ param.name.upper_camel_case }}({{ param.name.lower_camel_case }}.stream().map(elem -> elem.rpc{{ param.type_info.inner_name }}())::iterator)
+    .addAll{{ param.name.upper_camel_case }}({{ param.name.lower_camel_case }}.stream().map(elem -> elem.rpc{{ param.type_info.inner_name.upper_camel_case }}())::iterator)
     {%- else %}
-    .set{{ param.name.upper_camel_case }}({{ param.name.lower_camel_case }}.rpc{{ param.type_info.name }}())
+    .set{{ param.name.upper_camel_case }}({{ param.name.lower_camel_case }}.rpc{{ param.type_info.name.upper_camel_case }}())
     {%- endif %}
   {%- endfor %}
     .build();
 
-  Flowable<{% if return_type.is_primitive %}{{ return_type.name }}{% elif return_type.is_repeated %}List<{{ plugin_name.upper_camel_case }}.{{ return_type.inner_name }}>{% else %}{{ plugin_name.upper_camel_case }}.{{ return_type.name }}{% endif %}> flowable = Flowable.create(emitter -> {
+  Flowable<{% if return_type.is_primitive %}{{ return_type.name }}{% elif return_type.is_repeated %}List<{{ plugin_name.upper_camel_case }}.{{ return_type.inner_name.upper_camel_case }}>{% else %}{{ plugin_name.upper_camel_case }}.{{ return_type.name.upper_camel_case }}{% endif %}> flowable = Flowable.create(emitter -> {
     if (!isInitialized) {
       Thread.sleep(PLUGIN_INIT_TIMEOUT_MS);
       if (!isInitialized) {
@@ -99,13 +99,13 @@ private Flowable<{% if return_type.is_primitive %}{{ return_type.name }}{% elif 
               {%- if return_type.is_primitive %}
             emitter.onNext(value.get{{ return_name.upper_camel_case }}List());
               {%- else %}
-            emitter.onNext(value.get{{ return_name.upper_camel_case }}List().stream().map({{ return_type.inner_name }}::translateFromRpc).collect(Collectors.toList()));
+            emitter.onNext(value.get{{ return_name.upper_camel_case }}List().stream().map({{ return_type.inner_name.upper_camel_case }}::translateFromRpc).collect(Collectors.toList()));
               {%- endif %}
             {%- else %}
               {%- if return_type.is_primitive %}
             emitter.onNext(value.get{{ return_name.upper_camel_case }}());
               {%- else %}
-            emitter.onNext({{ return_type.name }}.translateFromRpc(value.get{{ return_name.upper_camel_case }}()));
+            emitter.onNext({{ return_type.name.upper_camel_case }}.translateFromRpc(value.get{{ return_name.upper_camel_case }}()));
               {%- endif %}
             {%- endif %}
             break;
@@ -131,7 +131,7 @@ private Flowable<{% if return_type.is_primitive %}{{ return_type.name }}{% elif 
 }
 
 @CheckReturnValue
-public Flowable<{% if return_type.is_primitive %}{{ return_type.name }}{% elif return_type.is_repeated %}List<{{ plugin_name.upper_camel_case }}.{{ return_type.inner_name }}>{% else %}{{ plugin_name.upper_camel_case }}.{{ return_type.name }}{% endif %}> {{ name.lower_camel_case }}({% for param in params %}@NonNull {{ param.type_info.name }} {{ param.name.lower_camel_case }}{{ ", " if not loop.last }}{% endfor %}) {
+public Flowable<{% if return_type.is_primitive %}{{ return_type.name }}{% elif return_type.is_repeated %}List<{{ plugin_name.upper_camel_case }}.{{ return_type.inner_name.upper_camel_case }}>{% else %}{{ plugin_name.upper_camel_case }}.{{ return_type.name.upper_camel_case }}{% endif %}> {{ name.lower_camel_case }}({% for param in params %}@NonNull {% if param.type_info.is_primitive %}{{ param.type_info.name }}{% else %}{{ param.type_info.name.upper_camel_case }}{% endif %} {{ param.name.lower_camel_case }}{{ ", " if not loop.last }}{% endfor %}) {
   return create{{ name.upper_camel_case }}({% for param in params %}{{ param.name.lower_camel_case }}{{ ", " if not loop.last }}{% endfor %});
 }
 

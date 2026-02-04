@@ -1,20 +1,26 @@
 public static class {{ name.upper_camel_case }} {
   {%- for field in fields %}
+  {%- if field.type_info.is_primitive %}
   private {{ field.type_info.name }} {{ field.name.lower_camel_case }};
+  {%- elif field.type_info.is_repeated %}
+  private List<{{ field.type_info.inner_name.upper_camel_case }}> {{ field.name.lower_camel_case }};
+  {%- else %}
+  private {{ field.type_info.name.upper_camel_case }} {{ field.name.lower_camel_case }};
+  {%- endif %}
   {%- endfor %}
 
   {%- for nested_enum in nested_enums %}
   {{ '\n' + indent(nested_enums[nested_enum], 1) }}
   {%- endfor %}
 
-  public {{ name.upper_camel_case }}({%- for field in fields %}{{ field.type_info.name }} {{ field.name.lower_camel_case }}{{ ", " if not loop.last }}{%- endfor %}) {
+  public {{ name.upper_camel_case }}({%- for field in fields %}{% if field.type_info.is_primitive %}{{ field.type_info.name }}{% elif field.type_info.is_repeated %}List<{{ field.type_info.inner_name.upper_camel_case }}>{% else %}{{ field.type_info.name.upper_camel_case }}{% endif %} {{ field.name.lower_camel_case }}{{ ", " if not loop.last }}{%- endfor %}) {
     {%- for field in fields %}
     this.{{ field.name.lower_camel_case }} = {{ field.name.lower_camel_case }};
     {%- endfor %}
   }
 
   {%- for field in fields %}
-  public {{ field.type_info.name }} get{{ field.name.upper_camel_case }}() {
+  public {% if field.type_info.is_primitive %}{{ field.type_info.name }}{% elif field.type_info.is_repeated %}List<{{ field.type_info.inner_name.upper_camel_case }}>{% else %}{{ field.type_info.name.upper_camel_case }}{% endif %} get{{ field.name.upper_camel_case }}() {
     return {{ field.name.lower_camel_case }};
   }
   {%- endfor %}
@@ -26,13 +32,13 @@ public static class {{ name.upper_camel_case }} {
         {%- if field.type_info.is_primitive %}
       .addAll{{ field.name.upper_camel_case }}({{ field.name.lower_camel_case }})
         {%- else %}
-      .addAll{{ field.name.upper_camel_case }}({{ field.name.lower_camel_case }}.stream().map({{ field.type_info.inner_name }}::rpc{{ field.type_info.inner_name }}).collect(Collectors.toList()))
+      .addAll{{ field.name.upper_camel_case }}({{ field.name.lower_camel_case }}.stream().map({{ field.type_info.inner_name.upper_camel_case }}::rpc{{ field.type_info.inner_name.upper_camel_case }}).collect(Collectors.toList()))
         {%- endif %}
       {%- else %}
         {%- if field.type_info.is_primitive %}
       .set{{ field.name.upper_camel_case }}(this.{{ field.name.lower_camel_case }})
         {%- else %}
-      .set{{ field.name.upper_camel_case }}(this.{{ field.name.lower_camel_case }}.rpc{{ field.type_info.inner_name }}())
+      .set{{ field.name.upper_camel_case }}(this.{{ field.name.lower_camel_case }}.rpc{{ field.type_info.inner_name.upper_camel_case }}())
         {%- endif %}
       {%- endif %}
     {%- endfor %}
@@ -46,13 +52,13 @@ public static class {{ name.upper_camel_case }} {
                 {%- if field.type_info.is_primitive %}
                 rpc{{ name.upper_camel_case }}.get{{ field.name.upper_camel_case }}List(){{ "," if not loop.last }}
                 {%- else %}
-                rpc{{ name.upper_camel_case }}.get{{ field.name.upper_camel_case }}List().stream().map({{ field.type_info.inner_name }}::translateFromRpc).collect(Collectors.toList()){{ "," if not loop.last }}
+                rpc{{ name.upper_camel_case }}.get{{ field.name.upper_camel_case }}List().stream().map({{ field.type_info.inner_name.upper_camel_case }}::translateFromRpc).collect(Collectors.toList()){{ "," if not loop.last }}
                 {%- endif %}
             {%- else %}
                 {%- if field.type_info.is_primitive %}
             rpc{{ name.upper_camel_case }}.get{{ field.name.upper_camel_case }}(){{ "," if not loop.last }}
                 {%- else %}
-            {{ field.type_info.name }}.translateFromRpc(rpc{{ name.upper_camel_case }}.get{{ field.name.upper_camel_case }}()){{ "," if not loop.last }}
+            {{ field.type_info.name.upper_camel_case }}.translateFromRpc(rpc{{ name.upper_camel_case }}.get{{ field.name.upper_camel_case }}()){{ "," if not loop.last }}
                 {%- endif %}
             {%- endif %}
             {%- endfor %});

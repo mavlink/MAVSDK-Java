@@ -1,18 +1,18 @@
 @CheckReturnValue
-public Single<{% if return_type.is_primitive %}{{ return_type.name }}{% elif return_type.is_repeated %}List<{{ plugin_name.upper_camel_case }}.{{ return_type.inner_name }}>{% else %}{{ plugin_name.upper_camel_case }}.{{ return_type.name }}{% endif %}> {{ name.lower_camel_case }}{% if name.lower_camel_case == "getFlightInformation" %}Sync{% endif %}({% for param in params %}@NonNull {{ param.type_info.name }} {{ param.name.lower_camel_case }}{{ ", " if not loop.last }}{% endfor %}) {
+public Single<{% if return_type.is_primitive %}{{ return_type.name }}{% elif return_type.is_repeated %}List<{{ plugin_name.upper_camel_case }}.{{ return_type.inner_name.upper_camel_case }}>{% else %}{{ plugin_name.upper_camel_case }}.{{ return_type.name.upper_camel_case }}{% endif %}> {{ name.lower_camel_case }}{% if name.lower_camel_case == "getFlightInformation" %}Sync{% endif %}({% for param in params %}@NonNull {% if param.type_info.is_primitive %}{{ param.type_info.name }}{% else %}{{ param.type_info.name.upper_camel_case }}{% endif %} {{ param.name.lower_camel_case }}{{ ", " if not loop.last }}{% endfor %}) {
   {{ plugin_name.upper_camel_case }}Proto.{{ name.upper_camel_case }}Request request = {{ plugin_name.upper_camel_case }}Proto.{{ name.upper_camel_case }}Request.newBuilder()
   {%- for param in params %}
     {%- if param.type_info.is_primitive %}
     .set{{ param.name.upper_camel_case }}({{ param.name.lower_camel_case }})
     {%- elif param.type_info.is_repeated %}
-    .addAll{{ param.name.upper_camel_case }}({{ param.name.lower_camel_case }}.stream().map(elem -> elem.rpc{{ param.type_info.inner_name }}())::iterator)
+    .addAll{{ param.name.upper_camel_case }}({{ param.name.lower_camel_case }}.stream().map(elem -> elem.rpc{{ param.type_info.inner_name.upper_camel_case }}())::iterator)
     {%- else %}
-    .set{{ param.name.upper_camel_case }}({{ param.name.lower_camel_case }}.rpc{{ param.type_info.name }}())
+    .set{{ param.name.upper_camel_case }}({{ param.name.lower_camel_case }}.rpc{{ param.type_info.name.upper_camel_case }}())
     {%- endif %}
   {%- endfor %}
     .build();
 
-  Single<{% if return_type.is_primitive %}{{ return_type.name }}{% elif return_type.is_repeated %}List<{{ plugin_name.upper_camel_case }}.{{ return_type.inner_name }}>{% else %}{{ plugin_name.upper_camel_case }}.{{ return_type.name }}{% endif %}> single = Single.create(emitter -> {
+  Single<{% if return_type.is_primitive %}{{ return_type.name }}{% elif return_type.is_repeated %}List<{{ plugin_name.upper_camel_case }}.{{ return_type.inner_name.upper_camel_case }}>{% else %}{{ plugin_name.upper_camel_case }}.{{ return_type.name.upper_camel_case }}{% endif %}> single = Single.create(emitter -> {
     if (!isInitialized) {
       Thread.sleep(PLUGIN_INIT_TIMEOUT_MS);
       if (!isInitialized) {
@@ -39,9 +39,9 @@ public Single<{% if return_type.is_primitive %}{{ return_type.name }}{% elif ret
           {%- endif %}
         {%- else %}
           {%- if return_type.is_repeated %}
-          emitter.onSuccess(value.get{{ return_name.upper_camel_case }}List().stream().map({{ return_type.inner_name }}::translateFromRpc).collect(Collectors.toList()));
+          emitter.onSuccess(value.get{{ return_name.upper_camel_case }}List().stream().map({{ return_type.inner_name.upper_camel_case }}::translateFromRpc).collect(Collectors.toList()));
           {%- else %}
-          emitter.onSuccess({{ return_type.name }}.translateFromRpc(value.get{{ return_name.upper_camel_case }}()));
+          emitter.onSuccess({{ return_type.name.upper_camel_case }}.translateFromRpc(value.get{{ return_name.upper_camel_case }}()));
           {%- endif %}
         {%- endif %}
         {%- if has_result %}
