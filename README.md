@@ -70,7 +70,7 @@ ProGuard users may need to add the following rule:
 2. For Android, run the `mavsdk_server` as follows:
 
 ```java
-MavsdkServer server = new MavsdkServer(context);
+MavsdkServer server = new MavsdkServer();
 MavsdkEventQueue.executor().execute(() -> server.run(SYSTEM_ADDRESS, MAVSDK_SERVER_PORT));
 ```
 
